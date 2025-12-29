@@ -1,0 +1,19 @@
+[project]
+name = "bettercode-book"
+version = "0.1.0"
+description = "Text for BetterCodeBetterScience book"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "jupyter-book>=1.0.2",
+    "mystmd>=1.7.1",
+]
+
+
+[tool.codespell]
+# Ref: https://github.com/codespell-project/codespell#using-a-config-file
+skip = './book/transcripts,./book/_build/html,.js*,.git*,*.lock,*.bib,.venv*,*.ipynb,*.json'
+check-hidden = true
+ignore-regex = '\b(BLOSUM|Shapin)\b'
+ignore-words = 'project-words.txt'
+

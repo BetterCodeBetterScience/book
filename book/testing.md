@@ -65,7 +65,7 @@ Just as with unit tests, we want integration tests that both confirm proper oper
 ## The anatomy of a test
 
 A test is generally structured as a function that executes without raising an exception as long as the code behaves in an expected way.
-Let's say that we want to generate a function that returns the escape velocity of a planet:
+Let's say that we want to generate a [function](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/escape_velocity.py) that returns the escape velocity of a planet:
 
 ```python
 import math
@@ -86,7 +86,7 @@ def escape_velocity(mass: float, radius: float, G=6.67430e-11):
     return math.sqrt(2 * G * mass / radius)
 ```
 
-We can then generate a test to determine whether the value returned by our function matches the known value for a given planet:
+We can then generate a [test](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/test_escape_velocity.py) to determine whether the value returned by our function matches the known value for a given planet:
 
 ```python
 def test_escape_velocity():
@@ -103,10 +103,10 @@ def test_escape_velocity():
 We can run this using `pytest` (more about this later), which tells us that the test passes:
 
 ```bash
-❯ pytest src/bettercode/escape_velocity.py
+❯ pytest tests/test_escape_velocity.py::test_escape_velocity
 ====================== test session starts ======================
 
-src/bettercode/escape_velocity.py ..          [100%]
+tests/test_escape_velocity.py .                            [100%]
 
 ======================= 1 passed in 0.10s =======================
 ```
@@ -116,11 +116,10 @@ If the returned value didn't match the known value (within a given level of tole
 For example, if we had mis-specified the expected value as 1186.0, we would have seen an error like this:
 
 ```bash
-❯ pytest src/bettercode/escape_velocity.py
-====================== test session starts ======================
+❯ pytest tests/test_escape_velocity.py::test_escape_velocity
+====================== test session starts =====================
 
-src/bettercode/escape_velocity.py F          [100%]
-
+tests/test_escape_velocity.py F                           [100%]
 =========================== FAILURES ===========================
 _____________________ test_escape_velocity _____________________
 
@@ -138,9 +137,10 @@ E       assert False
 E        +  where False = <function allclose at 0x101403370>(1186.0, 11185.97789184991)
 E        +    where <function allclose at 0x101403370> = np.allclose
 
-src/bettercode/escape_velocity.py:26: AssertionError
+tests/test_escape_velocity.py:14: AssertionError
 ===================== short test summary info =====================
-FAILED src/bettercode/escape_velocity.py::test_escape_velocity - AssertionError: Test failed!
+FAILED tests/test_escape_velocity.py::test_escape_velocity - 
+AssertionError: Test failed!
 ======================== 1 failed in 0.11s ========================
 ```
 
@@ -191,7 +191,7 @@ An easy way to introduce testing into the development process is to write a new 
 This makes it easy to then work on fixing the bug, since the test will determine when the bug has been fixed.
 In addition, the test will detect if future changes reintroduce the bug.
 
-As an example, take the following function:
+As an example, take the following [function](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/bug_driven_testing.py):
 
 ```python
 def find_outliers(data: List[float], threshold: float = 2.0) -> List[int]:
@@ -280,58 +280,38 @@ def test_find_outliers_identical_values():
 Running this with the original function definition, we see that it fails:
 
 ```python
-❯ pytest src/bettercode/bug_driven_testing.py
-=========================== test session starts ===========================
-collected 2 items
+➤  pytest tests/test_find_outliers.py
+============================= test session starts ==============================
 
-src/bettercode/bug_driven_testing.py .F                [100%]
+tests/test_find_outliers.py .F                                           [100%]
 
-================================ FAILURES =================================
-___________________ test_find_outliers_identical_values ___________________
+=================================== FAILURES ===================================
+_____________________ test_find_outliers_identical_values ______________________
 
     def test_find_outliers_identical_values():
         data = [5, 5, 5, 5, 5]  # All identical values
 
 >       outliers = find_outliers(data, threshold=2.0)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-src/bettercode/bug_driven_testing.py:50:
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests/test_find_outliers.py:16:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-data = [5, 5, 5, 5, 5], threshold = 2.0
-
-    def find_outliers(data: List[float], threshold: float = 2.0) -> List[int]:
-        """
-        Find outliers in a dataset using z-score method.
-
-        Parameters
-        ----------
-        data : List[float]
-            List of numerical values.
-        threshold : float, default=2.0
-            Number of standard deviations from the mean to consider a value as an outlier.
-
-        Returns
-        -------
-        List[int]
-            List of indices of outliers in the data.
-        """
-
-        mean = sum(data) / len(data)
-        variance = sum((x - mean) ** 2 for x in data) / len(data)
-        std = variance ** 0.5
-
+...
         # Bug: division by zero when std is 0 (all values are identical)
         # This only happens when all data points are the same
         outliers = []
         for i, value in enumerate(data):
 >           z_score = abs(value - mean) / std  # Bug: std can be 0!
+                      ^^^^^^^^^^^^^^^^^^^^^^^
 E           ZeroDivisionError: float division by zero
 
-src/bettercode/bug_driven_testing.py:31: ZeroDivisionError
-========================= short test summary info =========================
-FAILED src/bettercode/bug_driven_testing.py::test_find_outliers_identical_values
- - ZeroDivisionError: float division by zero
-======================= 1 failed, 1 passed in 0.10s =======================
+src/bettercode/bug_driven_testing.py:34: ZeroDivisionError
+=========================== short test summary info ============================
+FAILED tests/test_find_outliers.py::test_find_outliers_identical_values - 
+ZeroDivisionError: float division by zero
+========================= 1 failed, 1 passed in 0.08s ==========================
+
 ```
 
 We can now fix the code by returning an empty list if zero standard deviation is detected:
@@ -349,11 +329,10 @@ Running the tests now will show that the problem is fixed:
 ```python
 ❯ pytest src/bettercode/bug_driven_testing.py
 =========================== test session starts ===========================
-collected 2 items
 
-src/bettercode/bug_driven_testing.py ..                [100%]
+tests/test_find_outliers.py ..                                       [100%]
 
-============================ 2 passed in 0.08s ============================
+============================== 2 passed in 0.06s ==========================
 
 ```
 
@@ -384,7 +363,7 @@ A good test shouldn't know about the internal implementation details of the func
 That is, from the standpoint of the test, a function should be a "black box".
 
 The most common way in which a test can violate this principle is by accessing the internal variables of a class that it is testing.
-For example, we might generate a class that performs a scaling operation on a numpy matrix:
+For example, we might generate a [class](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/simpleScaler.py) that performs a scaling operation on a numpy matrix:
 
 ```python
 class SimpleScaler:
@@ -446,7 +425,7 @@ The use of ordered tests also prevents the parallel execution of tests, which ma
 For these reasons, we should always aim to create tests that can be executed independently.
 
 Here is an example where coupling between tests could cause failures.
-First we generate two functions that make changes in place to a data frame:
+First we generate two [functions] (https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/test_independence.py) that make changes in place to a data frame:
 
 ```python
 def split_names(df):
@@ -546,20 +525,21 @@ def test_distance_same_y():
 Now that we have our tests, we can run them using the `pytest` command:
 
 ```bash
-pytest src/bettercode/distance_testing
+pytest tests/test_distance.py
 ```
 
 This command will cause pytest to search (by default) for any files named `test_*.py` or `*_test.py` in the relevant path, and the select any functions whose name starts with the prefix "test".
 Running those tests, we get an error:
 
 
-```bash
+```python
 >       assert distance((1, -2), (-4, 6)) == math.sqrt(125)
 E       assert 9.433981132056603 == 11.180339887498949
 E        +  where 9.433981132056603 = distance((1, -2), (-4, 6))
 E        +  and   11.180339887498949 = <built-in function sqrt>(125)
 E        +    where <built-in function sqrt> = math.sqrt
 
+tests/test_distance.py:17: AssertionError
 ```
 
 Here we see that the value returned by our function is different from the one expected by the test; in this case, the test value generated by Copilot is incorrect.
@@ -567,14 +547,12 @@ In our research, it was not uncommon for ChatGPT to generate incorrect test valu
 Once we fix the expected value for that test (the square root of 89), then we can rerun the tests and see that they have passed:
 
 ```bash
-python -m pytest pytest src/bettercode/distance_testing
-==================== test session starts =====================                                     
+➤  pytest tests/test_distance.py                                          
+============================= test session starts ==============================
 
-src/codingforscience/simple_testing/test_distance.py . [ 16%]
-.....                                                  [100%]
+tests/test_distance.py ......                                            [100%]
 
-===================== 6 passed in 0.06s ======================
-
+============================== 6 passed in 0.07s ===============================
 ```
 
 ### Potential problems with AI-generated tests
@@ -608,18 +586,13 @@ def test_escape_velocity():
 When we run this test (renaming it `test_escape_velocity_gpt4`), we see that one of the tests fails:
 
 ```bash
-❯ pytest src/bettercode/escape_velocity.py::test_escape_velocity_gpt4
-==================================== test session starts ====================================
-platform darwin -- Python 3.12.0, pytest-8.4.1, pluggy-1.5.0
-rootdir: /Users/poldrack/Dropbox/code/BetterCodeBetterScience
-configfile: pyproject.toml
-plugins: cov-5.0.0, anyio-4.6.0, hypothesis-6.115.3, mock-3.14.0
-collected 1 item
+➤  pytest tests/test_escape_velocity.py::test_escape_velocity_gpt4      
+============================= test session starts ==============================
 
-src/bettercode/escape_velocity.py F                                      [100%]
+tests/test_escape_velocity.py F                                          [100%]
 
-========================================= FAILURES ==========================================
-_________________________________ test_escape_velocity_gpt4 _________________________________
+=================================== FAILURES ===================================
+__________________________ test_escape_velocity_gpt4 ___________________________
 
     def test_escape_velocity_gpt4():
 
@@ -643,10 +616,11 @@ E         comparison failed
 E         Obtained: 59564.97
 E         Expected: 60202.716344497014 ± 60.2027
 
-src/bettercode/escape_velocity.py:52: AssertionError
-================================== short test summary info ==================================
-FAILED src/bettercode/escape_velocity.py::test_escape_velocity_gpt4 - assert 60202.716344497014 ± 60.2027 == 59564.97
-===================================== 1 failed in 0.12s =====================================
+tests/test_escape_velocity.py:38: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_escape_velocity.py::test_escape_velocity_gpt4 - 
+assert 60202.716344497014 ± 60.2027 == 59564.97
+============================== 1 failed in 0.08s ===============================
 ```
  
 It seems that the first two assertions pass but the third one, for Jupiter, fails.
@@ -661,7 +635,7 @@ This example highlights the importance of understanding and checking the tests t
 ## Test-driven development and AI-assisted coding
 
 Here we will dive into a more realistic example of an application that one might develop using AI assistance, specifically looking at how we could develop the application using a test-driven development (TDD) approach.
-We will develop a Python application that takes in a query for the PubMed database and returns a data frame containing the number of database records matching that query for each year.
+We will develop a Python [application](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/pubmed.py) that takes in a query for the PubMed database and returns a data frame containing the number of database records matching that query for each year.
 We start by decomposing the problem and sketching out the main set of functions that we will need to develop, with understandable names for each:
 
 - `get_PubmedIDs_for_query`: A function that will search pubmed for a given query and return a list of pubmed IDs
@@ -675,7 +649,7 @@ We could use the `Biopython.Entrez` module to perform this search, but Biopython
 Instead, we will directly retrieve the result using the Entrez API and the built-in `requests` module.
 Note that for all of the code shown here we will not include docstrings, but they are available in the code within the repository.
 
-If we are using the TDD approach, we would first want to develop a set of tests to make sure that our function is working correctly.
+If we are using the TDD approach, we would first want to develop a set of [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/test_textmining.py) to make sure that our function is working correctly.
 The following three tests specify several different outcomes that we might expect.
 First, we give a query that is known to give a valid result, and test whether it in fact gives such a result:
 
@@ -717,11 +691,11 @@ def get_PubmedIDs_for_query(query: str,
 The test result shows that all of the tests fail:
 
 ```bash
-❯ python -m pytest -v tests/textmining
+❯ python -m pytest -v tests/test_textmining.py
 ================================== test session starts ===================================
 ...
-tests/textmining/test_textmining.py::test_get_PubmedIDs_for_query_check_valid FAILED [ 50%]
-tests/textmining/test_textmining.py::test_get_PubmedIDs_for_query_check_empty FAILED [100%]
+tests/test_textmining.py::test_get_PubmedIDs_for_query_check_valid FAILED [ 50%]
+tests/test_textmining.py::test_get_PubmedIDs_for_query_check_empty FAILED [100%]
 
 ======================================== FAILURES ========================================
 ________________________ test_get_PubmedIDs_for_query_check_valid ________________________
@@ -733,7 +707,7 @@ ids = None
 E       assert False
 E        +  where False = isinstance(None, list)
 
-tests/textmining/test_textmining.py:32: AssertionError
+tests/test_textmining.py:32: AssertionError
 ________________________ test_get_PubmedIDs_for_query_check_empty ________________________
 
     def test_get_PubmedIDs_for_query_check_empty():
@@ -743,10 +717,11 @@ ________________________ test_get_PubmedIDs_for_query_check_empty ______________
                ^^^^^^^^
 E       TypeError: object of type 'NoneType' has no len()
 
-tests/textmining/test_textmining.py:39: TypeError
+tests/test_textmining.py:39: TypeError
 ================================ short test summary info =================================
-FAILED tests/textmining/test_textmining.py::test_get_PubmedIDs_for_query_check_valid - assert False
-FAILED tests/textmining/test_textmining.py::test_get_PubmedIDs_for_query_check_empty - TypeError: object of type 'NoneType' has no len()
+FAILED tests/test_textmining.py::test_get_PubmedIDs_for_query_check_valid - assert False
+FAILED tests/test_textmining.py::test_get_PubmedIDs_for_query_check_empty - 
+TypeError: object of type 'NoneType' has no len()
 =================================== 2 failed in 0.12s ====================================
 ```
 
@@ -814,7 +789,7 @@ The `pytest-cov` extension for the `pytest` testing package can provide us with 
 ---------- coverage: platform darwin, python 3.12.0-final-0 ----------
 Name                                                   Stmts   Miss  Cover   Missing
 ------------------------------------------------------------------------------------
-src/bettercode/textmining/textmining.py      30      1    97%   70
+src/bettercode/textmining.py                              30      1    97%   70
 ------------------------------------------------------------------------------------
 TOTAL                                                     30      1    97%
 ```
@@ -1099,13 +1074,13 @@ Looking at the results of running the test, we will see that each parametric val
 
 ```bash
 ...
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[17773841-1944] PASSED       [ 62%]
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[13148370-1954] PASSED       [ 68%]
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[14208567-1964] PASSED       [ 75%]
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[4621244-1974] PASSED        [ 81%]
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[6728178-1984] PASSED        [ 87%]
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[10467601-1994] PASSED       [ 93%]
-tests/textmining/test_textmining.py::test_parse_year_from_pmid_parametric[15050513-2004] PASSED       [100%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[17773841-1944] PASSED       [ 62%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[13148370-1954] PASSED       [ 68%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[14208567-1964] PASSED       [ 75%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[4621244-1974] PASSED        [ 81%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[6728178-1984] PASSED        [ 87%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[10467601-1994] PASSED       [ 93%]
+tests/test_textmining.py::test_parse_year_from_pmid_parametric[15050513-2004] PASSED       [100%]
 ```
 
 This test requires a live API, so it would fail in cases where one didn't have a proper network connection or if the API was down, and it would also be slow for a large number of tests.
@@ -1117,7 +1092,7 @@ Parameterized testing can be useful when we have specific values that we want to
 One approach to doing this is known as *property-based testing*, and basically involves generating random values that match some specification and testing the code against those.
 
 Property-based testing can be particularly useful for testing mathematical code, so we will develop another simple example to show how to use the `hypothesis` module in Python to perform property-based testing.
-Let's say that we have developed a function to perform linear regression, taking in two vectors (X and y variables) and return a vector of length 2 (parameter estimates for slope and intercept).
+Let's say that we have developed a [function](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/my_linear_regression.py) to perform linear regression, taking in two vectors (X and y variables) and return a vector of length 2 (parameter estimates for slope and intercept).
 Copilot generates some very terse code for us:
 
 ```python
@@ -1174,7 +1149,7 @@ def linear_regression(X, y, validate=True):
     return np.linalg.inv(X.T @ X) @ X.T @ y
 ```
 
-Now we can use the `hypothesis` module to throw a range of data at this function and see if it fails, using the following test:
+Now we can use the `hypothesis` module to throw a range of data at this function and see if it fails, using the following [test](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/property_based_testing/test_propertybased_smoke.py):
 
 ```python
 @given(
@@ -1245,7 +1220,7 @@ FAILED tests/property_based_testing/test_propertybased_smoke.py::test_linear_reg
 The test has identified a specific input that will cause the code to fail - namely, when the X variable is all zeros, which leads to an error when trying to invert the singular matrix.
 We could get the test to pass by causing the function to return `None` when the matrix is no invertible, but this is not a great practice; we should announce problems loudly by raising an exception, rather than burying them quietly by returning `None`.
 
-Now that we have seen how `hypothesis` can identify errors, let's develop some tests for the code that we can use to make sure that it works properly.
+Now that we have seen how `hypothesis` can identify errors, let's develop some [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/property_based_testing/test_propertybased.py) for the code that we can use to make sure that it works properly.
 We will first separately test the validator function, making sure that it can detect any of the potential problems that it should be able to detect:
 
 ```python
@@ -1437,7 +1412,7 @@ One strategy that *will not* work reliably is to place the tests in a specific o
 While tests are often executed in the order that the functions appear in the file, this not guaranteed.
 
 For precise ordering of particular tests, one can use the [pytest-order](https://pypi.org/project/pytest-order/) plugin, which allows the use of marks to specify test order[^2].
-We start with two tests that are out of order in the test code:
+We start with two [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/ordering/test_order.py) that are out of order in the test code:
 
 ```python
 import pytest
@@ -1529,7 +1504,7 @@ markers = [
 ]
 ```
 
-We can then generate tests using these markers:
+We can then generate [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/markers/test_markers.py) using these markers:
 
 ```python
 import pytest
@@ -1594,7 +1569,7 @@ Another simple strategy that can help optimize the testing workflow is to run te
 This ensures that one doesn't end up waiting a long time for long-running tests to complete, only to find that a quick test fails.
 
 We can use pytest's `--durations` flag to get the durations for each test.
-Here is an example with three tests with different durations to completion:
+Here is an example with three [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/ordering/test_duration.py) with different durations to completion:
 
 ```python
 import pytest
@@ -1725,7 +1700,7 @@ Again, knowing where one can cut corners requires a good understanding of the sp
 
 If we have written good tests, they should be able to run independently, and thus their execution should be parallelizable, assuming that we are using a system with multiple CPU cores.
 If we are using `pytest` as our testing framework, then we can use the `pytest-xdist` extension to enable the parallel execution of tests in pytest.
-For example, let's set up a parameterized test that includes a `time.sleep()` command so that execution will take a significant amount of time.
+For example, let's set up a parameterized [test](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/parallel/tests_parallel.py) that includes a `time.sleep()` command so that execution will take a significant amount of time.
 
 ```python
 import pytest

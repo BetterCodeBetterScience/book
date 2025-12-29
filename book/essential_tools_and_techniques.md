@@ -530,7 +530,8 @@ We have found on a couple of occasions that some Python packages have dependenci
 Specifically, in cases where Python packages required a specific component (the LLVM compiler), we were unable to easily get the specific required version of that component working on our Mac using `uv`, whereas `conda` simply installs the required component and works out of the box.
 The speed and efficiency of `uv` generally outshine `conda` in our experience, but in some cases `conda` may help solve tricky non-Python dependency issues.
 
-**TODO**: Add section on Pixi?
+**TODO**: more detail about use of Conda
+
 
 ## Large language models
 

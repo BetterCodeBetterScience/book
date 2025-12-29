@@ -60,9 +60,6 @@ A depiction of the data management lifecycle, from the [RDMkit project by ELIXIR
 ```
 
 
-
-
-
 ## Planning a study
 
 It is essential to think about data management from the inception of a study, in order to ensure that early decisions don't lead to pain down the road.  Here are some examples of problems that might arise:
@@ -270,7 +267,6 @@ Many researchers store their data using RAID systems (which stands for "redundan
 Access to research data within a research group should operate by the *Principle of Least Privilege*, which is a general approach to computer security that states that any user should have only enough privileges to perform their intended actions, and no more. While this is most relevant to multi-user systems, it is often relevant even to systems with only a single user. With regard to data access, this principle has two important implications.  First, any particular dataset should be accessible only to users who have permission and need to use those data. Second, if data are meant to be accessed by a user but not modified by that user, then the user should have read-only access to the data.  
 
 Even when a user may have a need to modify data, it often makes sense to set the data as read-only, so that any modifications require an explicit permissions change before the modifications can be made. This can help prevent accidental changes or data deletion, even on a single-user system.
-
 
 
 ## Data formats and file types
@@ -766,7 +762,6 @@ An example of a Gene Ontology graph for the entity "node of Ranvier", which is a
 
 ```
 
-
 Ontologies are very useful for specifying metadata, because they allow us to know exactly what a particular entry in the metadata means, and thus allow us to establish link between equivalent entities across datasets.  For example, let's say that a researcher wants to query a database for datasets related to insulin signaling in pancreatic beta cells in Type II diabetes, and that there are three relevant datasets in the database.  Without an ontology, each of the teams might use different terms to refer to these cells (such as "pancreatic beta cells", "insulin-producing cells", and "islet beta cells"), making it difficult to link the datasets. However, if each of the datasets were to include metadata linked to a specific ontology (in this case, the identifier `CL:0000169` from the Cell Ontolog, which refers to "type B pancreatic cell"), then it becomes much easier to find and link these datasets.  There are at present a broad range of ontologies available for nearly every scientific domain; the [BioPortal](https://bioportal.bioontology.org/) project provides a tool to search across a wide range of existing ontologies.
 
 ### Metadata file formats
@@ -797,6 +792,7 @@ Now let's say that someone else wanted to search across datasets to find researc
   "email": "russpold@stanford.edu"
 }
 ```
+
 
 ## Data documentation
 
@@ -875,10 +871,10 @@ In addition, the model defines a set of relationships between these concepts, as
 A depiction of the PROV data model entities and relations.  Copyright © [2013] [World Wide Web Consortium](https://www.w3.org/copyright/document-license-2023/).
 ```
 
-
 This data model highlights the breadth of information that needs to be represented in order to accurately record provenance.
 
 There are several different ways to track provenance in practice, which vary in their complexity, comprehensiveness, and ease of use.  We will discuss this in much more detail in a later chapter on workflows.
+
 
 ## Handling of sensitive data
 
@@ -943,6 +939,7 @@ In the US, deidentification of data is generally sufficient to render them non-s
 Anonymization refers to the modification of data in a way that can essentially guarantee that the subjects cannot be reidentified. For example, one might modify ages so that they are stated in ranges (such as 20-25 years old) instead of a specific year.  These methods generally change the data in ways that could potentially affect downstream analyses, and thus many researchers shy away from using anonymized data unless absolutely necessary.   
 
 One method that is often used for large datasets is known as *differential privacy*, which involves adding noise to analytic results in a way that can provably prevent reidentification.  For example, this method is [now used](https://www.census.gov/programs-surveys/decennial-census/decade/2020/planning-management/process/disclosure-avoidance/differential-privacy.html) by the US Census Bureau to protect individuals. This has the benefit of providing a provable mathematical guarantee of privacy by quantifying the maximum degree of privacy loss given a particular amount of noise added.  However, this method may have adverse effects on the data, such by disparately impacting small sub-populations within a larger dataset {cite:p}`Santos-Lozada:2020aa`.
+
 
 ## Version control for data
 
@@ -1220,7 +1217,7 @@ The question that I will ask is as follows: How well can the biological similari
 - A dataset of genome-wise association study (GWAS) results for specific traits obtained from [here](https://www.ebi.ac.uk/gwas/docs/file-downloads).
 - Abstracts that refer to each of the traits identified in the GWAS result, obtained from the [PubMed](https://pubmed.ncbi.nlm.nih.gov/) database.  
 
-I will not present all of the code for each step; this can be found [here](src/bettercode/database_example_funcs.py) and [here](src/bettercode/database.py). Rather, I will show portions that are particularly relevant to the databases being used. 
+I will not present all of the code for each step, which can be found [here](https://github.com/BetterCodeBetterScience/example-databases). Rather, I will show portions that are particularly relevant to the databases being used. 
 
 ### Adding GWAS data to a document store
 
@@ -1236,7 +1233,7 @@ In this case, looking at the data we see that several columns contain multiple v
 gwas_data = get_exploded_gwas_data()
 ```
 
-We can now import the data from this data frame into a MongoDB collection, mapping each unique trait to the genes that are reported as being associated with it.  First I generated a separate function that sets up a MongoDB collection (see `setup_mongo_collection` [here](src/bettercode/database.py)).  We can then use that function to set up our gene set collection:
+We can now import the data from this data frame into a MongoDB collection, mapping each unique trait to the genes that are reported as being associated with it.  First I generated a separate function that sets up a MongoDB collection (see `setup_mongo_collection` [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/database.py)).  We can then use that function to set up our gene set collection:
 
 
 ```python
@@ -1838,8 +1835,6 @@ plt.title(
 
 A scatterplot of biological similarity (estimated as overlap in pathways) versus semantic similarity (estimated as embedding distance of Pubmed abstracts) on the GWAS dataset.
 ```
-
-
 
 There is a small but robust correlation between these two similarity measures. In order to more accurately estimate this association we need to take into account the fact that different documents vary in their overall similarity by including a *random effect* of document within a mixed effects model.  We use the `lmer()` function from the R `lme4` package, via the R magic within Jupyter:
 

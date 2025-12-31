@@ -3,7 +3,7 @@ project:
   title: Better Code, Better Science
   authors:
     - name: Russell Poldrack
-  github: poldrack/BetterCodeBetterScience
+  github: BetterCodeBetterScience/book
   bibliography:
     - book/references.bib
   exports:

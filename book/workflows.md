@@ -30,9 +30,38 @@ Finally, we care about the *efficiency* of the workflow implementation. This inc
 
 It's worth noting that these different desiderata will sometimes conflict with one another (such as configurability versus maintainability), and that no workflow will be perfect.  For example, a highly configurable workflow will often be more difficult to maintain.
 
+
+## FAIR-inspired practices for workflows
+    - FAIR workflows 
+        - https://pmc.ncbi.nlm.nih.gov/articles/PMC10538699/
+        - https://www.nature.com/articles/s41597-025-04451-9
+        - this seems really heavyweight.  
+    - 80/20 approach to reproducible workflows
+        - version control + documentation
+        - requirements file or container
+        - clear workflow structure
+        - standard file formats
+    - The full FAIR approach may be necessary in some contexts
+
+In the earlier chapter on Data Management I discussed the FAIR (Findable, Accessible, Interoperable, and Reusable) principles for data.  Since those principles were proposed in 2016 they have been extended to many other types of research objects, including workflows (REFS - https://www.nature.com/articles/s41597-025-04451-9).  The reader who is not an informatician is likely to quickly glaze over when reading these articles, as they ...
+
+Realizing that most scientists are unlikely to go to the lengths of a fully FAIR workflow, and preferring that the perfect never be the enemy of the good, I think that we can take an "80/20" approach, meaning that we can get 80% of the benefits for about 20% of the effort.  We can adhere to the spirit of the FAIR Workflows principle by adopting the following principles, based in part on the "Ten Quick Tips for FAIR Workflows" presented by de Visser et al., (2023; https://pmc.ncbi.nlm.nih.gov/articles/PMC10538699):
+
+- *Metadata*:  Provide sufficient metadata in a standard machine-readable format to make the workflow findable once it is shared.
+- *Version control*:  All workflow code should be kept under version control and hosted on a public repository such as Github.
+- *Documentation*: Workflows should be well documented. Documentation should focus primarily on the scientific motivation and technical design of the workflow, along with instructions on how to run it and description of the outputs.
+- *Standard organization schemes*: Both the workflow files (code and configuration) and data files should follow established standards for organization.
+- *Standard file formats*: The inputs and outputs to the workflow should use established standard file formats rather than inventing new formats.
+- *Configurability*: The workflow should be easily configurable, and example configuration files should be included in the repository.
+- *Requirements*: The requirements for the workflow should be clearly specified, either in a file (such as `pyproject.toml` or `requiremets.txt`) or in a container configuration file (such as a Dockerfile).
+- *Clear workflow structure*: The workflow structure should be easily understandable.
+
+There are certainly some contexts where a more formal structure adhering in detail to the FAIR Workflows standard may be required, as in large collaborative projects with specific compliance objectives, but these rough guidelines should get a researcher most of the way there.
+
+
 ## Pipelines versus workflows
 
-The terms *workflow* and *pipeline* are sometimes used interchangeably, but in this chapter I will use them to refer to different kinds of applications. I will use *workflow* as the more general term to refer to any set of analysis procedures that are implemented as separate modules.  I will use the term *pipeline* to refer more specifically to a data analysis workflow where several operations are combined into a single command through the use of *pipes*, which are a syntactic construct that feed the results of one process directly into the next process.  Some readers may be familiar with pipes from the UNIX command line, where they are represented by the vertical bar "|".  For example, let's say that we had a log file that contains the following entries:
+The terms *workflow* and *pipeline* are sometimes used interchangeably, but in this chapter I will use them to refer to different kinds of applications. I will use *workflow* as the more general term to refer to any set of analysis procedures that are implemented as separate modules.  I will use the term *pipeline* to refer  specifically to a data analysis workflow where several operations are combined into a single command through the use of *pipes*, which are a syntactic construct that feed the results of one process directly into the next process.  Some readers may be familiar with pipes from the UNIX command line, where they are represented by the vertical bar "|".  For example, let's say that we had a log file that contains the following entries:
 
 ```bash
 2024-01-15 10:23:45 ERROR: Database connection failed
@@ -93,35 +122,6 @@ Name: EverArrested, dtype: float64
 
 Note that `pandas` data frames also include an explicit `.pipe` method that allows using arbitrary functions within a pipeline.  While these kinds of pipelines can be useful for simple data processing operations, they can become very difficult to debug, so I would generally avoid using complex functions within a method chain.
 
-
-## FAIR-inspired practices for workflows
-    - FAIR workflows 
-        - https://pmc.ncbi.nlm.nih.gov/articles/PMC10538699/
-        - https://www.nature.com/articles/s41597-025-04451-9
-        - this seems really heavyweight.  
-    - 80/20 approach to reproducible workflows
-        - version control + documentation
-        - requirements file or container
-        - clear workflow structure
-        - standard file formats
-    - The full FAIR approach may be necessary in some contexts
-
-In the earlier chapter on Data Management I discussed the FAIR (Findable, Accessible, Interoperable, and Reusable) principles for data.  Since those principles were proposed in 2016 they have been extended to many other types of research objects, including workflows (REFS - https://www.nature.com/articles/s41597-025-04451-9).  The reader who is not an informatician is likely to quickly glaze over when reading these articles, as they ...
-
-Realizing that most scientists are unlikely to go to the lengths of a fully FAIR workflow, and preferring that the perfect never be the enemy of the good, I think that we can take an "80/20" approach, meaning that we can get 80% of the benefits for about 20% of the effort.  We can adhere to the spirit of the FAIR Workflows principle by adopting the following principles, based in part on the "Ten Quick Tips for FAIR Workflows" presented by de Visser et al., (2023; https://pmc.ncbi.nlm.nih.gov/articles/PMC10538699):
-
-- *Metadata*:  Provide sufficient metadata in a standard machine-readable format to make the workflow findable once it is shared.
-- *Version control*:  All workflow code should be kept under version control and hosted on a public repository such as Github.
-- *Documentation*: Workflows should be well documented. Documentation should focus primarily on the scientific motivation and technical design of the workflow, along with instructions on how to run it and description of the outputs.
-- *Standard organization schemes*: Both the workflow files (code and configuration) and data files should follow established standards for organization.
-- *Standard file formats*: The inputs and outputs to the workflow should use established standard file formats rather than inventing new formats.
-- *Configurability*: The workflow should be easily configurable, and example configuration files should be included in the repository.
-- *Requirements*: The requirements for the workflow should be clearly specified, either in a file (such as `pyproject.toml` or `requiremets.txt`) or in a container configuration file (such as a Dockerfile).
-- *Clear workflow structure*: The workflow structure should be easily understandable.
-
-There are certainly some contexts where a more formal structure adhering in detail to the FAIR Workflows standard may be required, as in large collaborative projects with specific compliance objectives, but these rough guidelines should get a researcher most of the way there.
-
-
 ## A simple workflow example
 
 Most real scientific workflows are complex and can often run for hours, and we will encounter such a complex workflow later in the chapter. However, we will start our discussion of workflows with a relatively simple and fast-running example that will help demonstrate the basic concepts of workflow execution. We will use the same data as above (from Eisenberg et al.) to perform a simple workflow:
@@ -132,7 +132,7 @@ Most real scientific workflows are complex and can often run for hours, and we w
 - Compute the correlation matrix across all variables
 - Generate a clustered heatmap for the correlation matrix
 
-I have implemented each of these components as a module [here]().  The simplest possible workflow would be a script that simply imnports and calls each of the methods in turn. For such a simple workflow this would be fine, but we will use the example to show how we might take advantage of more sophisticated workflow management tools.
+I have implemented each of these components as a module [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/simple_workflow.py).  The simplest possible workflow would be a script that simply imports and calls each of the methods in turn. For such a simple workflow this would be fine, but we will use the example to show how we might take advantage of more sophisticated workflow management tools.
 
 ### Running a simple workflow using GNU make
 
@@ -178,7 +178,7 @@ clean:
 
 We can run the entire workflow by simply running `make all`.  We could also take advantage of another feature of `make`: it only triggers the action if a file with the name of the action doesn't exist.  Thus, if the command was `make results/output.txt`, then the action would only be triggered if the file does not exist.  This is why we had to put the `.PHONY` command in the makefile above: it's telling `make` that those are not meant to be interpreted as file names, but rather as commands, so that they will be run even if files named "all" or "clean" exist.
 
-For a very simple workflow `make` can be useful, but we will see below why this wouldn't be sufficient for a complex workflow.  For those workflows we could either build our own more complex workflow management system, or we could use an existing software tool that is built to manage workflow execution, known as a *workflow engine*.  Later in the chapter I will show an example of a purpose-built workflow management system, but for this first example we will now turn to a general-purpose workflow engine.
+For a very simple workflow `make` can be useful, but we will see below why this wouldn't be sufficient for a complex workflow.  For those workflows we could either build our own more complex workflow management system, or we could use an existing software tool that is built to manage workflow execution, known as a *workflow engine*.  In general I prefer to use an existing solution unless it doesn't solve my problem, so we will now turn to discussing packages for workflow management.
 
 ### Using a workflow engine
 
@@ -208,7 +208,7 @@ With the growth of data science within industry and research, there has been an 
 
 ### Workflow management using Snakemake
 
-We will use the Snakemake workflow system for our example, which I chose for several reasons:
+We will use the [Snakemake](https://snakemake.readthedocs.io/en/stable/) workflow system for our example, which I chose for several reasons:
 
 - It is a very well-established project that is actively maintained.
 - It is Python-based, which makes it easy for Python users to grasp.
@@ -217,24 +217,28 @@ We will use the Snakemake workflow system for our example, which I chose for sev
 Snakemake is a sort of "make on steroids", designed specifically to manage complex computational workflows.  It uses a Python-like syntax to define the workflow, from which it infers the computational graph and optimizes the computation. The Snakemake workflow is defined using a `Snakefile`, the most important aspect of which is a set of rules that define the different workflow steps in terms of their outputs.  Here is an initial portion of the `Snakefile` for our simple workflow:
 
 ```Python
+# Base directory (where Snakefile is located)
+BASEDIR = workflow.basedir
+
+# Output directories (relative to working directory set via -d)
+DATA_DIR = "data"
+RESULTS_DIR = "results"
+FIGURES_DIR = "figures"
+LOGS_DIR = "logs"
+
 # Load configuration
-configfile: "config/config.yaml"
+configfile: f"{BASEDIR}/config/config.yaml"
 
 # Global report
-report: "report/workflow.rst"
-
-OUTPUT_DIR = Path(config["output_dir"])
-DATA_DIR = OUTPUT_DIR / "data"
-RESULTS_DIR = OUTPUT_DIR / "results"
-FIGURES_DIR = OUTPUT_DIR / "figures"
+report: f"{BASEDIR}/report/workflow.rst"
 
 # Default target
 rule all:
     input:
-        FIGURES_DIR / "correlation_heatmap.png",
+        f"{FIGURES_DIR}/correlation_heatmap.png",
 ```
 
-What this does is first specify the configuration file, which is a YAML file that defines various parameters for the workflow.  Here are the contents of the config file for our simple example:
+What this does is first specify a set of directories; the `BASEDIR` variable refers to the directory where the Snakefile is found, while the other directories are specified with the respect to the working directory that is specified using the `-d` argument.  It then specifies the location of the configuration file, which is a YAML file that defines various parameters for the workflow.  Here are the contents of the config file for our simple example:
 
 ```bash
 # Data URLs
@@ -252,17 +256,17 @@ heatmap:
   vmax: 1.0
 ```
 
-The only rule shown here is the `all` rule, which takes as its input the correlation figure that is the final output of the workflow.  If snakemake is called and that file already exists, then it won't be rerun (since it's the only requirement for the rule) unless 1) the `--force` flag is included, which forces rerunning the entire workflow, or 2) a rerun is triggered by one of the changes that Snakemake looks for (discussed more below).  If the file doesn't exist, then Snakemake examines the additional rules to determine which steps need to be run in order to generate that output.  In this case, it would start with the rule that generates the correlation figure:
+The only rule shown above is the `all` rule, which takes as its input the correlation figure that is the final output of the workflow.  If snakemake is called and that file already exists, then it won't be rerun (since it's the only requirement for the rule) unless 1) the `--force` flag is included, which forces rerunning the entire workflow, or 2) a rerun is triggered by one of the changes that Snakemake looks for (discussed more below).  If the file doesn't exist, then Snakemake examines the additional rules to determine which steps need to be run in order to generate that output.  In this case, it would start with the rule that generates the correlation figure:
 
 ```python
 # Step 5: Generate clustered heatmap
 rule generate_heatmap:
     input:
-        RESULTS_DIR / "correlation_matrix.csv",
+        f"{RESULTS_DIR}/correlation_matrix.csv",
     output:
         report(
-            FIGURES_DIR / "correlation_heatmap.png",
-            caption="report/heatmap.rst",
+            f"{FIGURES_DIR}/correlation_heatmap.png",
+            caption=f"{BASEDIR}/report/heatmap.rst",
             category="Results",
         ),
     params:
@@ -271,9 +275,11 @@ rule generate_heatmap:
         vmin=config["heatmap"]["vmin"],
         vmax=config["heatmap"]["vmax"],
     log:
-        OUTPUT_DIR / "logs" / "generate_heatmap.log",
+        f"{LOGS_DIR}/generate_heatmap.log",
+    conda:
+        f"{BASEDIR}/envs/simple.yml"
     script:
-        "scripts/generate_heatmap.py"
+        f"{BASEDIR}/scripts/generate_heatmap.py"
 ```
 
 This step uses the `generate_heatmap.py` script to generate the correlation figure, and it requires the `correlation_matrix.csv` file as input.  Snakemake would then work backward to identify which step is required to generate that file, which is the following:
@@ -282,19 +288,21 @@ This step uses the `generate_heatmap.py` script to generate the correlation figu
 # Step 4: Compute correlation matrix
 rule compute_correlation:
     input:
-        DATA_DIR / "joined_data.csv",
+        f"{DATA_DIR}/joined_data.csv",
     output:
-        RESULTS_DIR / "correlation_matrix.csv",
+        f"{RESULTS_DIR}/correlation_matrix.csv",
     params:
         method=config["correlation_method"],
     log:
-        OUTPUT_DIR / "logs" / "compute_correlation.log",
+        f"{LOGS_DIR}/compute_correlation.log",
+    conda:
+        f"{BASEDIR}/envs/simple.yml"
     script:
-        "scripts/compute_correlation.py"
+        f"{BASEDIR}/scripts/compute_correlation.py"
+
 ```
 
 By working backwards this way from the intended output, Snakemake can reconstruct the computational graph that we saw in #simpleDAG-fig.  It then uses this graph to plan the computations that will be performed.  
-
 
 #### Snakemake scripts
 
@@ -339,12 +347,21 @@ if __name__ == "__main__":
 
 You can see that the code refers to `snakemake` even though we haven't explicitly imported it; this is possible because the script is executed within the Snakemake environment which makes that object available, which contains all of the configuration details.  
 
-- Dry run
+Once the Snakefile and other related files are ready to go, we can first check whether they are properly formatted using `snakemake --lint`, which is a static analysis tool specifically for snakemake configuration files.  Here is the result (note: some output lines are omitted for conciseness):
 
 ```bash
-Config file config/config.yaml is extended by additional config specified via the command line.
-host: Russells-MacBook-Pro.local
+➤ uv run snakemake --lint --cores 1 -d ./output
+
+Congratulations, your workflow is in a good condition!
+```
+
+We are now ready to run the `snakemake` command, which will need to include several configuration directives. Let's first do a "dry run" which creates the execution graph but doesn't actually execute anything:
+
+```bash
+➤ uv run snakemake --dry-run --cores 1 -d ./output
+
 Building DAG of jobs...
+
 Job stats:
 job                              count
 -----------------------------  -------
@@ -385,14 +402,10 @@ This was a dry-run (flag -n). The order of jobs does not reflect the order of ex
 Once we have confirmed that everything is set up properly, we can then use `snakemake` to run the workflow:
 
 ```bash
-➤  snakemake --cores 1 --config output_dir=./output
-Config file config/config.yaml is extended by additional config specified via the command line.
-Assuming unrestricted shared filesystem usage.
-host: Russells-MacBook-Pro.local
+➤ snakemake --cores 1 -d ./output
+
 Building DAG of jobs...
-Using shell: /bin/bash
-Provided cores: 1 (use --cores to define parallelism)
-Rules claiming more threads will be scaled down.
+
 Job stats:
 job                              count
 -----------------------------  -------
@@ -428,35 +441,22 @@ Finished jobid: 7 (Rule: download_demographics)
 Complete log(s): .snakemake/log/2025-12-24T081757.266320.snakemake.log
 ```
 
-One handy feature of snakemake is that, just like `make`, we can give it a specific target file and it will perform only the portions of the workflow that are required to regenerate that specific file. 
+It's important to know that when snakemake is run, it stores metadata regarding the workflow in a hidden directory called `.snakemake`, including the log file mentioned at the end of the output above.  When debugging it's often useful to remove this directory, as it can carry over hidden state from previous runs that can become confusing. 
 
-#### Best practices for Snakemake workflows
+One handy feature of snakemake is that, just like `make`, we can give it a specific target file and it will perform only the portions of the workflow that are required to regenerate that specific file. For example, let's say that the file `output/data/demographics.csv` became corrupted and you needed to recreate it.  This could be done using the command:
 
-The Snakemake team has published a set of [best practices](https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html) for the creation of Snakemake workflows, some of which I will outline here, along with one of my own (the first).
+```bash
+➤ snakemake output/data/demographics.csv --cores 1 -d ./output
+```
 
-#### Using a working directory- TBD
-By default Snakemake looks for a Snakefile in the current directory, so it's tempting to run the workflow from the code repository.  However, Snakemake creates a directory called `.snakemake` to store metadata in the directory where the workflow is run, which one generally doesn't want to mix with the code.  Thus, it's best to create a working directory with its own copy of the config file (to allow local modifications), and then run the command from that directory using the
-
-- note about including {workflow.basedir} instead of using relative paths
-
-##### Workflow organization
-There is a [standard format](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#distribution-and-reproducibility) for the organization of Snakemake workflow directories, which one should follow when developing new workflows.  
-
-##### Snakefile formatting
-Snakemake comes with a set of commands that help ensure that Snakemake files are properly formatted and follow best practices.  First, there is a static analysis tool (i.e a "linter", akin to ruff or flake8 for Python code), which can automatically identify problems with Snakemake rule files.  Unfortunately, this tool assumes that one is using the Conda environment manager (which is increasingly being abandoned in favor of uv) or a container (which comes with substantial overhead), and it raises an issue for any rule that doesn't specify a Conda or container environment. Nonetheless, if those are ignored the linter can be useful in identifying problems. There is also a formatting tool called `snakefmt` (separately installed) that optimally formats Snakemake files in the way that `black` or `blue` format Python code.  These can both be useful tools when developing a new workflow.
-
-##### Configurability
-Workflow configuration details should be stored in configuration files, such as the `config.yaml` files that we have used in our workflow examples.  However, these files should not be used for runtime parameters, such as the number of cores or the output directory; those should instead be handled using Snakemake's standard arguments.  The initial workflow generated by Claude did not follow this guidance, and instead custom variables to define runtime details such as the output directory and the number of cores. (TBD - CHECK THIS)
 
 #### Updating the workflow when inputs change
 
 Once the workflow has completed successfully, re-running it will not result in the re-execution of any of the analyses:
 
 ```bash
-snakemake --cores 1 --config output_dir=/Users/poldrack/data_unsynced/BCBS/simple_workflow/wf_snakemake
-Config file config/config.yaml is extended by additional config specified via the command line.
-Assuming unrestricted shared filesystem usage.
-host: Russells-MacBook-Pro.local
+➤ snakemake --cores 1 -d ./output
+
 Building DAG of jobs...
 Nothing to be done (all requested files are present and up to date).
 ```
@@ -486,14 +486,10 @@ Permissions Size User     Date Modified Name
 You can see that the touch command updated the modification time of the file.  Now let's rerun the `snakemake` command:
 
 ```bash
-snakemake --cores 1 --config output_dir=/Users/poldrack/data_unsynced/BCBS/simple_workflow/wf_snakemake
-Config file config/config.yaml is extended by additional config specified via the command line.
-Assuming unrestricted shared filesystem usage.
-host: Russells-MacBook-Pro.local
+➤ snakemake --cores 1 -d ./output
+
 Building DAG of jobs...
-Using shell: /bin/bash
-Provided cores: 1 (use --cores to define parallelism)
-Rules claiming more threads will be scaled down.
+
 Job stats:
 job                            count
 ---------------------------  -------
@@ -509,17 +505,90 @@ Similarly, Snakemake will rerun the workflow if any of the scripts used to run t
 
 #### Reproducible environments with Conda
 
-after installing miniconda:
+Snakemake comes with native support for Conda environments, which helps ensure reproduciblity across systems. As I discussed in Chapter 2, I don't love conda, but in lieu of support for `uv` it's a reasonable solution for reproducible snakemake workflows.  After first installing `conda` on our system (if necessary), we then need to identify all of the packages that are necessary for our workflow to succeed, and then add those to a YAML file. Here is the example for our simple workflow, which I placed in `envs/simple.yaml`:
 
+```python
+name: bettercode
+channels:
+  - conda-forge
+dependencies:
+  - numpy=2.4.0
+  - pandas=2.3.3
+  - matplotlib==3.10.8
+  - seaborn==0.13.2
+```
+
+When we run the workflow, we will see that snakemake first builds a local conda environment within the working directory. In this case I am running it from a different directory than the source directory, so I need to specify the location of the Snakefile:
 
 ```bash
-conda create -c conda-forge -c bioconda -c nodefaults -n bettercode snakemake
-conda activate bettercode
-pip install -e .
+➤  snakemake --sdm conda --snakefile /path/to/Snakefile -d ./ --cores 15
+
+Building DAG of jobs...
+Creating conda environment /path/to/snakemake_workflow/envs/simple.yml...
+Downloading and installing remote packages.
+Cleaning up conda package tarballs.
+Environment for /path/to/snakemake_workflow/envs/simple.yml created (location: .snakemake/conda/0f65d58d0ced6388a583c7e1b77c240e_)
 ```
+
+It then uses this environment to execute the code.  It's worth nothing that this will leave the conda environment in place within the hidden `.snakemake` directory, which can take up a significant amount of disk space if there are a lot of dependencies.
+
 
 #### Reproducible environments with containers
 
+As I discussed in Chapter 2, software containers are increasingly used as a means for creating reproducible software environments. Snakemake has built-in support for the Apptainer container tool, which is available for Linux and installed on most high-performance computing systems, but unfortunately not easily usable on Mac or Windows systems. Here I will show an example of a containerized version of the simple workflow above, running on my local Linux system.
+
+Using containers is easiest if you can find an existing Docker container that contains all of the necessary dependencies for your code.  Fortunately there a large number of containers available via the [Docker Hub](https://hub.docker.com/), and given the simple dependencies that our workflow requires, I was easily able to find [a container](https://hub.docker.com/layers/jupyter/scipy-notebook/x86_64-ubuntu-22.04/images/sha256-3b37958b7b31ce94c3027d7c83c98fc16acfe166fab2de2f62ae54c50e59aed3) containing the necessary packages.  I added this to my `config.yaml` file:
+
+```python
+# Container image (used with --sdm apptainer)
+container: "docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04"
+```
+
+and then ran the `snakemake` command specifying apptainer as my dependency management system:
+
+```bash
+uv run snakemake --cores 1 --sdm apptainer -d ./output
+
+Building DAG of jobs...
+Pulling singularity image docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04.
+...
+```
+
+As with conda, it's worth nothing that snakemake will store the singularity image within the .snakemake directory, which can sometimes be quite large; for the Jupyter image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.  
+
+
+#### Best practices for Snakemake workflows
+
+The Snakemake team has published a set of [best practices](https://snakemake.readthedocs.io/en/stable/snakefiles/best_practices.html) for the creation of Snakemake workflows, some of which I will outline here, along with one of my own (the first).
+
+##### Using a working directory
+
+By default Snakemake looks for a Snakefile in the current directory, so it's tempting to run the workflow from the code repository.  However, Snakemake creates a directory called `.snakemake` to store metadata in the directory where the workflow is run, which one generally doesn't want to mix with the code.  Thus, it's best to run the command using the `--snakefile` directive to point to the `Snakefile` located in the code directory, and setting the working directory to the intended output directory using the `-d` flag. This will fail if you run the command from a location other than the source folder but the paths in the snakemake rules are specified using relative paths, like this:
+
+```python
+    script:
+        f"scripts/aggregate_results.py"
+```
+
+Instead, we need to use the `workflow.basedir` prefix, which refers to the directory where the Snakefile is located:
+
+```python
+    script:
+        f"{workflow.basedir}/scripts/aggregate_results.py"
+```
+
+
+##### Workflow organization
+
+There is a [standard format](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#distribution-and-reproducibility) for the organization of Snakemake workflow directories, which one should follow when developing new workflows.  
+
+##### Snakefile formatting
+
+Snakemake comes with a set of commands that help ensure that Snakemake files are properly formatted and follow best practices.  As I mentioned above, there is a static analysis tool (i.e a "linter", akin to ruff or flake8 for Python code), which can automatically identify problems with Snakemake rule files.  Users of uv shoudl note that this tool assumes that one is using the Conda environment manager or a container, and it raises an issue for any rule that doesn't specify a Conda or container environment. Nonetheless, if those are ignored the linter can be useful in identifying problems. There is also a formatting tool called `snakefmt` (separately installed) that optimally formats Snakemake files in the way that `black` or `blue` format Python code.  These can both be useful tools when developing a new workflow.
+
+##### Configurability
+
+Workflow configuration details should be stored in configuration files, such as the `config.yaml` files that we have used in our workflow examples.  However, these files should not be used for runtime parameters, such as the number of cores or the output directory; those should instead be handled using Snakemake's standard arguments. 
 
 ## Scaling to a complex workflow
 
@@ -528,7 +597,7 @@ We now turn to a more realistic and complex scientific data analysis workflow. F
 - It is a realistic example of a workflow that a researcher might actually perform.
 - It has a large enough sample size to provide a robust answer to our scientific question.
 - The data are large enough to call for a real workflow management scheme, but small enough to be processed on a single laptop (assuming it has decent memory). 
-- The workflow has many different steps, some of which can take a significant amount of time (over 30 minutes)
+- The workflow has many different steps, some of which can take a significant amount of time (over one hour)
 - There is an established Python library ([scanpy](https://scanpy.readthedocs.io/en/stable/)) that implements the necessary workflow components.
 - It's an example outside of my own research domain, to help demonstrate the applicability of the book's ideas across a broader set of data types.
 
@@ -536,7 +605,7 @@ I will use this example to show how to move from a monolithic analysis script to
 
 ### Starting point: One huge notebook
 
-I developed the initial version of this workflow as many researchers would: by creating a Jupyter notebook that implements the entire workflow, which can be found [here]().  Although I don't usually prefer to do code generation using a chatbot, I did most of the coding for this example using the Google Gemini 3 chatbot, for a couple of reasons.  First, this model seemed particularly knowledgeable about this kind of analysis and the relevant packages.  Second, I found it useful to read the commentary about why particular analysis steps were being selected.  For debugging I used a mixture of the Gemini 3 chatbot and the VSCode Copilot agent, depending on the nature of the problem; for problems specific to the RNA-seq analysis tools I used Gemini, while for standard Python/Pandas issues I used Copilot. The total execution time for this notebook is about two hours on an M3 Max Macbook Pro.  
+I developed the initial version of this workflow as many researchers would: by creating a Jupyter notebook that implements the entire workflow, which can be found [here](https://github.com/BetterCodeBetterScience/example-rnaseq/blob/main/notebooks/immune_scrnaseq_2_preprocess.ipynb).  Although I don't usually prefer to do code generation using a chatbot, I did most of the coding for this example using the Google Gemini 3 chatbot, for a couple of reasons.  First, this model seemed particularly knowledgeable about this kind of analysis and the relevant packages.  Second, I found it useful to read the commentary about why particular analysis steps were being selected.  For debugging I used a mixture of the Gemini 3 chatbot and the VSCode Copilot agent, depending on the nature of the problem; for problems specific to the RNA-seq analysis tools I used Gemini, while for standard Python/Pandas issues I used Copilot. The total execution time for this notebook is about two hours on an M3 Max Macbook Pro.  
 
 #### The problem of in-place operations
 
@@ -583,7 +652,7 @@ In addition to a conceptual breakdown, there are also other reasons that one mig
 
 ## Stateless workflows
 
-I asked Claude Code to help modularize the monolithic workflow, using a prompt that provided the conceptual breakdown described above.  The resulting code (found at XXX - link to commit 678983e1c337b6a23b0f35cfb974a87587cfd13e) ran correctly, but crashed about two hours into the process due to a resource issue that appeared to be due to asking for too many CPU cores in the differential expression analysis.  This left me in the situation of having to rerun the entire two hours of preliminary workflow simply to get to a point where I could test my fix for the differential expression component, which is not a particularly efficient way of coding.  The problem here is that the workflow execution is *stateful*, in the sense that the previous steps need to be rerun prior to performing the current step in order to establish the required objects in memory.  The solution to this problem is to implement the workflow in a *stateless* way, which doesn't require that earlier steps be rerun if they have already been completed.  One way to do this is by implementing a process called *checkpointing*, in which intermediate results are stored for each step.  These can then be used to start the workflow at any point without having to rerun all of the previous steps.  
+I asked Claude Code to help modularize the monolithic workflow, using a prompt that provided the conceptual breakdown described above.  The resulting code ran correctly, but crashed about two hours into the process due to a resource issue that appeared to be due to asking for too many CPU cores in the differential expression analysis.  This left me in the situation of having to rerun the entire two hours of preliminary workflow simply to get to a point where I could test my fix for the differential expression component, which is not a particularly efficient way of coding.  The problem here is that the workflow execution is *stateful*, in the sense that the previous steps need to be rerun prior to performing the current step in order to establish the required objects in memory.  The solution to this problem is to implement the workflow in a *stateless* way, which doesn't require that earlier steps be rerun if they have already been completed.  One way to do this is by implementing a process called *checkpointing*, in which intermediate results are stored for each step.  These can then be used to start the workflow at any point without having to rerun all of the previous steps.  
 
 Another important feature of a workflow related to statelessness is *idempotency*, which means that a workflow will result in the same answer when run multiple times.  This is related to, but not the same as, the idea of statelessness.  For example, a stateless workflow that saves its outputs to checkpoint files could fail to be idempotent if the results were appended to the output file with each execution, rather than overwriting them.  This would result in different outputs depending on how many times the workflow has been executed.  Thus, when we use checkpointing we should be sure to either reuse the existing file or rewrite it completely with a new version.
 
@@ -722,10 +791,6 @@ include: "rules/pseudobulk.smk"
 include: "rules/per_cell_type.smk"
 ```
 
-#### Running snakemake
-
-It's important to know that when snakemake is run, it stores metadata regarding the workflow in a hidden directory called `.snakemake`.  It's generally a good idea to add this to the `.gitignore` file since one probably doesn't want to include detailed workflow metadata in one's git repository.  It's also a best practice to execute the 
-
 #### Pipeline optimization
 
 The first time that I ran this workflow using snakemake, I noticed that it was substantially slower than when I ran it using the custom workflow engine.  When I asked Claude about this, it gave me a reasonable answer:
@@ -767,13 +832,6 @@ A common pattern in some computational research domains is the *parametric sweep
 - write tests for common edge cases
   - use a small toy dataset for testing
 - unit vs integration tests
-
-
-## Scaling workflows
-
-- maybe leave this to the HPC chapter?
-
-## Choosing a workflow engine
 
 
 

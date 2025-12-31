@@ -437,6 +437,8 @@ The Snakemake team has published a set of [best practices](https://snakemake.rea
 #### Using a working directory- TBD
 By default Snakemake looks for a Snakefile in the current directory, so it's tempting to run the workflow from the code repository.  However, Snakemake creates a directory called `.snakemake` to store metadata in the directory where the workflow is run, which one generally doesn't want to mix with the code.  Thus, it's best to create a working directory with its own copy of the config file (to allow local modifications), and then run the command from that directory using the
 
+- note about including {workflow.basedir} instead of using relative paths
+
 ##### Workflow organization
 There is a [standard format](https://snakemake.readthedocs.io/en/stable/snakefiles/deployment.html#distribution-and-reproducibility) for the organization of Snakemake workflow directories, which one should follow when developing new workflows.  
 

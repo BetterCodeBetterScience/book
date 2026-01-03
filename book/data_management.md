@@ -873,7 +873,7 @@ A depiction of the PROV data model entities and relations.  Copyright © [2013] 
 
 This data model highlights the breadth of information that needs to be represented in order to accurately record provenance.
 
-There are several different ways to track provenance in practice, which vary in their complexity, comprehensiveness, and ease of use.  We will discuss this in much more detail in a later chapter on workflows.
+There are several different ways to track provenance in practice, which vary in their complexity, comprehensiveness, and ease of use.  We will discuss this further in a later chapter on workflows.
 
 
 ## Handling of sensitive data

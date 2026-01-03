@@ -22,7 +22,7 @@ project:
     - file: book/AI_coding_assistants.md
     - file: book/project_organization.md
     - file: book/data_management.md
-# - file: workflows
+    - file: workflows
 # - file: validation.md
 # - file: performance
 # - file: HPC

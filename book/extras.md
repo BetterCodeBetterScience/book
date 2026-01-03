@@ -338,3 +338,157 @@ The example comes from a paper that we published in 2020 {cite:p}`Botvinik-Nezer
 The workflow that I will use here starts with the results that the teams submitted, and ends with preprocessed data that are ready for further statistical analysis.  I wrote much of the original analysis code for the project, which can be found [here](https://github.com/poldrack/narps).  This code was written at the point when I was just becoming interested in software engineering practices for science, and while it represents a first step in that direction, it has *a lot* of problems. In particular, it uses the problematic *God object* anti-pattern that I mentioned in an earlier chapter.  For the purposes of this chapter I have first rewritten the analysis into a monolithic mega-script, which I will then incrementally refactor into a well-structured workflow.  I chose this example because it is relatively complex yet runs quickly on any modern laptop.  
 
 
+## Workflows chapter
+
+
+I asked Claude Code to help with this:
+
+> I would like to modify the workflow described in src/bettercode/rnaseq/modular_workflow/run_workflow.py to make it execute in a stateless way through the use of checkpointing.  Please analyze the code and suggest the best way to accomplish this.
+
+After analyzing the codebase Claude came up with three proposed solutions to the problem:
+
+- 1. Use a "registry pattern" in which we define each step in terms of its inputs, outputs, and checkpoint file, and then assemble these into a workflow that can be executed in a stateless way, automatically skipping completed steps.  This was its recommended approach.
+- 2. Use simple "wrapper" approach in which each module in the workflow is executed via a wrapper function that checks for cached checkpoint values.
+- 3. Use a well-established existing workflow engine such as [Prefect](https://www.prefect.io/) or [Luigi](https://github.com/spotify/luigi). While these are powerful, they incur additional dependencies and complexity and may be too heavyweight for our problem.
+
+Here we will examine the first (recommended) option and the third solution; while the second option is easy to implement, it's not as clean as the registry approach.
+
+### A workflow registry with checkpointing
+
+We start with a custom approach in order to get a better view of the details of workflow orchestration. It's important to note that I generally would not recommend building one's one custom workflow manager, at least not before trying a general-purpose workflow engine, but I will show an example of a custom workflow engine in order to provide a better understanding of the detailed process of workflow management.  We start with a prompt:
+
+> let's implement the recommended Stateless Workflow with Checkpointing.  Please generate new code within src/bettercode/rnaseq/stateless_workflow.
+
+The resulting code worked straight out of the box, but it didn't maintain any sort of log of its processing, which can be very useful.  In particular, I wanted to log the time required to execute each step in the workflow, for use in optimization that I will discuss further below.  I asked Claude to add this:
+
+> I would like to log information about execution, including the time required to execute each step along with the details about execution such as parameters passed for each step.  please record these during execution and save to a date-stamped json file within the workflows directory.
+
+After Claude's implementation of this feature, a fresh run of the workflow gives the following summary:
+
+```bash
+============================================================
+EXECUTION SUMMARY
+============================================================
+Workflow: immune_aging_scrnaseq
+Run ID: 20251221_114458
+Status: completed
+Total Duration: 7094.5 seconds
+
+Step Details:
+------------------------------------------------------------
+  ✓ Step 1: data_download                 0.0s [cached]
+  ✓ Step 2: filtering                    74.7s
+  ✓ Step 3: quality_control             263.3s
+  ✓ Step 4: preprocessing                35.9s
+  ✓ Step 5: dimensionality_reduction   6565.4s
+  ✓ Step 6: clustering                   69.6s
+  ✓ Step 7: pseudobulking                11.6s
+  ✓ Step 8: differential_expression      19.0s
+  ✓ Step 9: gsea                          1.7s
+  ✓ Step 10: overrepresentation           13.3s
+  ✓ Step 11: predictive_modeling          39.8s
+------------------------------------------------------------
+```
+
+The associated JSON file contains much more detail regarding each workflow step.  If we run the workflow again, we see that it now uses cached results at each step:
+
+```bash
+============================================================
+EXECUTION SUMMARY
+============================================================
+Workflow: immune_aging_scrnaseq
+Run ID: 20251221_142225
+Status: completed
+Total Duration: 17.4 seconds
+
+Step Details:
+------------------------------------------------------------
+  ✓ Step 1: data_download                 0.0s [cached]
+  ✓ Step 2: filtering                     1.9s [cached]
+  ✓ Step 3: quality_control               3.0s [cached]
+  ✓ Step 4: preprocessing                 3.1s [cached]
+  ✓ Step 5: dimensionality_reduction      3.4s [cached]
+  ✓ Step 6: clustering                    4.3s [cached]
+  ✓ Step 7: pseudobulking                 0.1s [cached]
+  ✓ Step 8: differential_expression       1.4s [cached]
+  ✓ Step 9: gsea                          0.0s [cached]
+  ✓ Step 10: overrepresentation            0.0s [cached]
+  ✓ Step 11: predictive_modeling           0.0s [cached]
+------------------------------------------------------------
+```
+
+Checkpointing thus solved our problem, by allowing each step to be skipped over once it's been completed.
+
+#### Checkpointing and disk usage
+
+One potential drawback of checkpointing is that it can result in substantial disk usage when working with large datasets. In the example above, the checkpoint directory after workflow completion weighs in at a whopping 64 Gigabytes, with numerous very large files:
+
+```bash
+➤  du -sh *
+
+7.3G    step02_filtered.h5ad
+ 13G    step03_qc.h5ad
+ 13G    step04_preprocessed.h5ad
+ 14G    step05_dimreduced.h5ad
+ 14G    step06_clustered.h5ad
+380M    step07_pseudobulk.h5ad
+ 28M    step08_counts.parquet
+1.6M    step08_de_results.parquet
+1.8G    step08_stat_res.pkl
+ 13M    step09_gsea.pkl
+ 44K    step10_enr_down.pkl
+ 28K    step10_enr_up.pkl
+ 36K    step11_prediction.pkl
+ ```
+
+In particular, in step 3 a copy of the original data was added for reuse in a later step (in a separate variable within the dataset) alongside the results of processing at that step, leading to files that were roughly doubled in size.  However, those raw data were not needed again until step 7.  By changing the workflow to avoid saving those data in the checkpoints and instead loading them directly at step 7, we were able to halve the size of those intermediate checkpoints.
+
+In this implementation a checkpoint file was stored for each step in the workflow.  However, if the goal of checkpointing is primarily to avoid having to rerun expensive computations, then we don't need to checkpoint every step given that some of them take relatively little time.  In this case, we can checkpoint only after a subset of steps.  In this case I chose to checkpoint after steps 2, 3, and 5 since those each take well over a minute to run (with step 5 taking well over an hour).  Another goal of checkpointing is to store files that might be useful for later analyses or QA by the researcher.  In this example workflow, steps 1-7 can be classified as "preprocessing" in the sense that they are preparing the data for analysis, whereas steps 8-11 reflect actual analyses of the data, such that the results could be reported in a publication.  It is thus important to save those outputs for later analyses and for sharing with the final results.
+
+#### Compressing checkpoint files
+
+Another potentially helpful solution is to compress the checkpoint data if they are not already being compressed by default.  In this example, the default in the AnnData package for saving `h5ad` files is to use no compression, so there are substantial savings in disk space to be had by compressing the data: whereas the raw data file was 7.3 GB, a version of the same data saved using compression took up only 2.9 GB.  The tradeoff is that working with compressed files takes longer.  This is particularly the case for saving of files; whereas it took about 3 seconds to save an uncompressed version of the data, it took about 105 seconds to store the compressed version.  Given that the saving of the compressed file will happen in the context of an already long workflow, that doesn't seem like such a concern.  We are more concerned about how the use of compression increases loading times, and here the difference is not quite so dramatic, at 1.3 seconds versus 19.8 seconds.  The decision about whether or not to compress will ultimately come down to the relative cost of time versus disk space, but in this case I decided to go ahead and compress the checkpoint files.
+
+Combining these strategies of reducing data duplication, eliminating some intermediate checkpoints, and compressing the stored data, our final pipeline generates about 13 GB worth of checkpoint data, substantially smaller than the initial 64 GB.  With all checkpoints generated, the entire workflow completes in less than four minutes, with only three time-consuming steps being rerun each time.   The initial execution of the workflow is a few minutes longer due to the extra time needed to read and write compressed checkpoint files, but these few minutes are hardly noticeable for a workflow that takes more than two hours to complete.
+
+The use of a modular architecture for our stateless workflow helps to separate the actual workflow components from the execution logic of the workflow.  One important benefit of this is that it allows us to plug those modules into any other workflow system, and as long as the inputs are correct it should work. We will see that next when we create new versions of this workflow using two common workflow engines.
+
+
+#### Logging
+
+
+- talk about logging issues that arose - see changes in commit 1cdbc54b159bf677
+
+```
+
+⏺ I see the problem. The scripts use print() which outputs to stdout, but Snakemake's log: directive only captures stderr by default. The stdout output is lost.
+
+  There are two approaches to fix this:
+
+  1. Quick fix: Redirect stdout to stderr in scripts
+  2. Better fix: Use Python's logging module to write to the log file
+
+  Would you like me to update the scripts to properly log to the log files? The cleanest approach is to configure Python's logging module to write to snakemake.log[0] at the start of each script.
+
+  Here's what a fixed script would look like:
+
+  import sys
+  import logging
+
+  # Configure logging to write to snakemake log file
+  logging.basicConfig(
+      level=logging.INFO,
+      format="%(asctime)s - %(levelname)s - %(message)s",
+      handlers=[
+          logging.FileHandler(snakemake.log[0]),
+          logging.StreamHandler(sys.stderr),  # Also show in terminal
+      ],
+  )
+  logger = logging.getLogger(__name__)
+
+  # Then use logger.info() instead of print()
+
+  This would write to both the log file and stderr (visible in terminal).
+
+```
+

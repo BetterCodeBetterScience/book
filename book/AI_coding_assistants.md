@@ -520,7 +520,7 @@ In this example, we will build an application that computes column-wise correlat
 This is a problem that one would often encounter when trying to compute correlations between a large number of recordings.
 While standard methods for computing correlations are fine for small numbers of variables, these methods can become very slow for large correlation matrices.
 
-If you are not familiar with Claude Code, one good place to start is the [Claude Code Cheat Sheet](https://claude.ai/public/artifacts/8be57d65-fddd-44a8-a62e-9f004e8cb0a0) which provides an overview of many of the most useful commands in Claude Code.  The code for this example is available [here]().
+If you are not familiar with Claude Code, one good place to start is the [Claude Code Cheat Sheet](https://claude.ai/public/artifacts/8be57d65-fddd-44a8-a62e-9f004e8cb0a0) which provides an overview of many of the most useful commands in Claude Code.  The code for this example is available [here](https://github.com/BetterCodeBetterScience/example-einsumcorr).
 
 ### Initializing the project
 

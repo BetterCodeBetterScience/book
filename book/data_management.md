@@ -82,7 +82,7 @@ I recommend always creating a data management plan at the start of a project, ev
 
 ## Collecting data
 
-Once data collection starts, it is essential to ensure that the data are properly saved and readable.  One should never assume that the code responsible for saving the data has actually worked properly; instead, the data should be separately loaded and checked to make sure that the data are being correctly stored and are properly readable. One good practice is to develop a checklist for new studies to ensure that the data are being collected properly; the details of such a checklist will depend on the specific area of study, but an example from our lab can be found [here]().
+Once data collection starts, it is essential to ensure that the data are properly saved and readable.  One should never assume that the code responsible for saving the data has actually worked properly; instead, the data should be separately loaded and checked to make sure that the data are being correctly stored and are properly readable. One good practice is to develop a checklist for new studies to ensure that the data are being collected properly; the details of such a checklist will depend on the specific area of study, but an example from our lab can be found [here](https://www.poldracklab.org/labguide/research/EXDAR_template.pdf).
 
 ## Storing data
 

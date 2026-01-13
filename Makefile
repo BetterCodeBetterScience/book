@@ -6,7 +6,7 @@ build-html: clean
 	npx serve _build/html
 
 build-pdf:
-	jupyter-book build book/ --builder pdflatex
+	myst build --pdf
 
 check-links:
 	check-links	

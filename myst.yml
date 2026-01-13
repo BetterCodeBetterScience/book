@@ -13,6 +13,9 @@ project:
     - format: md
     - format: docx
       template: https://github.com/myst-templates/docx_default.git
+    - format: typst
+      template: plain_typst_book
+      output: exports/book_typst.pdf
   toc:
     - file: book/frontmatter.md
     - file: book/introduction.md
@@ -23,7 +26,7 @@ project:
     - file: book/project_organization.md
     - file: book/data_management.md
     - file: book/workflows.md
-# - file: validation.md
+    - file: book/validation.md
 # - file: performance
 # - file: HPC
 # - file: sharing

@@ -492,3 +492,15 @@ The use of a modular architecture for our stateless workflow helps to separate t
 
 ```
 
+### Building a custom generative model
+
+In many cases a generative model for our process of interest may not be available off the shelf, in which case we have to generate it ourself if we want to be able to simulate the process.  Here I will create an example of a simulator for a *diffusion decision model* (DDM), which is a model that is widely used in the behavioral sciences to decompose response times into a set of underlying processes [see @Smith_Ratcliff:2025 for a thorough introduction].  The basic idea of the DDM is that whenever an organism makes a decision, it does so through the accumulation of evidence until a threshold is reached, at which point the decision is made. One widespread phenomenon that occurs in behavior is known as the "speed-accuracy tradeoff", in which a person with the same level of ability on a task can go fast as the cost of more errors, or go slower and perform more accurately.  The DDM provides an elegant explanation for this phenomenon along with many others, and has become an essential tool for psychologists and neuroscientists.
+
+We can build function that takes in a set of parameters and outputs response time and accuracy.  The parameters for a very simple DDM are:
+
+- *drift rate*:
+- *boundary separation*:
+- *bias*:
+- *non-decision time*:
+
+

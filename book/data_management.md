@@ -560,7 +560,7 @@ However, the `.npy` format also has a number of drawbacks for scientific data:
 - It does not compress the data, so files can be much larger than a compressed file format. This can become very important when working with large sparse datasets.
 - It doesn't support storage of metadata alongside the data
 
-There are several other commonly used standard file formats for array data; we will focus on *HDF5* and *Zarr*.  HDF5 is a longstanding format for storage of large datasets, which is supported by nearly all programming languages. It has built-in support for compression, and allows access to specific chunks without loading the entire dataset.  However, may researchers (at least within the Python ecosystem) are moving towards the Zarr format, which stores data in a set of smaller chunk files rather than a single large file as in HDF5.  Zarr has several advantages over HDF5:
+There are several other commonly used standard file formats for array data; we will focus on *HDF5* and *Zarr*.  HDF5 is a longstanding format for storage of large datasets, which is supported by nearly all programming languages. It has built-in support for compression, and allows access to specific chunks without loading the entire dataset.  However, many researchers (at least within the Python ecosystem) are moving towards the Zarr format, which stores data in a set of smaller chunk files rather than a single large file as in HDF5.  Zarr has several advantages over HDF5:
 
 - Zarr is much more efficient for cloud storage, since only the specific chunk file needs to be accessed
 - Zarr is simpler than HDF5, and has a more Pythonic interface
@@ -689,7 +689,7 @@ print(adj_df.to_markdown())
 
 There are a number of different file formats for graph data, used variously across different software packages.  For example, the `networkx` package supports 13 different graph formats!  The decision about which format to use will likely depend on the specific software packages that you plan to use. I have had good luck with both *GraphML* and *Pajek* formats. 
 
-For large networks that are dense (i.e., networks where most connections are nonzero) or weighted (i.e., the edges have continuous weights) it might make more sense to save the network as an adjacency matrix, making sure to also save the associated node labels.  This allows taking advantage of the efficiency of formats like Zarr, though it will incur the overhead of having to load the adjacency matrix into the graph engine.
+For large networks that are dense (i.e., networks where most connections are nonzero) or weighted (i.e., the edges have continuous weights) it might make more sense to save the network as an adjacency matrix, making sure to also save the associated node labels. This allows taking advantage of the efficiency of formats like Zarr, though it will incur the overhead of having to load the adjacency matrix into the graph engine.
 
 ### Specialized data formats
 
@@ -707,9 +707,9 @@ There is always a tension between using a domain-specific standard versus a gene
 
 ## Data organization schemes
 
-It is essential to use a consistent data organization scheme for one's research data. This is obvious when the data are shared with other researchers, but even if the data will never be shared with anyone else, good organization is essential when one looks back at one's own data in the future.  Thus, good data organization is a gift to your future self!
+It is essential to use a consistent data organization scheme for one's research data. This is obvious when the data are shared with other researchers, but even if the data will never be shared with anyone else, good organization is essential when one looks back at one's own data in the future. Thus, good data organization is a gift to your future self!
 
-In this section we discuss data organization. The most important principle of data organization is that the scheme should be easily understood consistently applied.  If a standard scheme exists in one's field of research, then I would strongly suggest using that scheme, or at least adapting it to one's local requirements.  A second important principle is that file and folder names should be machine readable. Increasingly we want to use automated tools to parse large datasets, and a machine-readable organization scheme (as I discuss below) is essential to doing this effectively.
+In this section we discuss data organization. The most important principle of data organization is that the scheme should be easily understood consistently applied.  If a standard scheme exists in one's field of research, then I would strongly suggest using that scheme, or at least adapting it to one's local requirements. A second important principle is that file and folder names should be machine readable. Increasingly we want to use automated tools to parse large datasets, and a machine-readable organization scheme (as I discuss below) is essential to doing this effectively.
 
 
 ### File granularity
@@ -720,7 +720,7 @@ Another consideration about the number of files has to do with storage systems t
 
 ### Data file/folder naming conventions
 
-From my standpoint, the most important consideration for naming of files and folders is the ability to automatically parse the file/folder names.  While there are may possible ways to do this, I prefer the approach used in the Brain Imaging Data Structure (BIDS), which our group was involved in developing {cite:p}`Gorgolewski:2016aa`.  This is a standard for organizing a wide range of brain imaging data types, but the strategy behind the standard is applicable to almost any scientific data types.  The basic idea is to embed a set of key-value pairs in the name, along with a suffix that defines the data type along with a file type extension for files.  The schema looks like this:
+From my standpoint, the most important consideration for naming of files and folders is the ability to automatically parse the file/folder names.  While there are may possible ways to do this, I prefer the approach used in the Brain Imaging Data Structure (BIDS), which our group was involved in developing {cite:p}`Gorgolewski:2016aa`.  This is a standard for organizing a wide range of brain imaging data types, but the strategy behind the standard is applicable to almost any scientific data type.  The basic idea is to embed a set of key-value pairs in the name, along with a suffix that defines the data type along with a file type extension for files.  The schema looks like this:
 
 `<key>-<value>_<key>-<value>_suffix.extension`
 
@@ -745,13 +745,13 @@ print(key_values)
 
 This is very useful because it allows one to easily query a large set of files for particular key-value pairs, and also allows one to easily parse the key-value pairs for a particular file.  
 
-It's worth nothing that using a naming scheme like this requires strict attention to naming hygiene.  In particular, it's essential to ensure that the delimiter characters ("-" and "_") don't accidentally get used within the values.  For example, if one were using an analysis called "IS-RSA", using this for the description (e.g., "'sub-001_sess-1A_desc-IS-RSA_corr.zarr") would cause file parsing to fail.  
+It's worth noting that using a naming scheme like this requires strict attention to naming hygiene.  In particular, it's essential to ensure that the delimiter characters ("-" and "_") don't accidentally get used within the values.  For example, if one were using an analysis called "IS-RSA", using this for the description (e.g., "'sub-001_sess-1A_desc-IS-RSA_corr.zarr") would cause file parsing to fail.  
 
 ## Metadata
 
 *Metadata* refers to "data about data", and generally is meant to contain the information that is needed to interpret a dataset.  In principle, someone who obtains a dataset should be able to understand and reuse the data using only the metadata provided alongside the dataset. There are many different types of metadata that might be associated with a study, and it is usually necessary to decide how comprehensive to be in providing detailed metadata.  This will often rely upon the scientific expertise and judgment of the researcher, to determine which particular metadata would be essential for others to usefully interpret and reuse the data.
 
-An important concept in metadata is the *ontology*. In the context of bioinformatics, an ontology is a structured representation of the entities that exist in a domain (defined by a *controlled vocabulary*) and the relationships between these entities. One of the best known examples in the Gene Ontology, which represents classes of biological entities including Molecular Functions, Cellular Components, and Biological Processes.  As an example, [](#GO-fig) shows a hierarchical depiction for a specific cellular component.
+An important concept in metadata is the *ontology*. In the context of bioinformatics, an ontology is a structured representation of the entities that exist in a domain (defined by a *controlled vocabulary*) and the relationships between these entities. One of the best known examples is the Gene Ontology, which represents classes of biological entities including Molecular Functions, Cellular Components, and Biological Processes.  As an example, [](#GO-fig) shows a hierarchical depiction for a specific cellular component.
 
 ```{figure} images/GO_node_of_ranvier.png
 :label: GO-fig
@@ -762,11 +762,11 @@ An example of a Gene Ontology graph for the entity "node of Ranvier", which is a
 
 ```
 
-Ontologies are very useful for specifying metadata, because they allow us to know exactly what a particular entry in the metadata means, and thus allow us to establish link between equivalent entities across datasets.  For example, let's say that a researcher wants to query a database for datasets related to insulin signaling in pancreatic beta cells in Type II diabetes, and that there are three relevant datasets in the database.  Without an ontology, each of the teams might use different terms to refer to these cells (such as "pancreatic beta cells", "insulin-producing cells", and "islet beta cells"), making it difficult to link the datasets. However, if each of the datasets were to include metadata linked to a specific ontology (in this case, the identifier `CL:0000169` from the Cell Ontolog, which refers to "type B pancreatic cell"), then it becomes much easier to find and link these datasets.  There are at present a broad range of ontologies available for nearly every scientific domain; the [BioPortal](https://bioportal.bioontology.org/) project provides a tool to search across a wide range of existing ontologies.
+Ontologies are very useful for specifying metadata, because they allow us to know exactly what a particular entry in the metadata means, and thus allow us to establish links between equivalent entities across datasets.  For example, let's say that a researcher wants to query a database for datasets related to insulin signaling in pancreatic beta cells in Type II diabetes, and that there are three relevant datasets in the database.  Without an ontology, each of the teams might use different terms to refer to these cells (such as "pancreatic beta cells", "insulin-producing cells", and "islet beta cells"), making it difficult to link the datasets. However, if each of the datasets were to include metadata linked to a specific ontology (in this case, the identifier `CL:0000169` from the Cell Ontolog, which refers to "type B pancreatic cell"), then it becomes much easier to find and link these datasets.  There are at present a broad range of ontologies available for nearly every scientific domain; the [BioPortal](https://bioportal.bioontology.org/) project provides a tool to search across a wide range of existing ontologies.
 
 ### Metadata file formats
 
-An important feature of metadata is that it needs to be *machine-readable*, meaning that it is provided in a structured format that be automatically parsed by a computer.  Common formats are Extensible Markup Language (XML) and JavaScript Object Notation (JSON).  JSON is generally simpler and more human-readable, but it doesn't natively provide the ability to define attributes for particular entries (such as the units of measurement) or link to ontologies.  An extension of JSON known as *JSON-LD* (JSON for Linked Data) provides support for the latter, by allowing links to controlled vocabularies.
+An important feature of metadata is that it needs to be *machine-readable*, meaning that it is provided in a structured format that can be automatically parsed by a computer.  Common formats are Extensible Markup Language (XML) and JavaScript Object Notation (JSON).  JSON is generally simpler and more human-readable, but it doesn't natively provide the ability to define attributes for particular entries (such as the units of measurement) or link to ontologies.  An extension of JSON known as *JSON-LD* (JSON for Linked Data) provides support for the latter, by allowing links to controlled vocabularies.
 
 For example, let's say that I wanted to represent information about an author (myself) in JSON, which I might do like this:
 
@@ -778,7 +778,7 @@ For example, let's say that I wanted to represent information about an author (m
 }
 ```
 
-Now let's say that someone else wanted to search across datasets to find researchers from Stanford University. They would have no way of knowing that I used the term "affiliation" as opposed to "organization", "institiution", or other terms.  We could instead represent this using JSON-LD, which is more verbose but allows us to link to a vocabulary (in this case schema.org) that defines these entities by providing a `@context` tag:
+Now let's say that someone else wanted to search across datasets to find researchers from Stanford University. They would have no way of knowing that I used the term "affiliation" as opposed to "organization", "institution", or other terms.  We could instead represent this using JSON-LD, which is more verbose but allows us to link to a vocabulary (in this case schema.org) that defines these entities by providing a `@context` tag:
 
 ```json
 {
@@ -943,7 +943,7 @@ One method that is often used for large datasets is known as *differential priva
 
 ## Version control for data
 
-In the case of original data we never want to allow any changes, but for derived data we will often end up making changes to our workflows that result in changes in the data.  As an example, let's say that we are analyzing RNA-sequencing data, and we receive a notice that a bug was found in the specific version of STAR that we had used for sequence alignment.  We would like to be able to track these changes, so that we know which data we are working with at any point in time. In many laboratories, this achieved through file naming, resulting in a menagerie of files with names like "dataset_new_fixed_v2.tsv".  This can make it difficult to determine exactly which data were used in any analysis. In Chapter 2 we discussed the many reasons why we use version control for code, and many of those also apply to data as well. In the case of data, it is particularly important to be able to track the what, when, and why of any changes to the data, which is exactly the purpose of version control systems.
+In the case of original data we never want to allow any changes, but for derived data we will often end up making changes to our workflows that result in changes in the data.  As an example, let's say that we are analyzing RNA-sequencing data, and we receive a notice that a bug was found in the specific version of STAR that we had used for sequence alignment.  We would like to be able to track these changes, so that we know which data we are working with at any point in time. In many laboratories, this is achieved through file naming, resulting in a menagerie of files with names like "dataset_new_fixed_v2.tsv".  This can make it difficult to determine exactly which data were used in any analysis. In Chapter 2 we discussed the many reasons why we use version control for code, and many of those also apply to data as well. In the case of data, it is particularly important to be able to track the what, when, and why of any changes to the data, which is exactly the purpose of version control systems.
 
 ### Using git for data version control
 

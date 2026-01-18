@@ -1,18 +1,6 @@
 # Validating scientific software
 
-- Just because it runs reliably doesn't mean it's correct
-- Generating simulated ground-truth data
-
-"Two basic kinds of activity ensure that the systems correspond to one another. Validation is the process of checking that the theoretical system properly explains the observational system, and verification is the process of checking that
-the calculational system correctly implements the theoretical
-system. The distinction between validation and verification is
-expressed in the questions, “Are we building the right thing?”
-(validation) and, “Are we building the thing right?” (verification). Stevenson also uses the term complete validation to
-refer to checking all three systems – that is, to mean that "we
-compute the right numbers for the right reasons.""  -  Pipitone & Easterbrook, 2012 - https://gmd.copernicus.org/articles/5/1009/2012/gmd-5-1009-2012.pdf
-
-https://memolab.syr.edu/wp-content/uploads/2021/04/Lee_etal_2019.pdf
-https://www.princeton.edu/~ndaw/d10.pdf
+So far I have focused very heavily on *reproducibility*, that is, the ability to generate the same answer when code is run repeatedly.  However, it's easy to reliably generate the wrong answer!  In measurement theory there is a fundamental distinction between *reliability* and *validity*: Reliability means performing the same method repeatedly results in highly similar results, whereas validity refers to whether the estimated result is close to the true result.  In this chapter we turn to the *validation* of scientific software, by which I mean the degree to which it performs the intended task as expected and gets the answers right.  
 
 ## Creating simulations
 
@@ -41,12 +29,12 @@ array([0.56449692, 0.6880841 , 0.43249236, 0.28950554, 0.02708363,
        0.61239335, 0.30663968, 0.3854357 , 0.57454511, 0.07974661])
 ```
 
-In this case, `rng.uniform()` by default generates floating point values that fall within [0, 1]; this can be changed using the location and scale parameters to the function.  If we generate a large number of these then we can create a distribution plot (often called a *histogram*) showing how the numbers are distributed, as shown in #DistPlots-fig.  
+In this case, `rng.uniform()` by default generates floating point values that fall within [0, 1]; this can be changed using the location and scale parameters to the function.  If we generate a large number of these then we can create a distribution plot (often called a *histogram*) showing how the numbers are distributed, as shown in [](#DistPlots-fig).  
 
 ```{figure} images/multiple_distributions.png
 :label: DistPlots-fig
 :align: center
-:width: 400px
+:width: 600px
 
 Distribution plots for 1,000,000 random samples from each of six different distributions.
 ```
@@ -147,7 +135,7 @@ viz = ecoli_model.to_graphviz()
 viz.draw(IMAGE_DIR / 'ecoli.png', prog='dot')
 ```
 
-#ecoli-fig shows the resulting rendering of that network, which has 46 nodes (representing individual genes) and 70 directed edges (representing causal relationships on gene expression between nodes).  
+[](#ecoli-fig) shows the resulting rendering of that network, which has 46 nodes (representing individual genes) and 70 directed edges (representing causal relationships on gene expression between nodes).  
 
 
 ```{figure} images/ecoli.png
@@ -294,7 +282,7 @@ for tslength in tslengths:
 performance_df = pd.DataFrame(performance_results)
 ```
 
-We can then plot these results, as shown in #simresults-fig:
+We can then plot these results, as shown in [](#simresults-fig):
 
 ```python
 # Use colorblind-friendly palette
@@ -322,7 +310,7 @@ plt.tight_layout()
 ```{figure} images/causal_discovery_performance.png
 :label: simresults-fig
 :align: center
-:width: 500px
+:width: 600px
 
 A plot of true positive rate (TPR) and false positive rate (FPR) at increasing false discovery rates for various timeseries lengths.
 ```
@@ -342,7 +330,6 @@ In some cases parameter estimates can be obtained using a closed form analytic s
 
 $$
 p(x \mid \mu, \sigma) = \frac{1}{\sigma \sqrt{2\pi}} \exp\left( -\frac{(x - \mu)^2}{2\sigma^2} \right)
-
 $$
 
 where $\mu$ is the mean and $\sigma$ is the standard deviation.  
@@ -368,7 +355,7 @@ $$
 
 Note that this is very similar to the mean squared error, differing in the presence of a square root as well as the use of $n - 1$ rather than $n$ in the demoninator. The latter is meant to adjust for the fact that we lost one *degree of freedom* when we estimated the mean from the same data and then used it to compute the standard deviation.  When the variance (the square of the standard deviation) is computed using this correction it will be *unbaised*, meaning that its expected value will match the true variance of the population.  The standard deviation is still slightly biased, but less so that the one computed without the correction.
 
-Figure #NormalDist-fig shows an example of a histogram based on samples from a normal distribution, with the theoretical normal distribution based on the estimated sample mean and standard deviation overlaid.  Visually it's clear that the fitted distribution characterizes the overall shape well, even if it mismatches the shape at finer grain, due to sampling variability. 
+Figure [](#NormalDist-fig) shows an example of a histogram based on samples from a normal distribution, with the theoretical normal distribution based on the estimated sample mean and standard deviation overlaid.  Visually it's clear that the fitted distribution characterizes the overall shape well, even if it mismatches the shape at finer grain, due to sampling variability. 
 
 ```{figure} images/normal_distribution.png
 :label: NormalDist-fig
@@ -475,7 +462,7 @@ I noted above that the interpretation of the frequentist confidence interval is 
 
 Bayesian statistics is based on a different conception of probability from the frequentist approach that underlies the standard confidence interval.  Under the frequentist conception, probabilities are meant to refer to the long-run frequencies of outcomes across many samples, while the true parameter value is viewed as fixed. For this reason, it doesn't make sense to a frequentist to say that there is a particular probability of the true parameter value; it simply is what it is.  Bayesians, on the other hand, view probabilities as degrees of belief, and view the estimation of parameters from data as a way to sharpen our belief - that is, as a learning opportunity.  This means that it is perfectly legitimate in the Bayesian framework to say that there is a 95% probability that the true value of a parameter lies within a particular interval.  
 
-The fundamental idea in Bayesian statistics is that we start with a set of beliefs (known as a *prior* distribution), we obtain some relevant data, and then use the likelihood of those data given the possible parameter values to update our beliefs, generating a *posterior* distribution.  I won't go into detail about Bayesian methods here; see my [Statstical Thinking](https://statsthinking21.github.io/statsthinking21-core-site/bayesian-statistics.html) for a basic overview, and [Gelman:2013] or [McElreath:2020] for more detailed overviews.  Instead I will show an example of Bayesian estimation applied to our example data above. There are several Python packages that can be used to perform Bayesian estimation; I will use the popular `PyMC` package.  The first section sets up the Bayesian model, with priors for the mean (mu) and standard deviation (sigma) that are very broad and thus will have little influence on the outcome; in Bayesian terms these are referred to as *weakly informative priors*.  We then perform sampling to obtain an estimate of the posterior distribution of the parameters given the data.  Using these distributions, we can then find the narrowest set of values that contain 95% of the mass of posterior distribution, which are known as the *highest density interval* (HDI) (or sometimes as the *credible interval*).  This intervals serves as our Bayesian alternative to the frequentist confidence interval, allowing us to legitimately describe it as the interval that has a 95% probability of the containing the true value.
+The fundamental idea in Bayesian statistics is that we start with a set of beliefs (known as a *prior* distribution), we obtain some relevant data, and then use the likelihood of those data given the possible parameter values to update our beliefs, generating a *posterior* distribution.  I won't go into detail about Bayesian methods here; see my [Statstical Thinking](https://statsthinking21.github.io/statsthinking21-core-site/bayesian-statistics.html) for a basic overview, and [@Gelman:2013] or [@McElreath:2020] for more detailed overviews.  Instead I will show an example of Bayesian estimation applied to our example data above. There are several Python packages that can be used to perform Bayesian estimation; I will use the popular `PyMC` package.  The first section sets up the Bayesian model, with priors for the mean (mu) and standard deviation (sigma) that are very broad and thus will have little influence on the outcome; in Bayesian terms these are referred to as *weakly informative priors*.  We then perform sampling to obtain an estimate of the posterior distribution of the parameters given the data.  Using these distributions, we can then find the narrowest set of values that contain 95% of the mass of posterior distribution, which are known as the *highest density interval* (HDI) (or sometimes as the *credible interval*).  This intervals serves as our Bayesian alternative to the frequentist confidence interval, allowing us to legitimately describe it as the interval that has a 95% probability of the containing the true value.
 
 ```python
 import pymc as pm
@@ -513,7 +500,7 @@ Sample mean: -0.02889, Sample sd: 0.98922
 95% CI based on t-distribution: [-0.09028, 0.03249]
 ```
 
-In this case, the Bayesian HDI turns out to be very close to the parametric confidence interval. We can also obtain a visualization of the full posterior distributions obtained through Bayesian estimation, which are shown in #BayesPosterior-fig:
+In this case, the Bayesian HDI turns out to be very close to the parametric confidence interval. We can also obtain a visualization of the full posterior distributions obtained through Bayesian estimation, which are shown in [](#BayesPosterior-fig):
 
 ```python
 # Visualize posterior distributions
@@ -533,7 +520,7 @@ axes[1].legend()
 ```{figure} images/bayesian_posterior.png
 :label: BayesPosterior-fig
 :align: center
-:width: 400px
+:width: 600px
 
 Posterior distributions for mean (mu) and standard deviation (sigma) obtained using Bayesian estimation, with the 95% highest density interval shown by the gray bar at the base of the plot.
 ```
@@ -555,7 +542,7 @@ Best fit mean: 0.0190,   Best fit sd: 0.9785, loglik: -1397.4353
 Sample mean:   0.0193, Population sd: 0.9787, loglik: -1397.4352
 ```
 
-We can see this visualized in #gridsearch-fig, where we see the landscape of the likelihood across a range of possible parameter values; here we use the negative log-likelihood for visualization, since optimization methods tend to use the language of minimization rather than maximization. We can see that this landscape is smooth and only has one visible minimum; this occurs because the negative log-likelihood surface for the normal distribution is *convex*, which guarantees that there is a single minimum and thus that regardless of where we start our search, we are guaranteed to find the global minimum by simply following the surface downward, a process known as *gradient descent*. As we will see below, most realistic optimization problems have multiple local minima, making them much more difficult to optimize through simple gradient descent.
+We can see this visualized in [](#gridsearch-fig), where we see the landscape of the likelihood across a range of possible parameter values; here we use the negative log-likelihood for visualization, since optimization methods tend to use the language of minimization rather than maximization. We can see that this landscape is smooth and only has one visible minimum; this occurs because the negative log-likelihood surface for the normal distribution is *convex*, which guarantees that there is a single minimum and thus that regardless of where we start our search, we are guaranteed to find the global minimum by simply following the surface downward, a process known as *gradient descent*. As we will see below, most realistic optimization problems have multiple local minima, making them much more difficult to optimize through simple gradient descent.
 
 ```{figure} images/normal_log_likelihood_surface_3d.png
 :label: gridsearch-fig
@@ -612,7 +599,7 @@ $$
 V = \frac{V_{max} \cdot [S]}{K_m + [S]}
 $$
 
-where $V$ is the reaction velocity, $S$ is the concentration of the enzyme's substrate, $V_max$ is the maximum reaction velocity once the enzyme is saturated with substrate, and $K_m$ is the *Michaelis constant* that describes the affinity of the particular enzyme for its substrate (defined as the value of $S$ at which $V = V_{max}/2$). #mmplot-fig shows a plot of this function for the acetylcholinesterase enzyme, along with noisy data generated from the function.
+where $V$ is the reaction velocity, $S$ is the concentration of the enzyme's substrate, $V_max$ is the maximum reaction velocity once the enzyme is saturated with substrate, and $K_m$ is the *Michaelis constant* that describes the affinity of the particular enzyme for its substrate (defined as the value of $S$ at which $V = V_{max}/2$). [](#mmplot-fig) shows a plot of this function for the acetylcholinesterase enzyme, along with noisy data generated from the function.
 
 
 ```{figure} images/michaelis_menten_data.png
@@ -623,7 +610,7 @@ where $V$ is the reaction velocity, $S$ is the concentration of the enzyme's sub
 A plot of the Michaelis-Menten function for acetylcholinesterase, along with data sampled from this function with added Gaussian random noise.
 ```
 
-This equation could easily be solved using simpler methods, but it's a nice simple example to show how model parameters can be estimated using autodiff+SGD.  We can start by definining the Michaelis-Menten function and generating some data with random noise (shown in #mmplot-fig; plotting code omitted):
+This equation could easily be solved using simpler methods, but it's a nice simple example to show how model parameters can be estimated using autodiff+SGD.  We can start by definining the Michaelis-Menten function and generating some data with random noise (shown in [](#mmplot-fig); plotting code omitted):
 
 ```python
 def michaelis_menten(S, V_max, K_m):
@@ -712,19 +699,19 @@ Final estimates: V_max = 29.0894, K_m = 6.1336
 True values:     V_max = 29.0000, K_m = 6.0000
 ```
 
-Since there are only two parameters, we can easily visualize how the parameter estimate traverses the loss landscape as the estimation process moves from the initial guesses (in this case 10 for both parameters) to the final values, as shown in #mmloss-fig.  
+Since there are only two parameters, we can easily visualize how the parameter estimate traverses the loss landscape as the estimation process moves from the initial guesses (in this case 10 for both parameters) to the final values, as shown in [](#mmloss-fig).  
 
 ```{figure} images/loss_landscape_optimization.png
 :label: mmloss-fig
 :align: center
-:width: 400px
+:width: 600px
 
 A visualization of the log-loss landscape for the Michaelis-Menten optimization problem, showing the journal of the optimization process from the starting point to the ending point.
 ```
 
 #### Local minima in optimization
 
-The error landscape for the normal distribution example  is *convex*, which means that there is a single global minimum that can be found simply by following the error gradient downwards.  Claude Sonnet 4 initially tried to convince me that the Michaelis-Menten problem is convex, but was overruled by Claude Opus 4.5; visit the notebook for this example to see the entire unfolding of this internicene battle.  Despite being non-convex, the error landscape of the Michaelis-Menten problem is smooth and relatively well behaved, as seen in #mmloss-fig.  However, many realistic scientific problems have highly complex *non-convex likelihoods*, such that there are numerous *local minima* that the optimization routine can get stuck in.  #ComplexLoss-fig shows an example of this.
+The error landscape for the normal distribution example  is *convex*, which means that there is a single global minimum that can be found simply by following the error gradient downwards.  Claude Sonnet 4 initially tried to convince me that the Michaelis-Menten problem is convex, but was overruled by Claude Opus 4.5; visit the notebook for this example to see the entire unfolding of this internicene battle.  Despite being non-convex, the error landscape of the Michaelis-Menten problem is smooth and relatively well behaved, as seen in [](#mmloss-fig).  However, many realistic scientific problems have highly complex *non-convex likelihoods*, such that there are numerous *local minima* that the optimization routine can get stuck in.  [](#ComplexLoss-fig) shows an example of this.
 
 
 ```{figure} images/optimization_trajectories_moderately_rough.png
@@ -833,12 +820,12 @@ posterior_conditioned = inference.build_posterior(posterior)
 posterior_samples = posterior_conditioned.sample((n_samples,), x=x_obs)
 ```
 
-Note that since posterior sampling is computationally cheap, we can easily obtain a large number of samples, which helps give cleaner posterior distributions.  We can then compare the posterior samples to the true parameter values; as shown in #RickerPosterior-fig, the posterior distributions capture each of the true parameter estimates fairly well.  One common way to summarize the posterior sample is the *maximum a posteriori* (MAP) estimate, which is the parameter value with the maximum density.  We can also give a 95% credible interval using the posterior distribution, which is the range in which there is 95% probability that the true value falls. In this case these intervals are quite wide, suggesting that our estimates are not particularly precise.
+Note that since posterior sampling is computationally cheap, we can easily obtain a large number of samples, which helps give cleaner posterior distributions.  We can then compare the posterior samples to the true parameter values; as shown in [](#RickerPosterior-fig), the posterior distributions capture each of the true parameter estimates fairly well.  One common way to summarize the posterior sample is the *maximum a posteriori* (MAP) estimate, which is the parameter value with the maximum density.  We can also give a 95% credible interval using the posterior distribution, which is the range in which there is 95% probability that the true value falls. In this case these intervals are quite wide, suggesting that our estimates are not particularly precise.
 
 ```{figure} images/ricker_model_posterior_corner_plot.png
 :label: RickerPosterior-fig
 :align: center
-:width: 400px
+:width: 600px
 
 Joint distribution plots for the sampled posterior distributions of Ricker model parameters, with the true values denoted by the red star in the joint plots.  The posterior summary presents the maximum a posteriori (MAP) estimate for each parameter along with the 95% credible interval based on the posterior distribution.
 ```
@@ -908,7 +895,7 @@ def generate_independent_synthetic_data(df, random_seed=None):
     return df_synthetic
 ```
 
-Because this synthesizer learns both marginal and joint distributions by default, we need to randomly shuffle the values of each variable to break the correlations.  We can then visualize the correlations and distributions for the original data and the synthetic data; in #sdvdist-fig we see that the distributions in the synthetic data are very similar to those in the original data, while #sdvcorrs-fig we see that the synthetic data do not include the original correlations.
+Because this synthesizer learns both marginal and joint distributions by default, we need to randomly shuffle the values of each variable to break the correlations.  We can then visualize the correlations and distributions for the original data and the synthetic data; in [](#sdvdist-fig) we see that the distributions in the synthetic data are very similar to those in the original data, while [](#sdvcorrs-fig) we see that the synthetic data do not include the original correlations.
 
 
 ```{figure} images/sdv_distributions.png
@@ -979,56 +966,265 @@ The most common way in which leakage occurs is when features (i.e. variables) ar
 A comparison of the null distributions with proper feature selection (blue) and improper feature selection (red).
 ```
 
-### positive controls
+### Positive controls
 
-When developing analytic software, it is also important to determine whether the model can detect relevant signals when they are present, which we refer to as a *positive control*. This is like the red bar on the home COVID test that confirms that the test is working properly.  To do this, we would generally need to inject some amount of realistic signal into the data, and then assess the model's ability to detect it.  
+When developing analytic software, it is also important to determine whether the model can detect relevant signals when they are present, which we refer to as a *positive control*. This is like the red bar on the home COVID test that confirms that the test is working properly.  To do this, we would generally need to inject some amount of realistic signal into the data, and then assess the model's ability to detect it.  While useful for checking code, positive control simulations are also useful for understanding how various features of the study design (such as the sample size and the intended effect size) relate to the ability to detect signals; in the context of null hypothesis statistical testing this is often known as *statistical power*.
 
-Let's say that we wanted to build a model to detect a particular disease from gene expression data, and we want to ensure that our model can detect a realistic effect.  As an example of this I built a simulation using the RNA-seq data from above. I created a random outcome variable denoting disease presence (with a 10% prevalence), and then multiplied the values of a subset of features by a weighting factor based on disease presence so that they would be associated with the disease.  
+Let's say that we wanted to build a model to detect a particular disease from gene expression data, and we want to ensure that our model can detect a realistic effect.  As an example of this I built a simulation using the RNA-seq data from above. I created a random outcome variable denoting disease presence (with a 10% prevalence), and then multiplied the values of a subset of features by a weighting factor based on disease presence so that expression levels of these genes would be associated with the disease.  I initially wrote a function to perform a single simulation, but it was unweildy so I had Claude refactor it into a well-structured class with a separate dataclass for configuration variables. Here is the config dataclass:
+
+```python
+@dataclass
+class SignalInjectionConfig:
+    """Configuration for signal injection experiments."""
+    nfeatures_to_select: int = 1000
+    sim_features: int = 10
+    n_splits: int = 10
+    disease_prevalence: float = 0.1
+    noise_sd: float = 1.0
+    test_size: float = 0.3
+    scale_X: bool = True
+    shuffle_y: bool = False
+```
+
+The main class then implements each of the main components of the function as a separate method.  Inspecting the code closely, I found a place where the AI agent misinterpreted the logic of the original code:
+
+```python
+        # Shuffle or inject signal
+        if self.config.shuffle_y:
+            y = self.rng.permutation(y)
+        elif beta is not None:
+            y = self._inject_signal(X, y, beta)
+
+```
+
+In principle the signal injection is independent of whether or not `y` is shuffled, since the `_inject_signal()` method generates a new synthetic `y` variable.  However, if one happened to seting `shuffle_y=True` then the signal injection would be skipped by this code, which is not the intention.  To fix this I reordered the statement:
+
+```python
+        if beta is not None:
+            y = self._inject_signal(X, y, beta)
+        elif self.config.shuffle_y:
+            y = self.rng.permutation(y)
+```
+
+Here is the `run()` method that shows the execution of the main crossvalidation loop, with the different components split into class methods, which makes the code much more readable and understanable:
+
+```python
+    def run(
+        self, 
+        X: np.ndarray, 
+        y: np.ndarray, 
+        beta: Optional[float] = None
+    ) -> dict:
+        """
+        Run cross-validated classification with optional signal injection.
+        
+        Parameters
+        ----------
+        X : np.ndarray
+            Feature matrix
+        y : np.ndarray
+            Target labels
+        beta : float, optional
+            If provided, inject synthetic signal with this coefficient
+            
+        Returns
+        -------
+        dict
+            Mean scores across all CV folds
+        """
+        # Convert to numpy arrays
+        X = np.array(X)
+        y = np.array(y)
+        
+        # Shuffle or inject signal
+        if self.config.shuffle_y:
+            y = self.rng.permutation(y)
+        elif beta is not None:
+            y = self._inject_signal(X, y, beta)
+        
+        # Collect results across folds
+        fold_results = {
+            'test_scores': [],
+            'train_scores': [],
+            'nfeatures': []
+        }
+        
+        for train_idx, test_idx in self.cv.split(X, y):
+            X_train, X_test = X[train_idx], X[test_idx]
+            y_train, y_test = y[train_idx], y[test_idx]
+            
+            # Scale features
+            if self.config.scale_X:
+                X_train, X_test = self._scale_features(X_train, X_test)
+            
+            # Select features
+            if self.config.nfeatures_to_select is not None:
+                X_train, X_test = self._select_features(X_train, y_train, X_test)
+            
+            # Evaluate fold
+            fold_scores = self._evaluate_fold(X_train, X_test, y_train, y_test)
+            
+            # Store results
+            scorer_name = self.scorer.__name__.replace('_score', '')
+            fold_results['test_scores'].append(fold_scores[f'test_{scorer_name}'])
+            fold_results['train_scores'].append(fold_scores[f'train_{scorer_name}'])
+            fold_results['nfeatures'].append(fold_scores['nfeatures'])
+        
+        # Compute mean scores
+        scorer_name = self.scorer.__name__.replace('_score', '')
+        return {
+            f'test_{scorer_name}': np.mean(fold_results['test_scores']),
+            f'train_{scorer_name}': np.mean(fold_results['train_scores']),
+            'nfeatures_selected': np.mean(fold_results['nfeatures'])
+        }
+```
+
+Finally, it created a wrapper function that replicates the interface of the previous function, so that I don't have to change the calls to that older function:
+
+```python
+def run_signal_injection(X, y, beta=None, model=None, cv=None, shuffle_y=False, 
+                    scorer=None, rng=None, scale_X=True,
+                    nfeatures_to_select=1000, sim_features=10,
+                    n_splits=10, disease_prevalence=0.1, noise_sd=1.0):
+    """
+    Run a classifier with cross-validation, optionally injecting synthetic signals.
+    
+    This is a compatibility wrapper around SignalInjectionClassifier.
+    For new code, prefer using the class directly.
+    """
+    config = SignalInjectionConfig(
+        nfeatures_to_select=nfeatures_to_select,
+        sim_features=sim_features,
+        n_splits=n_splits,
+        disease_prevalence=disease_prevalence,
+        noise_sd=noise_sd,
+        scale_X=scale_X,
+        shuffle_y=shuffle_y
+    )
+    
+    classifier = SignalInjectionClassifier(
+        config=config,
+        model=model,
+        scorer=scorer,
+        rng=rng
+    )
+    
+    return classifier.run(X, y, beta=beta)
+    return means
+```
+
+I ran two sets of simulations using this code (shown in [](#controlsim-fig)), one that examined how classification accuracy relates to the magnitude of the injected signal as the number of features or sample size is varied.  These results show that the model behaves as expected, and also provides some insight into the limitations that smaller samples sizes woudl place on the ability to accurately classify.  The experience in refactoring above also once again highlights the need to closely check AI-generated code, as coding agents can often make subtle mistakes, especially when logic of the original code is not clear (as was the case here).
+
+```{figure} images/control_experiment_sim_results.png
+:label: controlsim-fig
+:align: center
+:width: 400px
+
+Results from simulations of classification performance using injected signals over different levels of simulated signal.  Left panel shows effect of varying number of simulated features, and right panel shows effect of varying sample size.
+```
 
 
 ## Sensitivity analysis
 
+It's rarely the case that there is a single analysis workflow that is uniqely appropriate for any particular scientific problem. Different methods come with different assumptions and often embody tradeoffs between different factors:
+
+- *Bias-variance tradeoffs*: While unbiasedness is widely thought to be an important feature of a statistical estimate, we are often willing to trade a small amount of bias in exchange for a significant reduction in the variance of our estimates.  The most common example of this is the use of *regularized* methods that penalize model complexity; for example, regularlized regression methods like ridge regression penalize the magnitude of model parameters and thus bias model parameters towards zero in exchange for potentially increased predictive performance.
+- *Penalization tradeoffs*: If one uses regularized models then there are tradeoffs in the selection of methods for model fitting (such as L1- versus L2-based penalizations, which vary in the sparseness of their model parameters). Model comparison methods (such as the use of Akaike Information Criterion (AIC) versus Bayesian Information Criterion (BIC) in model selection) differ in the degree to which they include sample size in the penalty.  
+- *Statistical assumptions*: 
+- *Sensitivity/specificity tradeoffs*:
+- *Preprocessing tradeoffs*: (smoothing, outlier/artifact rejection or other methods taht reduce detail or prevalence of smaller features)
+- *Interpretability tradeoffs*: 
+- *Robustness tradeoffs*
+
+In each of these there is no answer that is universallly *right*: the choices for any application will depend upon the goals of the researcher and the specifics of the data themselves. The goal of sensitivity analysis is to broadly test the range of reasonable/plausible analyses and assess the degree to which the outcomes change in relation to specific analytic choices.
+
+Previous work has shown that real-world analytic variability can have major impact on the results.  We [@Botvinik-Nezer:2020aa] examined this in a study that collected a neuroimaging dataset and distributed to a large number of research teams, asking them to test a set of hypotheses using their standard methods.  The results from 70 teams showed a substantial degree of variability; for 5 of the 9 hypotheses tested, the proportion of teams reporting a positive result ranged from 20-40%.  The realization of the impact of analytic variability has led to the use of *multiverse* analysis strategies, in which multiple analytic choices are compared and their impact on the results is assessed.
+
+### An example of multiverse analysis
+
+Here we will use an open ecology dataset to ask a simple question: How does bill depth and bill length covary in penguins?  This might seem like an obvious question, but it's actually an example where multiverse analysis can provide useful insight.  Gorman and colleagues [@Gorman:2014aa] collected data over three years that included measurements of bill length and depth and body mass from a total of 333 Antartic penguins, and openly shared those data.  The dataset includes three different species of penguins (Adelie, Gentoo, and Chinstrap), each of which inhabits a different ecological niche and has different body characteristics.  For this multiverse analysis I focused on two features of the model. First, I varied the way that species is included in the model, either leaving it out of the model, or modeling it using a mixed-effect linear model with either a random slope or random slope and intercept acros species.  Second, I varied the inclusion of a number of possible covariates of interest: sex, year of data collection, island where the data were collected, and overall body mass.
+
+One of the challenges of multiverse modeling is organizing all of the different models to be tested, which in this case comprises a set of 48 models.  I generated a class that specified all of the model features, and included a method that fits the specified model and returns the results as a dictionary.  I then iterated over each modeling approach with all possible combinations of covariates, fitting each of the 48 models, which took about one second to run on my laptop.  One common challenge with mixed effects models is that more complex models (like random-slope models) can fail to converge when they are fitted (since they use maximum likelihood estimation and thus must be estimated using optimization), and I saw this initially when I fit the random-slope models using the default optimizer.  Because the resulting parameter estimates are not trustable when the model fails to converge, I added code that tried several different optimizers when convergence failed; this resulted in convergence for all of the models. 
+
+Once we have fitted all of the models then we need to summarize the results, and a common way to do this is a *specification curve* plot.  [](#multiverse-fig) shows an example of such a plot for the penguin analysis.  Strikingly, we see in the top panel that while most of the models show significantly positive coefficients, a subset of models show *significantly negative* coefficients! The lower panel shows the features of each of the models, which helps understand the cause of the difference in model parameters: The negative parameters occurred only in models where species was not included in the model.  
+
+```{figure} images/penguin_bill_length_specification_curve.png
+:label: multiverse-fig
+:align: center
+:width: 700px
+
+A specification curve plot for the penguin analysis.  The top panel shows the sorted estimated effect sizes for the bill length model parameter across all of the models; statistically significant effects are colored in green.   The lower panel shows the features of each model using tick marks.
+```
+
+[](#simpsons-penguin-fig) provides further insight into why this occurred.  The left panel shows that across all penguins there was a negative relationship between bill length and depth.  However, the right panel shows that within each species there was a *positive* relationship between these features; in the models that included a random effect of species, the overall differences between species were removed and the positive effect could be observed.  This is an example of *Simpson's paradox*, in which the pattern observed across a dataset is inconsistent with the pattern observed within subgroups of the dataset. This is usually due to the presence of a confounding variable, which in this case is species. This example shows how multiverse analysis can help bring out important features in the data and better understand the robustness of results across modeling choices.
+
+```{figure} images/penguin_bill_length_regression.png
+:label: simpsons-penguin-fig
+:align: center
+:width: 600px
+
+Plots showing the regression of bill length against depth in the penguin dataset. The left panel shows the regression computed on the entire dataset combined across all species. The right panel shows separate regressions for each species.
+```
+
 ### Sensitivity to random seeds
 
-- avoid seed hacking
+When using analysis methods that involve random numbers, it is essential to establish that the results are robust to different random seeds, and also to determine the degree of variability across simulations due to random seed variabiilty.  There is published evidence [@Ferrari-Dacrema:2021aa] that some authors may cherry-pick results across random seeds in order to obtain better results, which we sometimes refer to as *seed-hacking* on analogy to p-hacking.
+
+As an example, I generated 100 synthetic datasets for a classification problem, and assessed the performance of two different classifiers that involve random numbers: a simple neural network model (Perceptron), and a stochastic gradient descent classifier.  Each of them was applied to the same dataset using 1000 different random seeds and their accuracy was recorded.  The result (shown in [](#seed-fig)) was striking: altough the average performance of the two models differed minimally (), depending on the specific random seed one could find cases where each of the classifiers outperformed the other by almost 10%!  This highlights the importance of quantifying the degree of variability due to random seed choice.  
 
 
-## Model identifiabiility
+### Sensitivity to modeling assumptions
 
-- parameter correlations
+Statistical models often make assummptions that, if violated, can invalidate any performance guarantees that come with the model.  Here we will look at the commonly violated assumption of independence. While assumptions regarding normality of errors are often discussed by researchers, most methods are remarkably robust to violations of normality as long as the sample size is large enough.  
 
-## Model comparison
+Many statistical methods rely upon an assumption that the residuals from the model are *independent and identically distributed* (or IID).  This assumption can easily be violated when the data has structure that involves relationships between observations, such as time-series data, spatial data, clustered data (e.g. data from families), or repeated measures on individuals.  When this assumption is violated, the actual error rate of the method can sometimes far exceed the reported error rates computed under the IID assumption (although the parameter estimates should remain unbiased as long as the other assumptions of the model are fulfilled).
 
+#### Clustered data
+
+A common cause of failures of independence is the presence of group structure in the data, which can lead to *clustered errors*; that is, members of each group are more similar in their errors compared those in other groups. [](#clusterederrors-fig) shows how clustering in the data can lead to highly inflated error rates, particularly when there is a small number of clusters.  This occurs because clustering leads to underestimation of the standard error that is used to compute the test statistic.  There are several different ways that the impact of clustered errors can be corrected, which are differently used across different research domains [@McNeish:2017aa].  These include:
+
+- Cluster-robust estimators for the standard error (commonly used in biostatistics)
+- Fixed effect models (commonly used in economics and social sciences)
+- Mixed effect models (commonly used in psychology and social sciences)
+
+(#clusterederrors-fig) shows that each of these does a good job of correcting for the effects of clustering in the data. The Python implementation of mixed effects modeling shows slightly inflated error rates, due to the fact that it uses a z-statistic which has slightly inflated error rates for small numbers of clusters, whereas the R implementation uses a correction to the degrees of freedom that corrects this.
+
+```{figure} images/type1_error_by_number_of_clusters.png
+:label: clusterederrors-fig
+:align: center
+:width: 700px
+
+An example of the effects of clustering on statistical outcomes.  Data were generated with a single intercept for the non-clustered group and with randomly varying intercepts across groups for the clustered group.  
+```
+
+#### Autocorrelated data
+
+Even more striking failures to control error can occur when the data are autcorrelated, meaning that adjacent data points in the dataset are correlated, as occurs commonly in timeseries or spatial data. Autocorrelation not only inflates error rates but can also lead to biased parameter estimates.  [](#autocorr-fig) shows error rates in simulated data with increasing degrees of autocorrelation.  The ordinary least squares (OLS) regression model performs very badly here, with false positive rates approaching 70% when autocorrelation reaches 0.9.  The results of a number of other methods that are commonly suggested for addressing autocorrelation are also shown in the figure; while these do perform much better than vanilla OLS, none of them appropriately controls error rates as autocorrelation becomes very high.  This is a great example of how one can't simply take the suggestions of a coding agent (or the Internet) and run with them without checking that they adequately control error rates.
+
+```{figure} images/type1_error_vs_autocorr.png
+:label: autocorr-fig
+:align: center
+:width: 700px
+
+An example of the effects of autcorrelation on statistical outcomes.  Data were generated with no true signal in the model and with increasing levels of autocorrelation in the noise.  In addition to the improperly ordinary least squares (OLS) approach, a number of different approaches were applied that are meant to correct for the effects of autocorrelation: generalized least squares (GLS) using an AR(1) covariance, HAC (Heteroskedasticity and Autocorrelation Consistent) standard errors using the Newey-West estimator, iterative feasible generalized least squares (FGLS), and the parametric bootstrap.  None of these methods adequately controlled errors when the autocorrelation was high.
+```
 
 ## Parameter recovery
 
-- go back to SBI example?
+Much of the foregoing discussion has focused on ensuring that models have adequate error rates, so that we don't fool ourselves into thinking that an effect exists when it doesn't.  This is a concern that is primarily relevant to researchers performing null hypothesis statistical testing, but many researchers are instead interested in obtaining precise estimates of particular parameters.  In this case, we are more interested in assessing *parameter recovery*: that is, given data generated using known parameter values, can our parameter estimation procedure return values that are close to the known ground truth?  This is most often of interest when we are estimating parameters from custom models that are estimated using optimization methods or simulation-based inference.
 
-Once we have our trained posterior estimation model, we can then simulate a large number of new datasets across the range of parameter values and ask how well the procedure captures the true parameter value.  T **TBD**
+Here we will return to our earlier example where we estimated the parameters for the Ricker model from simulated data using simulation-based inference.  Using the code that I had developed for the earlier example, I generated a *simulation harness* that ran a large number of simulations and recorded the results; the full code is [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/sbi_simulation_harness.py).  I started by training the posterior estimator using one million simulations, in order to ensure that it had good training across the range of possible parameters; Given that this just needs to be trained once, I saved it for later use in my simulations. Then I performed 10,000 experiments in which I generated a dataset from the Ricker model based on known parameters along with added noise, and then used the posterior estimator to estimate the parameters for the dataset. 
 
+```{figure} images/sbi_ricker_parameter_estimation_scatter_matrix.png
+:label: RicherParamrecov-fig
+:align: center
+:width: 700px
 
-## Model recovery
+Parameter recovery analysis for 10,000 datasets generated from the Ricker model.  The plots along the diagonal show the relationship between the true and estimated values and their correlation.  The plots in the lower triangle show the relationship between parameter estimates for each pair of parameters.
+```
 
-- does the model taht generated the data fit it better than other models?
+[](#RickerParamrecov-fig) shows the relationship between the true and estimated parameters on the diagonal.  We see that the correlations between true and estimated parameters are reasonable but that in some rare cases the estimates can veer far from the true values.  There is also faint evidence of some pathologies in model fitting: For both the phi and sigma parameters, there are bands of data points that suggest that the paramter estimation is being pulled towards specific ranges of values. If we were using this approach for real scientific work, we would probably want to dig more deeply to understand the source of this phenomenon.  The off-diagonal plots show the relationship between the estimated parameters for each pair of parameters.  This is useful to visualize because correlations between estimated parameters can reflect a lack of model identifiability, in which parameters trade off against one another.  In this case these relationships are very weak, suggesting that the model parameters are indeed identifiable.
 
-## Invariant checking
+## Conclusions on validation
 
-- assertions for things that should always be true
-
-## Understanding edge cases
-
-- e.g. perfect separation in logistic regression
-
-
-## Optimization
-- https://pmc.ncbi.nlm.nih.gov/articles/PMC6879303/
-
-- e.g. beware of boundary effects
-- local minima
-
-
-## Building in robustness
-
-- using robust methods (e.g. stats)
-
-- robustness to random seeds
+In this chapter I've shown a number of different ways that one might assess the validity of scientific code. Simulations are in general a very powerful way to do this, which is the reason that they are such an essential element in the computational scientist's toolkit.  

@@ -12,7 +12,7 @@
 ### Reusable
 
 
-## Unique idenfifiers
+## Unique identifiers
 
 
 ## Sharing code

@@ -189,7 +189,7 @@ clean:
 	rm -rf $(OUTPUT_DIR)
 ```
 
-Most of the targets (except for "clean" and "all") refer to specific files that are required for the workflow. For example, the first target refers to the two files that need to be downloaded by the `download_data.py` script. This target does not rely on the outputs of any others, so there is mothing following the colon in the target name. For the others, they require particular inputs, which come after the colon; thus, if those don't already exist then their targets will be run first.  
+Most of the targets (except for "clean" and "all") refer to specific files that are required for the workflow. For example, the first target refers to the two files that need to be downloaded by the `download_data.py` script. This target does not rely on the outputs of any others, so there is nothing following the colon in the target name. For the others, they require particular inputs, which come after the colon; thus, if those don't already exist then their targets will be run first.  
 
 We can run the entire workflow by simply running `make all`:
 
@@ -567,7 +567,7 @@ Similarly, Snakemake will rerun the workflow if any of the scripts used to run t
 
 ### Reproducible environments with Conda
 
-Snakemake comes with native support for Conda environments, which helps ensure reproduciblity across systems. As I discussed in Chapter 2, I don't love conda, but in lieu of support for `uv` it's a reasonable solution for reproducible snakemake workflows.  After first installing `conda` on our system (if necessary), we then need to identify all of the packages that are necessary for our workflow to succeed, and then add those to a YAML file. Here is the example for our simple workflow, which I placed in `envs/simple.yaml`:
+Snakemake comes with native support for Conda environments, which helps ensure reproducibility across systems. As I discussed in Chapter 2, I don't love conda, but in lieu of support for `uv` it's a reasonable solution for reproducible snakemake workflows.  After first installing `conda` on our system (if necessary), we then need to identify all of the packages that are necessary for our workflow to succeed, and then add those to a YAML file. Here is the example for our simple workflow, which I placed in `envs/simple.yaml`:
 
 ```python
 name: bettercode
@@ -646,7 +646,7 @@ There is a [standard format](https://snakemake.readthedocs.io/en/stable/snakefil
 
 #### Snakefile formatting
 
-Snakemake comes with a set of commands that help ensure that Snakemake files are properly formatted and follow best practices.  As I mentioned above, there is a static analysis tool (i.e a "linter", akin to ruff or flake8 for Python code), which can automatically identify problems with Snakemake rule files.  Users of uv shoudl note that this tool assumes that one is using the Conda environment manager or a container, and it raises an issue for any rule that doesn't specify a Conda or container environment. Nonetheless, if those are ignored the linter can be useful in identifying problems. There is also a formatting tool called `snakefmt` (separately installed) that optimally formats Snakemake files in the way that `black` or `blue` format Python code.  These can both be useful tools when developing a new workflow.
+Snakemake comes with a set of commands that help ensure that Snakemake files are properly formatted and follow best practices.  As I mentioned above, there is a static analysis tool (i.e a "linter", akin to ruff or flake8 for Python code), which can automatically identify problems with Snakemake rule files.  Users of uv should note that this tool assumes that one is using the Conda environment manager or a container, and it raises an issue for any rule that doesn't specify a Conda or container environment. Nonetheless, if those are ignored the linter can be useful in identifying problems. There is also a formatting tool called `snakefmt` (separately installed) that optimally formats Snakemake files in the way that `black` or `blue` format Python code.  These can both be useful tools when developing a new workflow.
 
 #### Configurability
 

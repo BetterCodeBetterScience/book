@@ -1,6 +1,6 @@
 # Workflow Management
 
-In most parts of science today, the processing and analysis of data comprise many different steps.  We will refer to such a set of steps as a computational *workflow*. If you have been doing science for very long, you have very likely encountered a *mega-script* that implements such a workflow. Usually written in a scripting language like *Bash*, this is a script that may be hundreds or even thousands of lines long that runs a single workflow from start to end.  Often these scripts are handed down to new trainees over generations, such that users become afraid to make any changes lest the entire house of cards comes crashing down.  I think that most of us can agree that this is not an optimal workflow, and in this chapter I will discuss in detail how to move from a mega-script to a workflow that will meet all of the requirements to provide robust and reliable answers to our scientific questions.
+In most parts of science today, the processing and analysis of data comprise many different steps.  We will refer to such a set of steps as a computational *workflow*; while there are certainly many types of non-computational workflows in science, we will focus here on computational workflows. If you have been doing science for very long, you have very likely encountered a *mega-script* that implements such a workflow. This is a script that may be hundreds or even thousands of lines long that runs a single workflow from start to end.  Often these scripts are handed down to new trainees over generations, such that users become afraid to make any changes lest the entire house of cards comes crashing down.  I think that most of us can agree that this is not an optimal workflow, and in this chapter I will discuss in detail how to move from a mega-script to a workflow that will meet all of the requirements to provide robust and reliable answers to our scientific questions.
 
 ## What do we want from a scientific workflow?
 
@@ -12,7 +12,8 @@ First let's ask: What do we want from a computational scientific workflow?  Here
 
 Second, we care about the *usability* of the workflow. Factors related to usability include:
 
-- *Configurability*: The workflow uses smart defaults, but allows the user to easily change the configuration in a way that is traceable.
+- *Configurability*: The workflow uses smart defaults, but allows the user to easily change the configuration.
+- *Portability*: We would like for the workflow to be easily runnable across multiple systems.
 - *Parameterizability*: Multiple runs of the workflow can be executed with different parameters, and the separate outputs can be tracked.
 - *Standards compliance*:  The workflow leverages common standards to easily read in data and generates output using community standards for file formats and organization when available.
 
@@ -32,9 +33,7 @@ It's worth noting that these different desiderata will sometimes conflict with o
 
 ## FAIR-inspired practices for workflows
 
-In the earlier chapter on Data Management I discussed the FAIR (Findable, Accessible, Interoperable, and Reusable) principles for data.  Since those principles were proposed in 2016 they have been extended to many other types of research objects, including workflows [@Wilkinson:2025aa].  The reader who is not an informatician is unfortunately likely to quickly glaze over when reading these articles, as they rely on concepts and jargon that will be unfamiliar to most scientists.
-
-Realizing that most scientists are unlikely to go to the lengths of a fully FAIR workflow, and preferring that the perfect never be the enemy of the good, I think that we can take an "80/20" approach, meaning that we can get 80% of the benefits for about 20% of the effort.  We can adhere to the spirit of the FAIR Workflows principle by adopting the following principles, based in part on the "Ten Quick Tips for FAIR Workflows" presented by [@Visser:2023aa]:
+In the earlier chapter on Data Management I discussed the FAIR (Findable, Accessible, Interoperable, and Reusable) principles for data.  Since those principles were proposed in 2016 they have been extended to many other types of research objects, including workflows [@Wilkinson:2025aa].  The reader who is not an informatician may quickly glaze over when reading these articles, as they rely on concepts and jargon that will be unfamiliar to most scientists. Realizing that most scientists are unlikely to go to the lengths of a fully FAIR workflow, and preferring not to let the perfect be the enemy of the good, I think that we can take an "80/20" approach, meaning that we can get 80% of the benefits for about 20% of the effort.  We can adhere to the spirit of the FAIR Workflows principle by adopting the following principles, based in part on the "Ten Quick Tips for Building FAIR Workflows" presented by [@Visser:2023aa]:
 
 - *Metadata*:  Provide sufficient metadata in a standard machine-readable format to make the workflow findable once it is shared.
 - *Version control*:  All workflow code should be kept under version control and hosted on a public repository such as Github.
@@ -48,9 +47,9 @@ Realizing that most scientists are unlikely to go to the lengths of a fully FAIR
 There are certainly some contexts where a more formal structure adhering in detail to the FAIR Workflows standard may be required, as in large collaborative projects with specific compliance objectives, but these rough guidelines should get a researcher most of the way there.
 
 
-## Streaming workflows
+## Piping and chaining
 
-One of the simplest ways to build a workflow is to stream data directly from one command to another, such that the intermediate results are ephemeral since no information about the intermediate states is saved.  One common way that this is accomplished is through the use of *pipes*, which are a syntactic construct that feed the results of one process directly into the next process.  Some readers may be familiar with pipes from the UNIX shell, where they are represented by the vertical bar "|".  For example, let's say that we had a log file that contains the following entries:
+One of the simplest ways to build a workflow is to stream data directly from one command to another, such that the intermediate results are ephemeral since no information about the intermediate states is saved.  Such a workflow is *linear* in the sense that there is a single pathway through the workflow. One common way that this is accomplished is through the use of *pipes*, which are a syntactic construct that feed the results of one process directly into the next process.  Some readers may be familiar with pipes from the UNIX shell, where they are represented by the vertical bar "|".  For example, let's say that we had a log file that contains the following entries:
 
 ```bash
 2024-01-15 10:23:45 ERROR: Database connection failed
@@ -80,7 +79,7 @@ Pipes are also commonly used in the *R* community, where they are a fundamental 
 
 ### Method chaining
 
-One way that streaming workflows can be built in Python is using *method chaining*, where each method returns an object on which the next method is called; this is slightly different from the operation of UNIX pipes, where it is the output of each command that is being passed through the pipe rather than an entire object.  This is commonly used to perform data transformations in `pandas`, as it allows composing multiple transformations into a single command.  As an example, we will work with the Eisenberg et al. dataset that we used in a previous chapter, to compute the probability of having ever been arrested separately for males and females in the sample. To do this we need to perform a number of operations:
+One way that linear workflows can be built in Python is using *method chaining*, where each method returns an object on which the next method is called; this is slightly different from the operation of UNIX pipes, where it is the output of each command that is being passed through the pipe rather than an entire object.  This is commonly used to perform data transformations in `pandas`, as it allows composing multiple transformations into a single command.  As an example, we will work with the Eisenberg et al. dataset that we used in a previous chapter, to compute the probability of having ever been arrested separately for males and females in the sample. To do this we need to perform a number of operations:
 
 - drop any observations that have missing values for the `Sex` or `ArrestedChargedLifeCount` variables
 - replace the numeric values in the `Sex` variable with text labels
@@ -111,14 +110,14 @@ Name: EverArrested, dtype: float64
 
 Note that `pandas` data frames also include an explicit `.pipe` method that allows using arbitrary functions within a pipeline.  
 
-While these kinds of streaming workflows can be useful for simple data processing operations, they can become very difficult to debug, so I would generally avoid using complex functions within a method chain.  In general, 
+While these kinds of streaming workflows can be useful for simple data processing operations, they can become very difficult to debug, so I would generally avoid using complex functions within a method chain. 
 
 ## A simple workflow example
 
 Most real scientific workflows are complex and can often run for hours, and we will encounter such a complex workflow later in the chapter. However, we will start our discussion of workflows with a relatively simple and fast-running example that will help demonstrate the basic concepts of workflow execution. We will use the same data as above (from Eisenberg et al.) to perform a simple workflow:
 
 - Load the demographic and meaningful variables files
-- Filter out any non-numeric variables from each data frame
+- Drop any non-numeric variables from each data frame
 - Join the data frames using their shared index
 - Compute the correlation matrix across all variables
 - Generate a clustered heatmap for the correlation matrix
@@ -148,7 +147,7 @@ clean:
 
 ```
 
-In this case, the command `make step1.txt` will run the command `python step1.py` which outputs a file called `step1.txt`, unless that file already exists.  The command `make step2.txt` requires `step1.txt`, so it will first run that action (which will do nothing if the file already exists).  It will then perform `python step2.py -i step1.txt` which outputs `step2.txt`.  The command `make all` will execute the `all` target, which includes both of the output files, and `make clean` will remove each of those files if they exist.  The targets `all` and `clean` are referred to as *phony* targets since they are not meant to refer to a specific file but rather to an action. The `.PHONY` designation in the `Makefile` denotes this, such that those commands will run even if a file called "all" or "clean" happens to exist.  This should already show you why `make` is such a handy tool: Any time there is a command that you run regularly in a particular directory, you can put it into a `Makefile` and then execute it with just a single `make` call.  
+In this case, the command `make step1.txt` will run the command `python step1.py` which outputs a file called `step1.txt`, unless that file already exists and the existing file is newer than its dependencies.  This is one of the powerful features of `make`: since it checks the timestamps of existing files, it can automatically rerun commands if any of their dependencies have changed.  The command `make step2.txt` requires `step1.txt`, so it will first run that action (which will do nothing if the file already exists and is newer than its dependencies).  It will then perform `python step2.py -i step1.txt` which outputs `step2.txt`.  The command `make all` will execute the `all` target, which includes both of the output files, and `make clean` will remove each of those files if they exist.  The targets `all` and `clean` are referred to as *phony* targets since they are not meant to refer to a specific file but rather to an action. The `.PHONY` designation in the `Makefile` denotes this, such that those commands will run even if a file called "all" or "clean" happens to exist.  This should already show you why `make` is such a handy tool: Any time there is a command that you run regularly in a particular directory, you can put it into a `Makefile` and then execute it with just a single `make` call.  
 
 Here is how we could build a Makefile to run our simple workflow:
 
@@ -189,7 +188,7 @@ clean:
 	rm -rf $(OUTPUT_DIR)
 ```
 
-Most of the targets (except for "clean" and "all") refer to specific files that are required for the workflow. For example, the first target refers to the two files that need to be downloaded by the `download_data.py` script. This target does not rely on the outputs of any others, so there is nothing following the colon in the target name. For the others, they require particular inputs, which come after the colon; thus, if those don't already exist then their targets will be run first.  
+Most of the targets (except for "clean" and "all") refer to specific files that are required for the workflow. For example, the first target refers to the two files that need to be downloaded by the `download_data.py` script. This target does not rely on the outputs of any others, so there is nothing following the colon in the target name. For the others, they require particular inputs, which come after the colon; thus, if those don't already exist then their targets will be run first.  Note that `make` *requires* the use of tabs to indent commands, and will fail if spaces are used; thus, `Makefile` commands often need to be reformatted when copied and pasted since this often converts tabs to spaces.
 
 We can run the entire workflow by simply running `make all`:
 
@@ -260,9 +259,9 @@ The use of DAGs to represent workflows provides a number of important benefits:
 
 - The engine can identify independent pathways through the graph, which can then be executed in parallel
 - If one node of the graph changes, the engine can identify which downstream nodes need to be rerun
-- If a node fails, the engine can continue with executing the nodes that don't depend on the failed node either directly or indirectly
+- If a node fails, the engine can be configured to continue with executing the nodes that don't depend on the failed node either directly or indirectly
 
-There are a couple of additional benefits to using a workflow engine, which we will discuss in more detail in the context of a more complex workflow. The first is that they generally deal automatically with the storage of intermediate results (known as *checkpointing*), which can help speed up execution when nothing has changed.  The second is that the workflow engine uses the execution graph to optimize the computation, only performing those operations that are actually needed.  This is similar in spirit to the concept of *lazy execution* used by packages like Polars, in which the system optimizes computational efficiency by first analyzing the full computational graph.
+There are a couple of additional benefits to using a workflow engine, which we will discuss in more detail in the context of a more complex workflow. The first is that they generally deal automatically with the storage of intermediate results (known as *caching* or *checkpointing*), which can help speed up execution when nothing has changed and allow continued execution if the process is interrupted.  The second is that the workflow engine uses the execution graph to optimize the schedule of computations, only performing those operations that are actually needed.  This is similar in spirit to the concept of *lazy execution* used by packages like Polars, in which the system optimizes computational efficiency by first analyzing the full computational graph.
 
 ### General-purpose versus domain-specific workflow engines
 
@@ -318,7 +317,7 @@ heatmap:
   vmax: 1.0
 ```
 
-The only rule shown above is the `all` rule, which takes as its input the correlation figure that is the final output of the workflow.  If snakemake is called and that file already exists, then it won't be rerun (since it's the only requirement for the rule) unless 1) the `--force` flag is included, which forces rerunning the entire workflow, or 2) a rerun is triggered by one of the changes that Snakemake looks for (discussed more below).  If the file doesn't exist, then Snakemake examines the additional rules to determine which steps need to be run in order to generate that output.  In this case, it would start with the rule that generates the correlation figure:
+The only rule shown above is the `all` rule, which takes as its input the correlation figure that is the final output of the workflow.  If snakemake is called and that file already exists, then it won't be rerun (since it's the only requirement for the rule) unless 1) the `--force` flag is included, which forces rerunning the entire workflow, or 2) a rerun is triggered by one of the changes to the input files, parameters, or the code itself.  If the file doesn't exist, then Snakemake examines the additional rules to determine which steps need to be run in order to generate that output.  In this case, it would start with the rule that generates the correlation figure:
 
 ```python
 # Step 5: Generate clustered heatmap
@@ -344,7 +343,7 @@ rule generate_heatmap:
         f"{BASEDIR}/scripts/generate_heatmap.py"
 ```
 
-This step uses the `generate_heatmap.py` script to generate the correlation figure, and it requires the `correlation_matrix.csv` file as input.  Snakemake would then work backward to identify which step is required to generate that file, which is the following:
+This step uses the `generate_heatmap.py` script to generate the correlation figure, and it requires the `correlation_matrix.csv` file as input.  Note that while there is a *conda* directive in this rule, which we will discuss further below, conda is not actually used unless the `--use-conda` flag is provided.  Snakemake would then work backward to identify which step is required to generate that file, which is the following:
 
 ```python
 # Step 4: Compute correlation matrix
@@ -392,7 +391,6 @@ def main():
     print(f"Loaded correlation matrix: {corr_matrix.shape}")
 
     # Generate heatmap
-    output_path.parent.mkdir(parents=True, exist_ok=True)
     generate_clustered_heatmap(
         corr_matrix,
         output_path=output_path,
@@ -503,7 +501,7 @@ Finished jobid: 7 (Rule: download_demographics)
 Complete log(s): .snakemake/log/2025-12-24T081757.266320.snakemake.log
 ```
 
-It's important to know that when snakemake is run, it stores metadata regarding the workflow in a hidden directory called `.snakemake`, including the log file mentioned at the end of the output above.  When debugging it's often useful to remove this directory, as it can carry over hidden state from previous runs that can become confusing. 
+It's important to know that when snakemake is run, it stores metadata regarding the workflow in a hidden directory called `.snakemake`, including the log file mentioned at the end of the output above. This directory can carry over hidden state from previous runs that can become confusing When debugging. It's sometimes useful to remove this directory as a last resort (when the `--force ` and `--cleanup-metadata` are not sufficient). 
 
 One handy feature of snakemake is that, just like `make`, we can give it a specific target file and it will perform only the portions of the workflow that are required to regenerate that specific file. For example, let's say that the file `output/data/demographics.csv` became corrupted and you needed to recreate it.  This could be done using the command:
 
@@ -531,16 +529,16 @@ However, Snakemake checks several features of the workflow (by default) when gen
 
 Snakemake also checks for changes in the details of the software environment, but as of the date of writing this only works for Conda environments.  
 
-As an example, I will first update the modification time of the demographics file from a previous successful run using the `touch` command:
+As an example, I will first update the modification time of the meaningful variables file from a previous successful run using the `touch` command:
 
 ```bash
-➤  ls -l data/meaningful_variables.csv
+➤  ls -l ./output/data/meaningful_variables.csv
 Permissions Size User     Date Modified Name
 .rw-r--r--@ 1.2M poldrack 24 Dec 10:11  data/meaningful_variables.csv
 
-➤  touch data/meaningful_variables.csv
+➤  touch ./output/data/meaningful_variables.csv
 
-➤  ls -l data/meaningful_variables.csv
+➤  ls -l ./output/data/meaningful_variables.csv
 Permissions Size User     Date Modified Name
 .rw-r--r--@ 1.2M poldrack 24 Dec 10:14  data/meaningful_variables.csv
 ```
@@ -563,7 +561,7 @@ join_datasets                      1
 total                              5
 ```
 
-Similarly, Snakemake will rerun the workflow if any of the scripts used to run the workflow are modified.  However, it's important to note that it will not identify changes in the modules that are imported.  In that case you would need to rerun the workflow in order to re-execute the relevant steps.
+Similarly, Snakemake will rerun the workflow if any of the scripts used to run the workflow are modified.  However, it's important to note that it will not identify changes in the modules that are imported.  In that case you would need to rerun the workflow using the `--force` flag in order to re-execute the relevant steps.
 
 ### Reproducible environments with Conda
 
@@ -576,8 +574,8 @@ channels:
 dependencies:
   - numpy=2.4.0
   - pandas=2.3.3
-  - matplotlib==3.10.8
-  - seaborn==0.13.2
+  - matplotlib=3.10.8
+  - seaborn=0.13.2
 ```
 
 When we run the workflow, we will see that snakemake first builds a local conda environment within the working directory. In this case I am running it from a different directory than the source directory, so I need to specify the location of the Snakefile:
@@ -599,11 +597,18 @@ It then uses this environment to execute the code.  It's worth nothing that this
 
 As I discussed in Chapter 2, software containers are increasingly used as a means for creating reproducible software environments. Snakemake has built-in support for the Apptainer container tool, which is available for Linux and installed on most high-performance computing systems, but unfortunately not easily usable on Mac or Windows systems. Here I will show an example of a containerized version of the simple workflow above, running on my local Linux system.
 
-Using containers is easiest if you can find an existing Docker container that contains all of the necessary dependencies for your code.  Fortunately there a large number of containers available via the [Docker Hub](https://hub.docker.com/), and given the simple dependencies that our workflow requires, I was easily able to find [a container](https://hub.docker.com/layers/jupyter/scipy-notebook/x86_64-ubuntu-22.04/images/sha256-3b37958b7b31ce94c3027d7c83c98fc16acfe166fab2de2f62ae54c50e59aed3) containing the necessary packages.  I added this to my `config.yaml` file:
+Using containers is easiest if you can find an existing Docker container that contains all of the necessary dependencies for your code.  Fortunately there is a large number of containers available via the [Docker Hub](https://hub.docker.com/), and given the simple dependencies that our workflow requires, I was easily able to find [a container](https://hub.docker.com/layers/jupyter/scipy-notebook/x86_64-ubuntu-22.04/images/sha256-3b37958b7b31ce94c3027d7c83c98fc16acfe166fab2de2f62ae54c50e59aed3) containing the necessary packages.  I added this to my `config.yaml` file:
 
 ```python
 # Container image (used with --sdm apptainer)
 container: "docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04"
+```
+
+and also added the definition to my `Snakemake` file:
+
+```
+# Container image for all rules (used with --sdm apptainer)
+container: config["container"]
 ```
 
 and then ran the `snakemake` command specifying apptainer as my dependency management system:
@@ -616,7 +621,7 @@ Pulling singularity image docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04.
 ...
 ```
 
-As with conda, it's worth nothing that snakemake will store the singularity image within the .snakemake directory, which can sometimes be quite large; for the Jupyter image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.  
+As with conda, it's worth noting that snakemake will store the singularity image within the .snakemake directory, which can sometimes be quite large; for the Jupyter image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.  
 
 
 ### Best practices for Snakemake workflows
@@ -632,7 +637,7 @@ By default Snakemake looks for a Snakefile in the current directory, so it's tem
         f"scripts/aggregate_results.py"
 ```
 
-Instead, we need to use the `workflow.basedir` prefix, which refers to the directory where the Snakefile is located:
+This happens because relative paths inside the `Snakemake` file are interpreted as relative to the working directory, not the directory where the `Snakemake` file is located.  Instead, we need to use the `workflow.basedir` prefix, which refers to the directory where the Snakefile is located:
 
 ```python
     script:
@@ -646,7 +651,7 @@ There is a [standard format](https://snakemake.readthedocs.io/en/stable/snakefil
 
 #### Snakefile formatting
 
-Snakemake comes with a set of commands that help ensure that Snakemake files are properly formatted and follow best practices.  As I mentioned above, there is a static analysis tool (i.e a "linter", akin to ruff or flake8 for Python code), which can automatically identify problems with Snakemake rule files.  Users of uv should note that this tool assumes that one is using the Conda environment manager or a container, and it raises an issue for any rule that doesn't specify a Conda or container environment. Nonetheless, if those are ignored the linter can be useful in identifying problems. There is also a formatting tool called `snakefmt` (separately installed) that optimally formats Snakemake files in the way that `black` or `blue` format Python code.  These can both be useful tools when developing a new workflow.
+Snakemake comes with a set of commands that help ensure that Snakemake files are properly formatted and follow best practices.  As I mentioned above, there is a static analysis tool (i.e., a "linter", akin to ruff or flake8 for Python code), which can automatically identify syntax errors and logical problems with Snakemake rule files.  Users of uv should note that this tool assumes that one is using the Conda environment manager or a container, and it raises an issue for any rule that doesn't specify a Conda or container environment. Nonetheless, if those are ignored the linter can be useful in identifying problems. There is also a formatting tool called `snakefmt` (separately installed) that optimally formats Snakemake files in the way that `black` or `ruff` format Python code.  These can both be useful tools when developing a new workflow.
 
 #### Configurability
 
@@ -660,7 +665,7 @@ One of the very handy features of Snakemake is its ability to generate reports f
 ➤ uv run snakemake -c 1 --report output/report.html -d output
 ```
 
-This command uses the metadata stored in the .snakemake directory along with details provided in separate report formatting files that are located within the `report` directory alongside the Snakemake file. In order for an output (such as a figure) to be included in the report, it needs to be marked with a `report` flag in the output section of the relevant rule.  For example, to have a correlation heatmap added to the report, I used the following statement:
+This command uses the metadata stored in the .snakemake directory along with details provided in separate report formatting files that are located within the `report` directory alongside the `Snakefile`. In order for an output (such as a figure) to be included in the report, it needs to be marked with a `report` flag in the output section of the relevant rule.  For example, to have a correlation heatmap added to the report, I used the following statement:
 
 ```python
 rule generate_heatmap:
@@ -679,7 +684,7 @@ Running the report generation command generates a single self-contained HTML fil
 
 ### Tracking provenance
 
-As I discussed in the earlier chapter on data management, it is essential to be able to track the provenance of files in a workflow.  That is, how did the file come to be, and what other files did it depend on?  Snakemake stores a substantial amount of metadata that allows us to reconstruct much of the provenance of any file generated by a workflow.  The relevant data are stored within the `.snakamake/metadata` directory, which on first glance seems to contain a bunch of gibberish:
+As I discussed in the earlier chapter on data management, it is essential to be able to track the provenance of files in a workflow.  That is, how did the file come to be, and what other files did it depend on?  Snakemake stores a substantial amount of metadata that allows us to reconstruct much of the provenance of any file generated by a workflow.  The relevant data are stored within the `.snakemake/metadata` directory, which on first glance seems to contain a bunch of gibberish:
 
 ```bash
 ➤  ls .snakemake/metadata
@@ -706,9 +711,9 @@ Out: 'data/meaningful_variables_numerical.csv'
 These files are stored in JSON format and contain a dictionary with relevant information about the provenance of each file:
 
 ```python
-with open(encoded_name) as f:
-    md_dict = json.load(f)
-print(md_dict)
+metadata_path = f".snakemake/metadata/{encoded_name}"
+with open(metadata_path) as f:
+    print(md_dict)
 ```
 ```python
 {'record_format_version': 6,
@@ -738,7 +743,7 @@ As I mentioned in the chapter on data management, there is a emerging standard f
 ➤ uv run python -m makeprov.snakemake --prov-path prov/snakemake -- --snakefile path/to/Snakefile --nolock
 ```
 
-This will generate a file called `prov/snakemake.json` that contains representations of each of the entities and activities in the workflow.  For example, the representation of of the `data/meaningful_variables_numerical.csv` output file would look like this:
+This will generate a file called `prov/snakemake.json` that contains representations of each of the entities and activities in the workflow.  For example, the representation of the `data/meaningful_variables_numerical.csv` output file would look like this:
 
 ```python
     {
@@ -793,7 +798,7 @@ I developed the initial version of this workflow as many researchers would: by c
 
 What I found as I developed the workflow is that I increasingly ran into problems that arose because the state of particular objects had changed.  This occurred for two reasons at different points.  In some cases it occurred because I saved a new version of the object to the same name, resulting in an object with different structure than before.  Second, and more insidiously, it occurred when an object passed into a function is modified by the function internally.  This is known as an *in-place* operation, in which a function modifies an object directly rather than returning a new object that can be assigned to a variable.  
 
-In-place operations can make code particularly difficult to debug in the context of a Jupyter notebook, because it's a case where out-of-order execution can result in very confusing results or errors, since the changes that were made in-place may not be obvious.  For this reason, I generally avoid any kind of in-place operations if possible.  Rather, any functions should immediately create a copy of the object that was passed in, and then do its work on that copy, which is returned at the end of the function for assignment to a new variable.  One can then re-assign it to the same variable name if desired, which is more transparent than an in-place operation but still makes the workflow dependent on the exact state of execution and can lead to confusion when debugging.  Some packages allow a feature called "copy-on-write" which defers actually copying the data in memory until it is actually modified, which can make copying more efficient. 
+In-place operations can make code particularly difficult to debug in the context of a Jupyter notebook, because it's a case where out-of-order execution can result in very confusing results or errors, since the changes that were made in-place may not be obvious.  For this reason, I generally avoid any kind of in-place operations if possible.  Rather, any functions should immediately create a copy of the object that was passed in, and then do its work on that copy, which is returned at the end of the function for assignment to a new variable.  One can then re-assign it to the same variable name if desired, which is more transparent than an in-place operation but still makes the workflow dependent on the exact state of execution and can lead to confusion when debugging.  Some packages allow a feature called "copy-on-write" which defers actually copying the data in memory until it is actually modified, which can make copying more efficient; this feature is becoming the default in `pandas`.
 
 If one must modify objects in-place, then it is good practice to announce this loudly.  The loudest way to do this would be to put "inplace" in the function name. Another cleaner but less loud way is through conventions regarding function naming; for example, in PyTorch it is a convention that any function that ends with an underscore (e.g. `tensor.mul_(x)`) performs an in-place operation whereas the same function without the underscore (`tensor.mul(x)`) returns a new object. Another way that some packages enable explicit in-place operations is through a function argument (e.g. `inplace=True` in pandas), though this is being phased out from many functions in Pandas because "It is generally seen (at least by several pandas maintainers and educators) as bad practice and often unnecessary" ([PDEP-8](https://pandas.pydata.org/pdeps/0008-inplace-methods-in-pandas.html)). 
 
@@ -811,7 +816,7 @@ The first thing we need to do with a large monolithic workflow is to determine h
 - Data filtering (removing subjects or cell types with insufficient observations)
 - Quality control
     - identifying bad cells on the basis of mitochondrial, ribosomal, or hemoglobin genes or hemoglobin contamination
-    - identifying "doublets" (multiple cells identified as one)
+    - identifying "doublets" (two cells captured in a single barcode)
 - Preprocessing
     - Count normalization
     - Log transformation
@@ -820,7 +825,7 @@ The first thing we need to do with a large monolithic workflow is to determine h
 - Dimensionality reduction
 - UMAP generation
 - Clustering
-- Pseudobulking
+- Pseudobulking (aggregating cells within an individual)
 - Differential expression analysis
 - Pathway enrichment analysis (GSEA)
 - Overrepresentation analysis (Enrichr)
@@ -834,9 +839,9 @@ In addition to a conceptual breakdown, there are also other reasons that one mig
 
 ## Resumable workflows
 
-I asked Claude Code to help modularize the monolithic workflow, using a prompt that provided the conceptual breakdown described above.  The resulting code ran correctly, but crashed about two hours into the process due to a resource issue that appeared to be due to asking for too many CPU cores in the differential expression analysis.  This left me in the situation of having to rerun the entire two hours of preliminary workflow simply to get to a point where I could test my fix for the differential expression component, which is not a particularly efficient way of coding.  The problem here is that the workflow execution is *stateful*, in the sense that the previous steps need to be rerun prior to performing the current step in order to establish the required objects in memory.  The solution to this problem is to implement the workflow in a *resumable* way, which doesn't require that earlier steps be rerun if they have already been completed.  One way to do this is by implementing a process called *checkpointing*, in which intermediate results are stored for each step.  These can then be used to start the workflow at any point without having to rerun all of the previous steps.  
+I asked Claude Code to help modularize the monolithic workflow, using a prompt that provided the conceptual breakdown described above.  The resulting code ran correctly, but crashed about two hours into the process due to a resource issue that appeared to be due to asking for too many CPU cores in the differential expression analysis.  This left me in the situation of having to rerun the entire two hours of preliminary workflow simply to get to a point where I could test my fix for the differential expression component, which is not a particularly efficient way of coding.  The problem here is that the workflow execution is *stateful*, in the sense that the previous steps need to be rerun prior to performing the current step in order to establish the required objects in memory.  The solution to this problem is to implement the workflow in a *resumable* way, which doesn't require that earlier steps be rerun if they have already been completed.  One way to do this is by implementing a process called *checkpointing*, in which the intermediate state is stored for each step.  These can then be used to start the workflow at any point without having to rerun all of the previous steps.  
 
-Another important feature of a workflow related to resumability is *idempotency*, which means that a workflow will result in the same answer when run multiple times.  This is related to, but not the same as, the idea of resumability.  For example, a resumable workflow that saves its outputs to checkpoint files could fail to be idempotent if the results were appended to the output file with each execution, rather than overwriting them.  This would result in different outputs depending on how many times the workflow has been executed.  Thus, when we use checkpointing we should be sure to either reuse the existing file or rewrite it completely with a new version.
+Another important feature of a workflow related to resumability is *idempotency*, which means that a workflow will result in the same answer when run multiple times.  This is related to, but not the same as, the idea of resumability.  For example, a resumable workflow that saves its outputs to cache files could fail to be idempotent if the results were appended to the output file with each execution, rather than overwriting them.  This would result in different outputs depending on how many times the workflow has been executed.  Thus, when we use caching we should be sure to either reuse the existing file or rewrite it completely with a new version.
 
 When it comes to building a resumable workflow, there are two options:
 
@@ -882,19 +887,19 @@ I asked Claude to fix this, and it returned the following change:
 >  4. Set NUMBA_NUM_THREADS and OMP_NUM_THREADS environment variables in dimred.py
 >  In contrast, tasks run in the main process have access to all CPUs by default, which is why it was faster.
 
-This solves the problem but it's a brittle solution: in particular, it will probably fail if there are fewer than 8 threads available on the system and it won't take advantage of more than 8 if they are available. Snakemake actually take a command line argument (`--cores`) to specify the number of cores to use, so I instead asked Claude to have Snakemake use the number of cores specified at the command line rather than an arbitrary number that might not be optimal. We will discuss optimization in much greater detail in a later chapter, but whenever a pipeline takes much longer to run using a workflow manager than one would expect, it's likely that there is optimization to be done.
+This involved creating rules like this one:
 
-I opted to add a command to the Makefile for this project which can automatically determine the number of cores on my machine (Linux or Mac), and use all but one of the cores for my process:
-
-```Makefile
-# get ncores - 1 on mac or linux
-CORES := $(shell echo $$(( $$(nproc 2>/dev/null || sysctl -n hw.ncpu) - 1 )))
+```python
+rule dimensionality_reduction:
+...
+    threads: 8
 ```
 
+The `dimred.py` script then uses the `snakemake.threads` variable to set the relevant environment variables. This rule defines the ideal situation: that is, what is the maximum number of threads that our code can take advantage of?  In general a number from 4-8 is optimal here, given the overhead that comes with multithreading (as we will discuss further in the later chapter on Performance).  While this might seem problematic (e.g., what if there are only four cores available?), Snakemake deals with it gracefully.  If there are more cores available than the limit, then Snakemake will (if appropriate) spawn multiple processes in parallel. If there are fewer than the number requested, it will simply use what is available. There is a separate command line argument to Snakemake (`--cores`) that specifies the maximum number of cores that can be utilized on the computer.   
 
 #### Parametric sweeps
 
-A common pattern in some computational research domains is the *parametric sweep*, where a workflow is run using a range of values for specific parameters in the workflow.  A key to successful execution of parametric sweeps is proper organization of the outputs so that they can be easily processed by downstream tools.  Snakemake provides the ability to easily implement parametric sweeps simply by specifying a list of parameter values in the configuration file.  For example, let's say that we wanted to assess predctive accuracy using several values of the regularization parameter (known as *alpha*) for a ridge regression model.  We could first specify a setting within our `config.yaml` file containing these values:
+A common pattern in some computational research domains is the *parametric sweep*, where a workflow is run using a range of values for specific parameters in the workflow.  A key to successful execution of parametric sweeps is proper organization of the outputs so that they can be easily processed by downstream tools.  Snakemake provides the ability to easily implement parametric sweeps simply by specifying a list of parameter values in the configuration file.  For example, let's say that we wanted to assess predictive accuracy using several values of the regularization parameter (known as *alpha*) for a ridge regression model.  We could first specify a setting within our `config.yaml` file containing these values:
 
 ```python
 ridge_alpha:
@@ -908,7 +913,7 @@ We would then add wildcards to the inputs and/or outputs for the relevant rules,
 ```python
 rule all:
     input:
-        expand("results/ridge/alpha_{param}/metrics.json",
+        expand("results/ridge/alpha_{param}/model.pkl",
                param=config["ridge_alpha"])
 
 rule train:
@@ -920,7 +925,7 @@ rule train:
         "python train.py --model ridge --param {wildcards.param} -o {output}"
 ```
 
-It is also possible to generate parameters based on earlier steps in the workflow. In our RNA-seq workflow, we determine in an earlier step which specific cell types to include, based on their prevalence in the dataset.  These cell types are then used to run the per-cell-type analyses in a later step, executing the same enrichment and pathway analyses on each of the selected cell types.
+It is also possible to generate parameters based on earlier steps in the workflow. In our RNA-seq workflow, we determine in an earlier step which specific cell types to include, based on their prevalence in the dataset.  These cell types are then used to run the per-cell-type analyses in a later step, executing the same enrichment and pathway analyses on each of the selected cell types.  This kind of data-dependent computational graph requires the use of the advanced checkpointing features in Snakemake.  
 
 One could certainly perform the parametric sweep outside of the workflow engine (e.g. by running several snakemake jobs for each set of values or by looping over the values within the main job script rather than at the workflow layer). However, there are several advantages to doing it within a coherent workflow. First, it ensures that all of the runs are performed using exactly the same software environment and workflow.  If the different parameter settings were run in different workflows, then it is possible that the software environment could change between runs, so one would need to do additional validation to ensure that it was identical across runs.  Second, it maximizes the use of system resources, since the workflow manager can optimally split the work across the available number of cores/threads.  Running multiple snakemake jobs at once has the potential to request more threads than available, which can sometimes substantially reduce performance; doing this effectively requires manually managing system resources which can require substantial effort.  Third, it enables the use of values from earlier workflow steps to determine the parameters for sweeping at later layers, as in the cell-type example above.  Finally, it makes incremental changes easy and economical; if one additional value of the parameter is added, Snakemake will only run the computations for the new value.  
 
@@ -940,7 +945,7 @@ I will leave the question of analytic accuracy to be addressed in the following 
 
 ### Generating tests using AI agents
 
-Because I didn't use test-driven development to generate this workflow, I was faced with the task of having to generate a substantial amount of testing code for the completed workflow. To get a feel for the scale, the source code for our RNA-seq analysis contained 83 functions defined across 13 files.  In total these files included 3,239 lines, but there are actually many fewer lines of code, since many lines are blank or contain comments.  In addition many individual commands are split across lines to increase readability.  Using the [radon](https://radon.readthedocs.io/en/latest/) package for source code analysis, we can compute the *logical lines of code*, which is the number of unique commands:
+Because I didn't use test-driven development to generate this workflow, I was faced with the task of having to generate a substantial amount of testing code for the completed workflow. To get a feel for the scale, the source code for our RNA-seq analysis contained 83 functions defined across 13 files.  In total these files included 3,239 lines, but there are actually many fewer lines of code, since many lines are blank or contain comments.  In addition many individual commands are split across lines to increase readability.  Using the [radon](https://radon.readthedocs.io/en/latest/) package for source code analysis, we can compute the *logical lines of code*, which is the number of executable statements:
 
 ```bash
 ➤  uv run radon raw *.py | awk '/LLOC:/ {sum += $2} END {print sum}'
@@ -970,7 +975,8 @@ This dataset should be saved to tests/data/testdata.h5ad.
 - Think about the problem before generating code.
 - Write code that is clean and modular. Prefer shorter functions/methods over longer ones.
 - Prefer reliance on widely used packages (such as numpy, pandas, and scikit-learn); avoid unknown packages from Github.
-- Do not include *any* code in `__init__.py` files.- Use pytest for testing.
+- Do not include *any* code in `__init__.py` files.
+- Use pytest for testing.
 - Use functions rather than classes for tests. Use pytest fixtures to share resources between tests.
 ```
 
@@ -995,10 +1001,9 @@ Because AI agents have a strong tendency to generate tests that pass, they will 
 The `use_rep` variable contains "X_pca_harmony" if the `harmonypy` package is installed and successfully applied to the data, otherwise it falls back on standard PCA and sets `use_rep` to "X_pca".  But it's clear here that this package only checks for the harmony embedding in the case that it was successfully created ('if use_rep == "X_pca_harmony"'), in which case it makes sure that it is present in the dataset and has the right shape. Thus, the test could pass even if the harmony embedding was not successfully created.  Here is the improved version to address this issue:
 
 ```python
-    def test_creates_harmony_embedding(self, adata_with_pca, harmonypy_available):
+    def test_creates_harmony_embedding(self, adata_with_pca):
         """Test that Harmony creates a new embedding with correct shape."""
-        if not harmonypy_available:
-            pytest.skip("harmonypy not installed")
+        pytest.importorskip("harmonypy")
 
         adata, use_rep = run_harmony_integration(adata_with_pca.copy())
 
@@ -1032,22 +1037,22 @@ Pseudobulking is an operation that should summarize all cells of a given type fo
 
 #### Lessons learned about reviewing AI-generated tests
 
-These examples highlight the need to closely examine the test code that is generated by AI agents.  However it's worth nothing that although it took a significant amount of human time to read over the AI-generated tests, the time spent was still far less than if I had undertaking writing the test code without AI assistance, and Claude was also able to fix all of the issues to my satisfaction after I raised them.  
+These examples highlight the need to closely examine the test code that is generated by AI agents.  However it's worth noting that although it took a significant amount of human time to read over the AI-generated tests, the time spent was still far less than if I had undertaken writing the test code without AI assistance, and Claude was also able to fix all of the issues to my satisfaction after I raised them.  
 
 My examination of the AI-generated code highlighted a number of failure points that one should look for when reviewing AI-generated test code:
 
 - *Weak assertions*: In many cases there were assertions present that would have passed even if the function did not give an appropriate result. There were in effect functioning more like *smoke tests* (i.e. testing whether the function runs without crashing) rather than unit tests that are meant to test whether the function returns the proper kinds of outputs.  It's important to understand what the function's intended output is, and make sure that the actual output matches that intention.
 - *Testing for changes*: When data go into a function, we generally expect the output to be changed in some way.  It's important to test specifically whether the intended changes were made.
-- *Numerical precision*: One of these tests initially failed because it was comparing equality of two very large numbers (93483552 vs 93483547), which differed due to floating point errors.  It is important to test equality of floating point numbers using a method that allows for some degree of tolerance, though this can be tricky to calibrate in a way that catches real errors but avoids spurious errors.  
+- *Numerical precision*: One of these tests initially failed because it was comparing equality of two very large numbers (93483552 vs 93483547), which differed due to floating point errors.  It is important to test equality of floating point numbers using a method that allows for some degree of tolerance (e.g. `pytest.approx()`), though this can be tricky to calibrate in a way that catches real errors but avoids spurious errors.  
 - *Coverage gaps*: The initial test set for this project had no tests for one of the modules, and other modules with significant portions untested.  I was able to improve this by having Claude Code analyze the code coverage report and identify important parts of the code that were not currently covered, which moved the test coverage from 69% to 88% of the 870 statements in the code that were identified by the `coverage` tool.
 - *Checking for non-critical dependencies*: In many cases the code will simply crash when a dependency is missing, but in some cases (as in the harmony example above), code may modify its behavior depending on the presence or absence of a particular dependency.  If the use of a particular dependency is critical to the workflow (as it was for this one) then it's important to check for those dependencies and make sure that they work properly.
 - *Outdated APIs*: In a couple of cases, the initial tests used calls to external package functions that were now deprecated.  This is hard to avoid given that the knowledge base of LLMs often lags many months behind current software, but adding `-W error::FutureWarning` to one's `pytest` commands can help identify features that are currently allowed but will be deprecated in the future.  In some cases there may be such errors that occur within an external package, in which case one may simply need to set the warning to be ignored (using `@pytest.mark.filterwarnings`) since it can't be fixed by the user.
 
 #### Property-based testing for workflows
 
-The tests initially developed for this workflow were built around the known characteristics of the expected data. However, there are many "unknown unknowns" when it comes to input data, and it's important to make sure that the code deals gracefully with problematic inputs. We can test this using a *property-based testing* approach; as I discussed in Chapter 4, this involves the generation of many different datasets that vary, and checking whether the code deals with them appropriately.  When asked to identify plausible candidates for property-based testing, it generated [tests](https://github.com/BetterCodeBetterScience/example-rnaseq/blob/main/tests/test_hypothesis.py) centered on several different properties:
+The tests initially developed for this workflow were built around the known characteristics of the expected data. However, there are many "unknown unknowns" when it comes to input data, and it's important to make sure that the code deals gracefully with problematic inputs. We can test this using a *property-based testing* approach; as I discussed in Chapter 4, this involves the generation of many different datasets that vary, and checking whether the code deals with them appropriately.  When I asked the coding agent to identify plausible candidates for property-based testing using the Hypothesis package, it generated [tests](https://github.com/BetterCodeBetterScience/example-rnaseq/blob/main/tests/test_hypothesis.py) centered on several different properties:
 
-- Proper parsing of a range of filenames for the BIDS format parser used in checkpointing
+- Proper parsing of a range of filenames for the BIDS format parser used in caching
 - Consistency of hashing operations
 - Proper JSON serialization of a range of values
 - Proper processing of input lists with a range of inputs

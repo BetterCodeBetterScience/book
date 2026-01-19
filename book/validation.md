@@ -189,12 +189,12 @@ def generate_data(model, noise_sd=1, tslength=500, seed=42, coef=0.5, ar_param=0
     # Prepare data for tigramite
     return DataFrame(data), index_to_node
 
-# we will need the indx_to_node mapping later
-ecoli_dataframe, index_to_node = generate_data(ecoli_model, noise_sd=1, 
+# we will need the index_to_node mapping later
+ecoli_dataframe, _, index_to_node = generate_data(ecoli_model, noise_sd=1, 
     tslength=500, seed=42)
 ```
 
-Now that we have the dataset we can test out our estimation method. Since I don't actually have a new method for causal estimation on timeseries, I will instead use the PCMCI method described by [@#Runge:2019aa] and implemented in the `tigramite` package:
+Now that we have the dataset we can test out our estimation method. Since I don't actually have a new method for causal estimation on timeseries, I will instead use the PCMCI method described by [@Runge:2019aa] and implemented in the `tigramite` package:
 
 ```python
 from tigramite.pcmci import PCMCI
@@ -275,7 +275,7 @@ False Discovery Rate: 19.54%
 F1 Score: 89.17%
 ```
 
-The results showed that the model performed quite well, detecting all of the true relationships and only two false relationships.  In general we would want to do additional validation to make sure that the results behave in the way that we expect. For example, we would expect better model performance with more data, and we would expect fewer nodes identified when the p-value threshold is more stringent.  We can use the functions generated above to run a simulation of this:
+The results showed that the model performed quite well, detecting all of the true relationships and only two false relationships.  In general we would want to do additional validation to make sure that the results behave in the way that we expect. For example, we would expect better model performance with stronger signal, and we would expect fewer nodes identified when the p-value threshold is more stringent.  We can use the functions generated above to run a simulation of this:
 
 ```python
 # loop over signal levels and q values to see effect on performance

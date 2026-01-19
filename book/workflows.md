@@ -237,7 +237,7 @@ Saved heatmap to output/figures/correlation_heatmap.png
 ```
 
 
-We could also take advantage of another feature of `make`: it only triggers the action if a file with the name of the action doesn't exist.  Thus, if the command was `make results/output.txt`, then the action would only be triggered if the file does not exist.  This is why we had to put the `.PHONY` command in the makefile above: it's telling `make` that those are not meant to be interpreted as file names, but rather as commands, so that they will be run even if files named "all" or "clean" exist.
+We could also take advantage of another feature of `make`: it only triggers the action if a file with the name of the action doesn't exist, or if the existing file is not newer than its dependencies.  Thus, if the command was `make results/output.txt`, then the action would only be triggered if the file does not exist or if it was older than the inputs.  This is why we had to put the `.PHONY` command in the makefile above: it's telling `make` that those are not meant to be interpreted as file names, but rather as commands, so that they will be run even if files named "all" or "clean" exist.
 
 For many simple workflows `make` can be a perfectly sufficient solution to workflow management, but we will see below why it's not sufficient to manage a complex workflow.  For those workflows we could either build our own more complex workflow management system, or we could use an existing software tool that is built to manage workflow execution, known as a *workflow engine*.  In general I prefer to use an existing solution unless it doesn't solve my problem, so I will now turn to discussing packages for workflow management.
 
@@ -501,7 +501,7 @@ Finished jobid: 7 (Rule: download_demographics)
 Complete log(s): .snakemake/log/2025-12-24T081757.266320.snakemake.log
 ```
 
-It's important to know that when snakemake is run, it stores metadata regarding the workflow in a hidden directory called `.snakemake`, including the log file mentioned at the end of the output above. This directory can carry over hidden state from previous runs that can become confusing When debugging. It's sometimes useful to remove this directory as a last resort (when the `--force ` and `--cleanup-metadata` are not sufficient). 
+It's important to know that when snakemake is run, it stores metadata regarding the workflow in a hidden directory called `.snakemake`, including the log file mentioned at the end of the output above. This directory can carry over hidden state from previous runs that can become confusing when debugging. It's sometimes useful to remove this directory as a last resort (when the `--force ` and `--cleanup-metadata` are not sufficient). 
 
 One handy feature of snakemake is that, just like `make`, we can give it a specific target file and it will perform only the portions of the workflow that are required to regenerate that specific file. For example, let's say that the file `output/data/demographics.csv` became corrupted and you needed to recreate it.  This could be done using the command:
 
@@ -606,7 +606,7 @@ container: "docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04"
 
 and also added the definition to my `Snakemake` file:
 
-```
+```python
 # Container image for all rules (used with --sdm apptainer)
 container: config["container"]
 ```
@@ -621,7 +621,7 @@ Pulling singularity image docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04.
 ...
 ```
 
-As with conda, it's worth noting that snakemake will store the singularity image within the .snakemake directory, which can sometimes be quite large; for the Jupyter image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.  
+As with conda, it's worth noting that Snakemake will store the Apptainer image within the `.snakemake` directory, which can sometimes be quite large; for the Jupyter image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.  
 
 
 ### Best practices for Snakemake workflows
@@ -630,14 +630,14 @@ The Snakemake team has published a set of [best practices](https://snakemake.rea
 
 #### Using a working directory
 
-By default Snakemake looks for a Snakefile in the current directory, so it's tempting to run the workflow from the code repository.  However, Snakemake creates a directory called `.snakemake` to store metadata in the directory where the workflow is run, which one generally doesn't want to mix with the code.  Thus, it's best to run the command using the `--snakefile` directive to point to the `Snakefile` located in the code directory, and setting the working directory to the intended output directory using the `-d` flag. This will fail if you run the command from a location other than the source folder but the paths in the snakemake rules are specified using relative paths, like this:
+By default Snakemake looks for a `Snakefile` in the current directory, so it's tempting to run the workflow from the code repository.  However, Snakemake creates a directory called `.snakemake` to store metadata in the directory where the workflow is run, which one generally doesn't want to mix with the code.  Thus, it's best to run the command using the `--snakefile` directive to point to the `Snakefile` located in the code directory, and setting the working directory to the intended output directory using the `-d` flag. This will fail if you run the command from a location other than the source folder if the paths in the snakemake rules are specified using relative paths, like this:
 
 ```python
     script:
         f"scripts/aggregate_results.py"
 ```
 
-This happens because relative paths inside the `Snakemake` file are interpreted as relative to the working directory, not the directory where the `Snakemake` file is located.  Instead, we need to use the `workflow.basedir` prefix, which refers to the directory where the Snakefile is located:
+This happens because relative paths inside the `Snakefile` are interpreted as relative to the working directory, not the directory where the `Snakefile` is located.  Instead, we need to use the `workflow.basedir` prefix, which refers to the directory where the `Snakefile` is located:
 
 ```python
     script:
@@ -665,7 +665,7 @@ One of the very handy features of Snakemake is its ability to generate reports f
 ➤ uv run snakemake -c 1 --report output/report.html -d output
 ```
 
-This command uses the metadata stored in the .snakemake directory along with details provided in separate report formatting files that are located within the `report` directory alongside the `Snakefile`. In order for an output (such as a figure) to be included in the report, it needs to be marked with a `report` flag in the output section of the relevant rule.  For example, to have a correlation heatmap added to the report, I used the following statement:
+This command uses the metadata stored in the `.snakemake` directory along with details provided in separate report formatting files that are located within the `report` directory alongside the `Snakefile`. In order for an output (such as a figure) to be included in the report, it needs to be marked with a `report` flag in the output section of the relevant rule.  For example, to have a correlation heatmap added to the report, I used the following statement:
 
 ```python
 rule generate_heatmap:
@@ -839,7 +839,7 @@ In addition to a conceptual breakdown, there are also other reasons that one mig
 
 ## Resumable workflows
 
-I asked Claude Code to help modularize the monolithic workflow, using a prompt that provided the conceptual breakdown described above.  The resulting code ran correctly, but crashed about two hours into the process due to a resource issue that appeared to be due to asking for too many CPU cores in the differential expression analysis.  This left me in the situation of having to rerun the entire two hours of preliminary workflow simply to get to a point where I could test my fix for the differential expression component, which is not a particularly efficient way of coding.  The problem here is that the workflow execution is *stateful*, in the sense that the previous steps need to be rerun prior to performing the current step in order to establish the required objects in memory.  The solution to this problem is to implement the workflow in a *resumable* way, which doesn't require that earlier steps be rerun if they have already been completed.  One way to do this is by implementing a process called *checkpointing*, in which the intermediate state is stored for each step.  These can then be used to start the workflow at any point without having to rerun all of the previous steps.  
+I asked Claude Code to help modularize the monolithic workflow, using a prompt that provided the conceptual breakdown described above.  The resulting code ran correctly, but crashed about two hours into the process due to a resource issue that appeared to be due to asking for too many CPU cores in the differential expression analysis.  This left me in the situation of having to rerun the entire two hours of preliminary workflow simply to get to a point where I could test my fix for the differential expression component, which is not a particularly efficient way of coding.  The problem here is that the workflow execution is *stateful*, in the sense that the previous steps need to be rerun prior to performing the current step in order to establish the required objects in memory.  The solution to this problem is to implement the workflow in a *resumable* way, which doesn't require that earlier steps be rerun if they have already been completed.  One way to do this is by implementing a process called *checkpointing*, in which the intermediate state is stored for each step.  These checkpoint files can then be used to start the workflow at any point without having to rerun all of the previous steps.  
 
 Another important feature of a workflow related to resumability is *idempotency*, which means that a workflow will result in the same answer when run multiple times.  This is related to, but not the same as, the idea of resumability.  For example, a resumable workflow that saves its outputs to cache files could fail to be idempotent if the results were appended to the output file with each execution, rather than overwriting them.  This would result in different outputs depending on how many times the workflow has been executed.  Thus, when we use caching we should be sure to either reuse the existing file or rewrite it completely with a new version.
 
@@ -848,7 +848,7 @@ When it comes to building a resumable workflow, there are two options:
 - Build it from scratch
 - Use an existing workflow engine
 
-While there may sometimes be good reasons to build a workflow from scratch (and I actually do so in developing this chapter: see [here](https://github.com/BetterCodeBetterScience/example-rnaseq/blob/main/stateless_workflow/run_workflow.py)), one's first inclination should always be to see whether there is an existing tool that can solve the problem.
+While there may sometimes be good reasons to build a workflow from scratch (and I actually do so in developing this chapter: see [here](https://github.com/BetterCodeBetterScience/example-rnaseq/blob/main/checkpointed_workflow/run_workflow.py)), one's first inclination should always be to see whether there is an existing tool that can solve the problem.
 
 ### Managing a complex workflow with Snakemake
 
@@ -874,7 +874,7 @@ include: "rules/per_cell_type.smk"
 
 #### Pipeline optimization
 
-The first time that I ran this workflow using snakemake, I noticed that it was substantially slower than when I ran it using the custom workflow engine.  When I asked Claude about this, it gave me a reasonable answer:
+The first time that I ran this workflow using Snakemake, I noticed that it was substantially slower than when I ran it using the custom workflow engine.  When I asked Claude about this, it gave me a reasonable answer:
 
 > The Snakemake rules don't specify a threads directive. By default, Snakemake runs each job with 1 thread, which limits parallelization of computationally intensive operations like neighbor computation and UMAP (which use numba internally).
 
@@ -982,9 +982,9 @@ This dataset should be saved to tests/data/testdata.h5ad.
 
 Claude Code took about 20 minutes to generate an entire test framework for the code, comprising 215 test functions and 19 test fixtures.  Interestingly, Claude disregarded my instructions to use functions rather than classes for tests, generating 78 test classes.  While I usually prefer tests to be in pure functions rather than classes so that novices can more easily understand them, I decided in this case to stay with the class-based implementation since I don't mind it and it does make the organization of the tests a bit cleaner. 
 
-Because it is essential for AI-generated tests to be assessed by a knowledgeable human, I proceeded to read all of the tests that had been generated by Claude.  Fortunately they were all easily readable and clearly named, which made it relatively easy to see some potential problems right away. Several kinds of issues arose:
-
 #### Avoiding the happy path
+
+Because it is essential for AI-generated tests to be assessed by a knowledgeable human, I proceeded to read all of the tests that had been generated by Claude.  Fortunately they were all easily readable and clearly named, which made it relatively easy to see some potential problems right away. Several kinds of issues arose.
 
 Because AI agents have a strong tendency to generate tests that pass, they will sometimes miss potential problems - this is commonly referred to as following the "happy path". Several of the tests performed very minimal checking of outputs that would miss potential problems.  For example, it generated the following test which, according to its name, should test whether a PCA embedding is generated using the `harmonypy` package:
 

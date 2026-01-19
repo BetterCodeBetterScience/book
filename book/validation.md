@@ -7,14 +7,16 @@ So far I have focused very heavily on *reproducibility*, that is, the ability to
 Creating simulations is perhaps the most important tool that computers offer the scientist, as captured in a well-worn quote by [@Press:1992]:
 
 > offered the choice between mastery of a five-foot shelf of analytical statistics books
-and middling ability a tperforming statistical Monte Carlo simulations, we would surely
+and middling ability at performing statistical Monte Carlo simulations, we would surely
 choose to have the latter skill. (p.691)
 
-Simulations are indeed a powerful way to understand a system even when it's not analytically tractable.  My previous book, *Statistical Thinking* [@Poldrack:2023stats], gives an [overview](https://statsthinking21.github.io/statsthinking21-core-site/resampling-and-simulation.html) of how to use simulations in the context of statistics; here I will focus primarily on the use of simulation in the context of software validation, but I recommend that book for background reading if you aren't already familiar with the concept of a statistical distribution.
+Simulations are indeed a powerful way to understand a system even when it's not analytically tractable.  More importantly, they are the only way that we can establish *ground truth* against which we can compare our models.  As scientists we never know the true process that generates our data, but with simulations we can have complete control over the data generation process.
+
+My previous book, *Statistical Thinking* [@Poldrack:2023stats], gives an [overview](https://statsthinking21.github.io/statsthinking21-core-site/resampling-and-simulation.html) of how to use simulations in the context of statistics; here I will focus primarily on the use of simulation in the context of software validation, but I recommend that book for background reading if you aren't already familiar with the concept of a statistical distribution.
 
 ### Generating random numbers
 
-The most fundamental requirement in nearly any simulation is the ability to generate random numbers.[^1]. What makes a series of numbers *random* is that it is impossible (or at least nearly impossible) to predict the next value in the series.  Random numbers are defined by the *distribution* that characterizes them, which is a mathematical function that describes the "shape" of the data when they are summarized according to the relative frequency of different ranges of values.  Picking the correct distribution is essential to ensure that any simulation performs as advertised.  Fortunately, there are lots of existing packages that provide tools to generate random numbers for nearly any distribution; we will focus on the `numpy` package here since it is the most commonly used.
+The most fundamental requirement in nearly any simulation is the ability to generate random numbers.[^1] What makes a series of numbers *random* is that it is impossible (or at least nearly impossible) to predict the next value in the series.  Random numbers are defined by the *distribution* that characterizes them, which is a mathematical function that describes the "shape" of the data when they are summarized according to the relative frequency of different ranges of values.  Picking the correct distribution is essential to ensure that any simulation performs as advertised.  Fortunately, there are lots of existing packages that provide tools to generate random numbers for nearly any distribution; we will focus on the `numpy` package here since it is the most commonly used.
 
 
 The simplest distribution is the *uniform* distribution, in which any possible value within a particular range has the same probability of occurring.  We can generate uniform random variates by first creating a random number generator object using `np.random.default_rng()`, and then calling `rng.uniform()` which returns random samples from the distribution:
@@ -38,7 +40,7 @@ In this case, `rng.uniform()` by default generates floating point values that fa
 Distribution plots for 1,000,000 random samples from each of six different distributions.
 ```
 
-For purposes of reproducibility it's often useful to be able to regenerate exactly the same series of random samples, which can be done by specifying a *random seed*, which gives the random number generating a starting point. If you are going to do simulations then it is important to understand the the specific random number generator that your code will use.  [This blog post](https://web.archive.org/web/20250711110016/https://blog.scientific-python.org/numpy/numpy-rng/) provides an excellent introduction to the Numpy random generation system; here I will only give a brief overview. Previously it was common to use the global Numpy random seed function (`np.random.seed()`) to set the seed, and this is still necessary when using packages that access the global random number generator. However, the best practice is to generate a random number generator object (using `np.random.default_rng()`), and then call the methods of that object to obtain random numbers, as I did above.  This prevents surprises in case other functions modify the global seed, helps isolate your specific generator, and enables multiple parallel generators.  Here is an example:
+For purposes of reproducibility it's often useful to be able to regenerate exactly the same series of random samples, which can be done by specifying a *random seed*, which gives the random number generating a starting point. If you are going to do simulations then it is important to understand the specific random number generator that your code will use.  [This blog post](https://web.archive.org/web/20250711110016/https://blog.scientific-python.org/numpy/numpy-rng/) provides an excellent introduction to the Numpy random generation system; here I will only give a brief overview. Previously it was common to use the global Numpy random seed function (`np.random.seed()`) to set the seed, and this is still necessary when using packages that access the global random number generator. However, the best practice is to generate a random number generator object (using `np.random.default_rng()`), and then call the methods of that object to obtain random numbers, as I did above.  This prevents surprises in case other functions modify the global seed, helps isolate your specific generator, and enables multiple parallel generators.  Here is an example:
 
 ```python
 rng = np.random.default_rng(seed=42)
@@ -85,25 +87,27 @@ Choosing the right distribution for a simulation often comes down to understandi
     - Examples: Whether a patient responds to a given treatment, whether a hard drive fails within a particular period of time.
 - *Binomial*: This generates a number of successes across a specific number of Bernoulli trials, given a probability of a positive outcome.  
     - Examples: The number of patients who respond to treatment in a clinical trial treatment group, the number of hard drives that fail within a particular period of time at a particular data center
-- *Categorical* (or *Discrete*): A distribution with several distinct possible outcomes, each of which has a particular probability:
+- *Categorical*: A distribution with several distinct possible outcomes, each of which has a particular probability:
     - Examples: Eye color across a population, programming languages used by programmers in a company
-- *Multinomial*: A multivarite generalization of the binomial, representing the counts of multiple possible outcomes across a set of independent trials with fixed probabilities of each outcome.
+- *Uniform*: A specific form of a discrete categorical variable with equal probability
+    - Examples: equiprobable physical outcomes such as a dice roll.
+- *Multinomial*: A multivariate generalization of the binomial, representing the counts of multiple possible outcomes across a set of independent trials with fixed probabilities of each outcome.
     - Examples: Frequencies of types of stars in a galaxy, frequencies of cell types in a tissue sample
 
 *Continuous outcomes*:
 
-- *Uniform*: A distribution with equal probability for all possible values within the range.
-    - Examples: probabilities of events when there is no prior knowledge, equiprobable physical outcomes such as a dice roll.
+- *Uniform*: A distribution with equal probability density for all values within the range.
+    - Examples: probabilities of events when there is no prior knowledge, equiprobable continuous physical outcomes
 - *Beta*: A generalization of the uniform distribution that models the probability of values within a range but allows different values to have different probabilities.
     - Examples: Prior probabilities in a Bayesian model, proportions of time spent in a particular state.
-- *Normal* (or *Gaussian*): A symmetric distribution centered around a mean, which commonly arises when an outcome is generated based on many small additive contributions. The Central Limit Theorem explains why this occurs so frequently, as it should be arise for sums random variables sampled from *any* distribution, as long as the sample size is large enough and the distribution has finite variance.
+- *Normal* (or *Gaussian*): A symmetric distribution centered around a mean, which commonly arises when an outcome is generated based on many small additive contributions. The Central Limit Theorem explains why this occurs so frequently, as it should arise for sums of independent random variables sampled from *any* distribution, as long as the sample size is large enough and the distribution has finite variance.
     - Examples: Height of individuals in a population, measurement errors for continuous variables
 - *Log-normal*:  Distribution of positive continuous values whose logarithm is normally distributed.  It reflects the expected values of a product of independent random variables.
-    - Wealth and income distributions in a population, biological growth processes
+    - Examples: Wealth and income distributions in a population, biological growth processes
 
 *Count data*:
 
-- *Poisson*: This is a distribution of counts of events within a fixed interval assuming that the events are independent and occur at a constant rate. Unlike the binomial there is no limit on the number of events that can occur, and it is the limiting case of the Binomial when the sample size approaches infinity and the probability approaches zero.
+- *Poisson*: This is a distribution of counts of events within a fixed interval assuming that the events are independent and occur at a constant rate. Unlike the binomial there is no limit on the number of events that can occur, and it is the limiting case of the Binomial when the sample size $n$ approaches infinity and the probability $p$ approaches zero (and $n * p$ remains constant).
     - Examples: The number of atoms decaying within a particular period, the number of emails that a person receives within a day
 - *Negative binomial*: A distribution that models count data that are *overdispersed*, meaning that their variance is greater than their mean.  It can also be interpreted as representing the number of failures that occur before a given number of successes.
     - Example: Commonly used in genomics to model read counts in genomic sequencing.
@@ -120,7 +124,7 @@ It is essential to choose the right distributions for a simulation; otherwise th
 
 In some cases, we want to simulate data that have particular structure in order to test whether our code can properly identify the structure in the data. Depending on the kind of structure one needs to create, there are often existing tools that can help generate the data.  For example, the `scikit-learn` package has a large number of [data generators](https://scikit-learn.org/stable/api/sklearn.datasets.html#sample-generators) that are often useful, either on their own or as a starting point to develop a custom generator.  Similarly, the `networkx` graph analysis package has a large number of [graph generators](https://networkx.org/documentation/stable/reference/generators.html) available.  
 
-Let's say that we have developed a tool that implements a novel method for the discovery of causal relationships from timeseries data.  We would like to generate data from a known causal graph (which is represented as a directed acyclic graph, just like our workflow graphs in the previous chapter). For this, we can use an existing graph; I chose one based on a dataset of gene expression in E. coli bacteria which was generated by [@Schafer:2005aa] and is shared via the `pgmpy` package:
+Let's say that we have developed a tool that implements a novel method for the discovery of causal relationships from timeseries data.  We would like to generate data from a known causal graph (which is represented as a directed acyclic graph, just like our workflow graphs in the previous chapter). For this, we can use an existing graph; I chose one based on a dataset of gene expression in E. coli bacteria which was used by [@Schafer:2005aa] and is shared via the `pgmpy` package:
 
 ```python
 from IPython.display import Image
@@ -148,9 +152,9 @@ A plot of the graphical model for the E. Coli gene expression data generated by 
 Given this DAG, we then need to generate timeseries data for expression of each gene that reflect the causal relationships between the genes as well as the autocorrelation in gene expression within genes measured over time.  For this, we turn to the `tigramite` package, which is primarily focused on causal discovery from timeseries data, but also includes a function that can generate timeseries data given a graphical model.  However, the `tigramite` package requires a different representation of the graphical model than the one obtained from `pgmpy`, so we have to convert the edge representation from the original to the link format required for `tigramite`:
 
 ```python
-def generate_links_from_pgmpy_model(model, noise_sd=1.0, coef=0.5, ar_param=0.6):
+def generate_links_from_pgmpy_model(model, coef=0.5, ar_param=0.6):
     nodes, edges = model.nodes(), model.edges()
-    noise_func = lambda x: x + norm.rvs(scale=noise_sd)
+    noise_func = lambda x: x 
     links = {}
 
     # create dicts mapping node names to indices and vice versa
@@ -161,7 +165,7 @@ def generate_links_from_pgmpy_model(model, noise_sd=1.0, coef=0.5, ar_param=0.6)
     for edge in edges:
         cause = node_to_index[edge[0]]
         effect = node_to_index[edge[1]]
-        # for simplicity, use lag 1, constant coef and normal noise
+        # for simplicity, use lag 1, constant coef and no edge noise
         links.setdefault(effect, []).append( ((cause, -1), coef, noise_func) )
 
     # add a self-connection to all nodes to simulate autoregressive behavior
@@ -175,18 +179,19 @@ def generate_links_from_pgmpy_model(model, noise_sd=1.0, coef=0.5, ar_param=0.6)
 We can then create a function to take in the original model, convert it, and generate timeseries data for the model:
 
 ```python
-
-def generate_data(model, noise_sd=3, tslength=500, seed=42):
-    links, _, index_to_node = generate_links_from_pgmpy_model(model, 
-        noise_sd=noise_sd)
+def generate_data(model, noise_sd=1, tslength=500, seed=42, coef=0.5, ar_param=0.6):
+    links, node_to_index, index_to_node = generate_links_from_pgmpy_model(model, 
+        coef=coef, ar_param=ar_param)
+    rng = np.random.default_rng(seed)
+    # Calculate total length including transient period
     data, _ = structural_causal_process(links, T=tslength, seed=seed)
-
+    data = rng.normal(scale=noise_sd, size=data.shape) + data
     # Prepare data for tigramite
     return DataFrame(data), index_to_node
 
-# we will need the index_to_node mapping later
-ecoli_dataframe, index_to_node = generate_data(ecoli_model, 
-    noise_sd=3, tslength=500, seed=42)
+# we will need the indx_to_node mapping later
+ecoli_dataframe, index_to_node = generate_data(ecoli_model, noise_sd=1, 
+    tslength=500, seed=42)
 ```
 
 Now that we have the dataset we can test out our estimation method. Since I don't actually have a new method for causal estimation on timeseries, I will instead use the PCMCI method described by [@#Runge:2019aa] and implemented in the `tigramite` package:
@@ -230,41 +235,59 @@ def get_edge_stats(edges, discovered_links, verbose=True):
     false_positives = discovered_edges.difference(true_edges)
     false_negatives = true_edges.difference(discovered_edges)
 
-    true_positive_rate = len(true_positives) / len(true_edges)
-    false_positive_rate = len(false_positives) / len(discovered_edges)
+    true_positive_rate = len(true_positives) / len(true_edges) if len(true_edges) > 0 else 0
+    
+    # Precision: proportion of discoveries that are true
+    precision = len(true_positives) / len(discovered_edges) if len(discovered_edges) > 0 else 0
+    
+    # False Discovery Rate: proportion of discoveries that are false
+    false_discovery_rate = len(false_positives) / len(discovered_edges) if len(discovered_edges) > 0 else np.nan
+    
     f1_score = (2 * len(true_positives)) / (2 * len(true_positives) + \
-        len(false_positives) + len(false_negatives))
+        len(false_positives) + len(false_negatives)) if (len(true_positives) + len(false_positives) + len(false_negatives)) > 0 else np.nan
     
     if verbose:
         print(f'{len(true_edges)} true edges')
         print(f'discovered {len(discovered_edges)} edges')
-        print(f"True Positive Rate: {true_positive_rate:.2%}")
-        print(f"False Positive Rate: {false_positive_rate:.2%}")
+        print(f"True Positive Rate (Recall): {true_positive_rate:.2%}")
+        print(f"Precision: {precision:.2%}")
+        print(f"False Discovery Rate: {false_discovery_rate:.2%}")
         print(f"F1 Score: {f1_score:.2%}")
 
-get_edge_stats(ecoli_model.edges(), discovered_links)
+    return {
+        'true_positives': true_positives,
+        'false_positives': false_positives,
+        'false_negatives': false_negatives,
+        'true_positive_rate': true_positive_rate,
+        'precision': precision,
+        'false_discovery_rate': false_discovery_rate,
+        'f1_score': f1_score
+    }
+
+edge_stats = get_edge_stats(ecoli_model.edges(), discovered_links)
 ```
 ```bash
 70 true edges
-discovered 72 edges
-True Positive Rate: 100.00%
-False Positive Rate: 2.78%
-F1 Score: 98.59%
+discovered 87 edges
+True Positive Rate (Recall): 100.00%
+Precision: 80.46%
+False Discovery Rate: 19.54%
+F1 Score: 89.17%
 ```
 
-The results showed that the model performed quite well, detecting all of the true relationships and only two false relationships.  In general we would want to do additional validation to make sure that the results behave in the way that we expect. For example, we would expect better model performance with more data, and we would expect fewer nodes identifed when the p-value threshold is more stringent.  We can use the functions generated above to run a simulation of this:
+The results showed that the model performed quite well, detecting all of the true relationships and only two false relationships.  In general we would want to do additional validation to make sure that the results behave in the way that we expect. For example, we would expect better model performance with more data, and we would expect fewer nodes identified when the p-value threshold is more stringent.  We can use the functions generated above to run a simulation of this:
 
 ```python
-# loop over noise levels and q values to see effect on performance
+# loop over signal levels and q values to see effect on performance
 
-noise_sd = 10
-tslengths = [100, 200, 500]
+noise_sd = 1
+tslength = 500
 q_values =  [1e-6, 1e-5, 1e-4, 1e-3, 1e-2]
+signal_levels = np.arange(0, 0.7, 0.1)
 performance_results = []
 
-for tslength in tslengths:
-    dataframe = generate_data(ecoli_model, 
-        noise_sd=noise_sd, tslength=tslength, seed=42)
+for signal_level in signal_levels:
+    dataframe, index_to_node = generate_data(ecoli_model, noise_sd=noise_sd, tslength=tslength, seed=42, coef=signal_level, ar_param=0.6)
     results = run_pcmci(dataframe)
     for q in q_values:
         discovered_links = extract_discovered_links(results, index_to_node, q_thresh=q)
@@ -273,37 +296,17 @@ for tslength in tslengths:
         'noise_sd': noise_sd,
         'q_value': q,
         'tslength': tslength,
+        'signal_level': signal_level,
         'true_positive_rate': edge_stats['true_positive_rate'],
-        'false_positive_rate': edge_stats['false_positive_rate'],
+        'precision': edge_stats['precision'],
+        'false_discovery_rate': edge_stats['false_discovery_rate'],
         'f1_score': edge_stats['f1_score']
     })
 
 performance_df = pd.DataFrame(performance_results)
 ```
 
-We can then plot these results, as shown in [](#simresults-fig):
-
-```python
-# Use colorblind-friendly palette
-colors = sns.color_palette("colorblind", n_colors=len(tslengths))
-
-plt.figure(figsize=(12, 6))
-for idx, tslength in enumerate(tslengths):
-    subset = performance_df[performance_df['tslength'] == tslength]
-    plt.plot(subset['q_value'], subset['true_positive_rate'], 
-             marker='o', color=colors[idx], linestyle='-',
-             label=f'TPR (TS Length={tslength})')
-    plt.plot(subset['q_value'], subset['false_positive_rate'], 
-             marker='x', color=colors[idx], linestyle='--',
-             label=f'FPR (TS Length={tslength})')
-
-plt.xscale('log')
-plt.xlabel('q value')
-plt.ylabel('Rate')
-plt.title('True and False Positive Rates by TS Length and q Value')
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-plt.tight_layout()
-```
+We can then plot these results, as shown in [](#simresults-fig).  The results confirm that the model is performing as expected, with increasing recall as a function of increasing true signal and decreasing FDR threshold.
 
 
 ```{figure} images/causal_discovery_performance.png
@@ -311,17 +314,115 @@ plt.tight_layout()
 :align: center
 :width: 600px
 
-A plot of true positive rate (TPR) and false positive rate (FPR) at increasing false discovery rates for various timeseries lengths.
+A plot of observed true positive rate (TPR) and false discovery rate (FDR) at increasing signal levels for varying FDR thresholds.
 ```
 
-These results confirm that the model is performing as expected across the parametric variations.
 
+### Simulating data based on existing data
+
+It's very common for researchers to collect a dataset of interest and then develop code that implements their analysis on that dataset to ask their questions of interest. However, this approach raises a concern that the choices made in the course of analysis might be biased by the specific features of the dataset [@Gelman:2019aa].  In particular, decisions might be made that reflect the noise in the dataset, rather than the true signal, which is often referred to as *overfitting* (discussed further below). In some fields (particularly in physics) it is common to perform *blind analysis* [@MacCoun:2015aa], in which they are given data that are either modified or relabeled, in order to prevent the analyst from being biased by their hypotheses.  One way to achieve this in the context of data analysis is to develop the code using a simulated dataset that has some of the same features as the real dataset, such that one can implement the code, validate it, and then immediately apply it to the real data once they are made available.  To achieve this, one needs to be able to generate simulated data based on an existing dataset; for blind analysis, the generation of the simulated data should be performed by a different member of the research team. For example, in some cases I have generated the simulated data for a study based on the real data and provided those to my students, only providing them with the real data once the code was implemented and validated.
+
+The important question in generating simulated data from real data is what specific features one intends to capture from the real data. This generally will require some degree of domain expertise in order to understand the features of the data.  Some common features that one might wish to replicate are:
+
+- Data types (e.g. categorical, integer, floating point)
+- Marginal distributions of the values (minimally the range, preferably the shape or summary statistics)
+- Joint distributions of the variables (e.g. capturing correlations between variables)
+
+It's generally important to avoid including features in the model that are directly relevant to the hypothesis.  For example, if the hypothesis relates to correlations between specific variables in the dataset, then the correlation in the simulated data should *not* be based on the correlation in the real data, lest the analysis be biased.
+
+Here I will focus primarily on tabular data; while there are simulators to generate more complex types of data, such as [genome wide association data](https://zzz.bwh.harvard.edu/plink/simulate.shtml) and functional magnetic resonance imaging data [@Ellis:2020aa], these require substantial domain expertise to use properly, whereas tabular data are widely applicable.  For simple datasets it may be most appropriate to generate simulated data by hand; here I will use the [Synthetic Data Vault](https://docs.sdv.dev/sdv) Python package, which has powerful tools for generating many kinds of synthetic data.
+
+As an example, I will use the Eisenberg data that you have already seen on a couple of occasions. I'll start by picking out a few variables and then using `sdv` to create a synthetic dataset whose distributions for each variable match those in the original, but the columns are generated independently, which removes any correlations between columns.  The full analysis is shown [here].  After loading and combining the demographic and behavioral data frames, selecting a few important variables, and joining them into a single frame (`df_orig`), I then use `sdv` to generate simulated data for each variable, shuffling each column after generation to destroy any correlations:
+
+```python
+from sdv.single_table import GaussianCopulaSynthesizer
+from sdv.metadata import Metadata
+
+def generate_independent_synthetic_data(df, random_seed=42):
+    """
+    Generate synthetic data where all variables are independent.
+    
+    Uses SDV to model the full dataset, then shuffles each column 
+    independently to break all correlations while preserving marginal distributions.
+    
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        Original dataframe to generate synthetic version of
+    random_seed : int, optional
+        Random seed for reproducibility (default: 42)
+        
+    Returns:
+    --------
+    pd.DataFrame
+        Synthetic dataframe with same shape and column names as input,
+        but with independent variables
+    """
+    # Suppress the metadata saving warning
+    warnings.filterwarnings('ignore', message='We strongly recommend saving the metadata')
+    
+    # Set random seed
+    if random_seed is not None:
+        np.random.seed(random_seed)
+    
+    # Create metadata for the full dataset
+    metadata = Metadata.detect_from_dataframe(
+        data=df,
+        table_name='full_data'
+    )
+    
+    # Create synthesizer for the full dataset
+    synthesizer = GaussianCopulaSynthesizer(
+        metadata,
+        enforce_rounding=False,
+        enforce_min_max_values=True,
+        default_distribution='norm'
+    )
+    
+    # Fit synthesizer to the full dataset
+    synthesizer.fit(df)
+    
+    # Generate synthetic data
+    df_synthetic = synthesizer.sample(num_rows=len(df))
+    
+    # CRITICAL: Shuffle each column independently to break all correlations
+    # This preserves the marginal distribution of each variable but eliminates dependencies
+    for col in df_synthetic.columns:
+        shuffled_values = df_synthetic[col].values.copy()
+        np.random.shuffle(shuffled_values)
+        df_synthetic[col] = shuffled_values
+    
+    return df_synthetic
+```
+
+We can then visualize the correlations and distributions for the original data and the synthetic data; in [](#sdvdist-fig) we see that the distributions in the synthetic data are very similar to those in the original data, while [](#sdvcorrs-fig) we see that the synthetic data do not include the original correlations.
+
+
+```{figure} images/sdv_distributions.png
+:label: sdvdist-fig
+:align: center
+:width: 400px
+
+A comparison of the distributions of the original and synthetic data for several of the variables in the example dataset.
+```
+
+```{figure} images/sdv_correlations.png
+:label: sdvcorrs-fig
+:align: center
+:width: 400px
+
+A comparison of the correlations matrices for the numeric variables in the original and synthetic data.
+```
+
+The `sdv` package also offers many additional tools for more sophisticated generation of synthetic data.  We will see below additional ways to use synthetic data for validation of scientific data analysis code.
 
 
 
 ## Estimating model parameters
 
 It is very common in science to collect data and then use those data to estimate the parameters for a given model, and it's important to be able to validate that the estimates are valid.  For this reason, I now dive into the various methods that one can use to estimate model parameters, and show examples of how we might validate them. In addition to estimating model parameters, we generally also want some kind of way to quantify the uncertainty in our estimate. That is, rather than thinking of the parameter estimate as a single point value, we can ask: What range of values for the parameter are consistent with the data?  This is often expressed using *confidence intervals*, though I will discuss below the ways that these are often misunderstood.
+
+A central idea in this section will be the notion of *parameter recovery*: that is, how well can our estimation procedure recover the true parameter values using simulated data? This is particularly important in cases where we don't have statistical guarantees on the unbiasedness of our estimates. As we will see, simulation provides a powerful tool to assess parameter recovery performance for any model.
 
 ### Closed-form estimates
 
@@ -352,7 +453,7 @@ $$
 s_y = \sqrt{\frac{1}{n-1} \sum_{i=1}^{n} (y_i - \bar{y})^2}
 $$
 
-Note that this is very similar to the mean squared error, differing in the presence of a square root as well as the use of $n - 1$ rather than $n$ in the demoninator. The latter is meant to adjust for the fact that we lost one *degree of freedom* when we estimated the mean from the same data and then used it to compute the standard deviation.  When the variance (the square of the standard deviation) is computed using this correction it will be *unbaised*, meaning that its expected value will match the true variance of the population.  The standard deviation is still slightly biased, but less so that the one computed without the correction.
+Note that this is very similar to the mean squared error, differing in the presence of a square root as well as the use of $n - 1$ rather than $n$ in the demominator. The latter is meant to adjust for the fact that we lost one *degree of freedom* when we estimated the mean from the same data and then used it to compute the standard deviation.  When the variance (the square of the standard deviation) is computed using this correction it will be *unbiased*, meaning that its expected value will match the true variance of the population.  The standard deviation is still slightly biased, but less so than the one computed without the correction.
 
 Figure [](#NormalDist-fig) shows an example of a histogram based on samples from a normal distribution, with the theoretical normal distribution based on the estimated sample mean and standard deviation overlaid.  Visually it's clear that the fitted distribution characterizes the overall shape well, even if it mismatches the shape at finer grain, due to sampling variability. 
 
@@ -366,7 +467,7 @@ A histogram of 1000 samples from a standard normal distribution (with mean of ze
 
 #### Quantifying uncertainty in closed-form estimation
 
-In general we want not just a point estimate for our parameter but also an estimate of our uncertainty in that estimate.  The *confidence interval* is the most commonly used method for expressing uncertainty around an estimate, and with closed form expressions it's often possible to compute the confidence interval directly. A confidence interval is expressed in terms of a percentage, but the meaning of this percentage is often misinterpreted (see the discussion in my [*Statistical Thinking*](https://statsthinking21.github.io/statsthinking21-core-site/ci-effect-size-power.html#confidence-intervals) for more on this).  The term "95% confidence interval* seems to imply that it is an interval in which we have 95% confidence that the true value of the parameter falls.  However, that violates the frequentist statistical logic that underlies the computation of the confidence interval, which treats the true value as fixed, and thus it either falls in the interval or it doesn't.  Instead, the more appropriate interpretation of a frequentist confidence interval is that it is the interval that would capture the sample mean 95% of the time for samples from the same population.  I prefer to frame it a slightly different, if somewhat less precise way: The confidence interval expresses the range of plausible values for the parameter given our data, and thus tells us something about the precision of our estimate.  
+In general we want not just a point estimate for our parameter but also an estimate of our uncertainty in that estimate.  The *confidence interval* is the most commonly used method for expressing uncertainty around an estimate, and with closed form expressions it's often possible to compute the confidence interval directly. A confidence interval is expressed in terms of a percentage, but the meaning of this percentage is often misinterpreted (see the discussion in my [*Statistical Thinking*](https://statsthinking21.github.io/statsthinking21-core-site/ci-effect-size-power.html#confidence-intervals) for more on this).  The term "95% confidence interval" seems to imply that it is an interval in which we have 95% confidence that the true value of the parameter falls.  However, that violates the frequentist statistical logic that underlies the computation of the confidence interval, which treats the true value as fixed, and thus it either falls in the interval or it doesn't.  Instead, the more appropriate interpretation of a frequentist confidence interval is that it is the interval that would capture the true population mean 95% of the time for samples from the same population.  I prefer to frame it in a slightly different, if somewhat less precise way: The confidence interval expresses the range of plausible values for the parameter given our data, and thus tells us something about the precision of our estimate.  
 
 Using our example from above, we can compute a confidence interval for our estimate of the sample mean.  This requires that we have a probability distribution that is associated with our statistic; in this case, the *Student's t* distribution is appropriate since we have estimated the standard deviation as well as the mean.  The *t* distribution has slightly wider tails than the normal distribution, which helps account for the added uncertainty in our estimate of the standard deviation.  The equation for the confidence interval around the mean using the *t* distribution is:
 
@@ -383,6 +484,9 @@ where $s_y$ is the sample standard deviation, $n$ is the sample size, and $t_{\a
 n_simulations = 100000
 confidence_level = 0.95
 alpha = 1 - confidence_level
+random_state = 42
+true_mean, true_sd = 0, 1
+sample_size = 1000
 
 # Track how many times the CI captures the true mean
 captures = 0
@@ -433,7 +537,7 @@ Here we see that the observed proportion of samples where the sample mean falls 
 
 #### The bootstrap as a general method for quantifying uncertainty
 
-There are some cases where our parameter estimator has a closed form solution but we don't have a probability distribution that we can use to form a confidence interval.  In these cases we can use a technique known as the *bootstrap*.  This method takes advantage of *resampling*, meaning that we repeatedly draw samples with replacement from our full sample.  We can do this using the `scipy.stats.bootstrap()` function, which performs the bootstrap on a sample given any statistical function:
+There are some cases where our parameter estimator has a closed form solution but we don't have a sampling distribution that we can use to form a confidence interval.  In these cases we can use a technique known as the *bootstrap*.  This method takes advantage of *resampling*, meaning that we repeatedly draw samples with replacement from our full sample.  We can do this using the `scipy.stats.bootstrap()` function, which performs the bootstrap on a sample given any statistical function:
 
 ```python
 from scipy.stats import bootstrap
@@ -452,7 +556,7 @@ Bootstrap 95% CI for mean:  [-0.09104, 0.03078]
 CI based on t-distribution: [-0.09028, 0.03249]
 ```
 
-Here we see that the bootstrap procedure gives results that are very close to those obtained using the closed form solution, but has the advantage of being usable with any statistic regardless of whether a probability distribution is available.
+Here we see that the bootstrap procedure gives results that are very close to those obtained using the closed form solution, but has the advantage of being usable with nearly any statistic (except for those based on extreme values) regardless of whether the sampling distribution is analytically tractable.
 
 
 ### Bayesian estimation
@@ -588,7 +692,7 @@ result = minimize(negative_log_likelihood, initial_params, args=(normal_samples,
 
 This doesn't have much impact on this particular problem, but with complex models and multiple parameters it's common for parameter values to explode, and setting boundaries can help prevent that. However, as I will discuss below, it's important to ensure that parameter estimates don't sit at the boundaries, as this can suggest pathologies in model fitting.
 
-## Automated differentiation
+### Automated differentiation
 
 The optimization methods discussed above are limited either to small numbers of parameters (like derivative-free methods such as Nelder-Mead) or small numbers of data points (like gradient-based methods such as L-BFGS that require computation of gradients across the entire dataset on each optimization step).  Given this, how is it possible to train artificial neural networks that may have billions of parameters over trillions of data points?  A key innovation that has enabled effective training of large models is *automatic differentiation* (often called *autodiff* for short) combined with *stochastic gradient descent* (or *SGD*).  Automatic differentiation takes a function definition and (when possible) automatically determines the derivatives of the function with respect to the parameters, which allows the use of simple gradient descent methods.  SGD uses small *mini-batches* of data to estimate the parameters; even though the estimates for each individual batch are noisy, they are unbiased estimates of the parameters and computationally cheap to obtain, such that averaging them together gives precise estimation at compararatively low computational cost.
 
@@ -658,7 +762,7 @@ def compute_loss(V_max, K_m, S, v_observed):
     return loss
 ```
 
-Using this we set up our training loop that uses SGD to estimate the parameters (with some code omitted for clarity):
+Using this we set up our training loop that uses SGD to estimate the parameters (with some code omitted for clarity), and assess the parameter recovery of the model by comparing the estimates to the true values:
 
 ```python
 # Hyperparameters
@@ -708,6 +812,7 @@ Since there are only two parameters, we can easily visualize how the parameter e
 A visualization of the log-loss landscape for the Michaelis-Menten optimization problem, showing the journal of the optimization process from the starting point to the ending point.
 ```
 
+
 #### Local minima in optimization
 
 The error landscape for the normal distribution example  is *convex*, which means that there is a single global minimum that can be found simply by following the error gradient downwards.  Claude Sonnet 4 initially tried to convince me that the Michaelis-Menten problem is convex, but was overruled by Claude Opus 4.5; visit the notebook for this example to see the entire unfolding of this internicene battle.  Despite being non-convex, the error landscape of the Michaelis-Menten problem is smooth and relatively well behaved, as seen in [](#mmloss-fig).  However, many realistic scientific problems have highly complex *non-convex likelihoods*, such that there are numerous *local minima* that the optimization routine can get stuck in.  [](#ComplexLoss-fig) shows an example of this.
@@ -728,7 +833,7 @@ There are a number of strategies that one can employ to help avoid parameter est
 - Use an optimizer that explores more broadly before converging, such as the *differntial evolution* method implemented in `scipy.optimize.differential_evolution`.  
 - It can sometimes be helpful to reparameterize the model to help with convergence.  For example, if the models are physically constrained to being positive, then one might consider optimizing in log-space rather than the natural values of the parameters.  If the different parameters are on very different scales this can also cause problems since the optimizer needs to move at different rates in different directions of the loss space, so reparametrizing the model such that parameters are in roughly the same numeric scale can be useful.  
 
-## Simulation based inference
+### Simulation based inference
 
 Sometimes we want to estimate parameters from a model that doesn't have a tractable analytic likelihood function (which rules out standard maximum likelihood estimation) and is not differentiable (which rules out gradient-based methods).  However, it's often true in cases like this that it's relatively easy to simulate data from the model, even if the likelihood can't be computed.  This has led to the idea of *simulation-based inference*[@Cranmer:2020aa], in which one generates synthetic data using a simulation in order to learn how the simulated data relate to the parameters of the model, and then uses that learned mapping to estimate the most likely parameter values (or their full posterior distribution) given the observed data.  In many cases it's not possible to directly compare simulated and observed data (for example, when working with timeseries data that have uncertain phase), so instead one uses some form of *summary* or *embedding* of the data that characterizes relevant aspects of its structure in a way that is informative of the model parameters.
 
@@ -804,7 +909,6 @@ density_estimator = posterior_nn(
 
 This density estimator is then used to train a neural network to generate posterior estimates based on the simulated observations (from known parameter values) after embedding them:
 
-
 ```python
 inference = NPE(prior=prior, density_estimator=density_estimator, device=device)
 inference = inference.append_simulations(thetas, xs)
@@ -829,91 +933,20 @@ Note that since posterior sampling is computationally cheap, we can easily obtai
 Joint distribution plots for the sampled posterior distributions of Ricker model parameters, with the true values denoted by the red star in the joint plots.  The posterior summary presents the maximum a posteriori (MAP) estimate for each parameter along with the 95% credible interval based on the posterior distribution.
 ```
 
-We will return below to this example when we discuss the concept of *parameter recovery*. 
+#### Parameter recovery
 
+Simulation allows us to assess how well our estimation procedure performs, by generating data with known model parameters and then comparing the estimated parameters to the true values.  Using the code that I had developed for the earlier example, I generated a *simulation harness* that ran a large number of simulations and recorded the results; the full code is [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/sbi_simulation_harness.py).  I started by training the posterior estimator using one million simulations, in order to ensure that it had good training across the range of possible parameters; Given that this just needs to be trained once, I saved it for later use in my simulations. Then I performed 10,000 experiments in which I generated a dataset from the Ricker model based on known parameters along with added noise, and then used the posterior estimator to estimate the parameters for the dataset. 
 
-### Simulating data based on existing data
-
-It's very common for researchers to collect a dataset of interest and then develop code that implements their analysis on that dataset to ask their questions of interest. However, this approach raises a concern that the choices made in the course of analysis might be biased by the specific features of the dataset [@Gelman:2019aa].  In particular, decisions might be made that reflect the noise in the dataset, rather than the true signal, which is often referred to as *overfitting* (discussed further below). In some fields (particularly in physics) it is common to perform *blind analysis* [@MacCoun:2015aa], in which they are given data that are either modified or relabeled, in order to prevent the analyst from being biased by their hypotheses.  One way to acheive this in the context of data analysis is to develop the code using a simulated dataset that has some of the same features as the real dataset, such that one can implement the code, validate it, and then immediately apply it to the real data once they are made available.  To acheive this, one needs to be able to generate simulated data based on an existing dataset; to acheive blind analysis, the generation of the simulated data should be performed by a different member of the research team. For example, in some cases I have generated the simulated data for a study based on the real data and provided those to my students, only providing them with the real data once the code was implemented and validated.
-
-The important question in generating simulated data from real data is what specific features one intends to capture from the real data. This generally will require some degree of domain expertise in order to understand the features of the data.  Some common features that one might wish to replicate are:
-
-- Data types (e.g. categorical, integer, floating point)
-- Marginal distributions of the values (minimally the range, preferably the shape or summary statistics)
-- Joint distributions of the variables (e.g. capturing correlations between variables)
-
-It's generally important to avoid including features in the model that are directly relevant to the hypothesis.  For example, if the hypothesis relates to correlations between specific variables in the dataset, then the correlation in the simulated data should *not* be based on the correlation in the real data, lest the analysis be biased.
-
-Here I will focus primarily on tabular dataset; while there are simulators to generate more complex types of data, such as [genome wide association data](https://zzz.bwh.harvard.edu/plink/simulate.shtml) and functional magnetic resonance imaging data [@Ellis:2020aa], these require substantial domain expertise to use properly, whereas tabular data are widely applicable.  For simple datasets it may be most appropriate to generate simulated data by hand, here I will use the [Synthetic Data Vault](https://docs.sdv.dev/sdv) Python package, which has powerful tools for generating many kinds of synthetic data.
-
-As an example, I will use the Eisenberg data that you have already seen on a couple of occasions. I'll start by picking out a few variables and then using `sdv` to create a synthetic dataset whose distributions for each variable match those in the original, but the columns are generated independently, which removes any correlations between columns.  The full analysis is shown [here].  After loading and combining the demographic and behavioral data frames, selecting a few import variables, and joining them into a single frame (`df_orig`), I then use `sdv` to generate simulated data for each variable:
-
-```python
-from sdv.single_table import GaussianCopulaSynthesizer
-from sdv.metadata import Metadata
-
-def generate_independent_synthetic_data(df, random_seed=None):
-    
-    # Create an empty dataframe for synthetic data
-    df_synthetic = pd.DataFrame()
-    
-    # Set random seed
-    if random_seed is not None:
-        np.random.seed(random_seed)
-    
-    # For each column, fit a separate synthesizer and shuffle results
-    for idx, col in enumerate(df.columns):
-        # Create single-column dataframe
-        col_df = df[[col]].copy()
-        
-        # Create metadata for this column
-        metadata = Metadata.detect_from_dataframe(
-            data=col_df,
-            table_name='single_column'
-        )
-        
-        # Create a NEW synthesizer for this column
-        col_synthesizer = GaussianCopulaSynthesizer(
-            metadata,
-            enforce_rounding=False,
-            enforce_min_max_values=True,
-            default_distribution='norm'
-        )
-        
-        # Fit this synthesizer to this column's data
-        col_synthesizer.fit(col_df)
-        
-        # Sample synthetic values
-        synthetic_col = col_synthesizer.sample(num_rows=len(df))
-        
-        # CRITICAL: Shuffle each column independently to break any ordering correlations
-        shuffled_values = synthetic_col[col].values.copy()
-        np.random.shuffle(shuffled_values)
-        df_synthetic[col] = shuffled_values
-    
-    return df_synthetic
-```
-
-Because this synthesizer learns both marginal and joint distributions by default, we need to randomly shuffle the values of each variable to break the correlations.  We can then visualize the correlations and distributions for the original data and the synthetic data; in [](#sdvdist-fig) we see that the distributions in the synthetic data are very similar to those in the original data, while [](#sdvcorrs-fig) we see that the synthetic data do not include the original correlations.
-
-
-```{figure} images/sdv_distributions.png
-:label: sdvdist-fig
+```{figure} images/sbi_ricker_parameter_estimation_scatter_matrix.png
+:label: RicherParamrecov-fig
 :align: center
-:width: 400px
+:width: 700px
 
-A comparison of the distributions of the original and synthetic data for several of the variables in the example dataset.
+Parameter recovery analysis for 10,000 datasets generated from the Ricker model.  The plots along the diagonal show the relationship between the true and estimated values and their correlation.  The plots in the lower triangle show the relationship between parameter estimates for each pair of parameters.
 ```
 
-```{figure} images/sdv_correlations.png
-:label: sdvcorrs-fig
-:align: center
-:width: 400px
+[](#RickerParamrecov-fig) shows the relationship between the true and estimated parameters on the diagonal.  We see that the correlations between true and estimated parameters are reasonable but that in some rare cases the estimates can veer far from the true values.  There is also faint evidence of some pathologies in model fitting: For both the phi and sigma parameters, there are bands of data points that suggest that the paramter estimation is being pulled towards specific ranges of values. If we were using this approach for real scientific work, we would probably want to dig more deeply to understand the source of this phenomenon.  The off-diagonal plots show the relationship between the estimated parameters for each pair of parameters.  This is useful to visualize because correlations between estimated parameters can reflect a lack of model identifiability, in which parameters trade off against one another.  In this case these relationships are very weak, suggesting that the model parameters are indeed identifiable.
 
-A comparison of the correlations matrices for the numeric variables in the original and synthetic data.
-```
-
-The `sdv` package also offers many additional tools for more sophisticated generation of synthetic data.  We will see below additional ways to use synthetic data for validation of scientific data analysis code.
 
 
 ## Statistical calibration using randomization
@@ -947,9 +980,6 @@ When we build a computational model or analytic tool, it is essential to ensure 
 ### Negative controls
 
 A *negative control* a test should reliably produce negative results. Thinking back to the discussion of COVID-19 home tests in the earlier chapter on software testing, a negative test would be one where if the line appears the test is invalid.  When we build a software tool that is meant to detect a signal, it is essential that we ensure that it will reliably return a negative result when there is no signal.
-
-
-### Calibrating error rates
 
 Negative controls are particularly important whenever one is developing a new method that should have a particular error rate.  As an example, let's say we wanted to use the RNA-seq dataset from the previous chapter to develop a new biomarker for biological aging. We could select data from a set of 16 older individuals (over 70) and 16 younger individuals (under 40) and then fit a classification model using a stochastic gradient descent classifier.  We could quantify out-of-sample predictive performance using *cross-validation*, where different subsets of the data are used to fit the model and the remainder of the data is then used to test the model for that subset.   The results (shown in more detail [here]) show that were are able to predict whether a person was younger or older with about 67% accuracy; in this case, because the two groups were the same size, we would expect 50% accuracy by chance, and this seems much higher than chance. However, it is always important to ensure that the model performs as expected when there is no signal to be found, and in many cases like this one we can use randomization to break the relationship between variables and ensure that peformance should be at chance on average. 
 
@@ -1208,21 +1238,6 @@ Even more striking failures to control error can occur when the data are autcorr
 An example of the effects of autcorrelation on statistical outcomes.  Data were generated with no true signal in the model and with increasing levels of autocorrelation in the noise.  In addition to the improperly ordinary least squares (OLS) approach, a number of different approaches were applied that are meant to correct for the effects of autocorrelation: generalized least squares (GLS) using an AR(1) covariance, HAC (Heteroskedasticity and Autocorrelation Consistent) standard errors using the Newey-West estimator, iterative feasible generalized least squares (FGLS), and the parametric bootstrap.  None of these methods adequately controlled errors when the autocorrelation was high.  Full code is available [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/notebooks/independence_violation_example.ipynb).
 ```
 
-## Parameter recovery
-
-Much of the foregoing discussion has focused on ensuring that models have adequate error rates, so that we don't fool ourselves into thinking that an effect exists when it doesn't.  This is a concern that is primarily relevant to researchers performing null hypothesis statistical testing, but many researchers are instead interested in obtaining precise estimates of particular parameters.  In this case, we are more interested in assessing *parameter recovery*: that is, given data generated using known parameter values, can our parameter estimation procedure return values that are close to the known ground truth?  This is most often of interest when we are estimating parameters from custom models that are estimated using optimization methods or simulation-based inference.
-
-Here we will return to our earlier example where we estimated the parameters for the Ricker model from simulated data using simulation-based inference.  Using the code that I had developed for the earlier example, I generated a *simulation harness* that ran a large number of simulations and recorded the results; the full code is [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/sbi_simulation_harness.py).  I started by training the posterior estimator using one million simulations, in order to ensure that it had good training across the range of possible parameters; Given that this just needs to be trained once, I saved it for later use in my simulations. Then I performed 10,000 experiments in which I generated a dataset from the Ricker model based on known parameters along with added noise, and then used the posterior estimator to estimate the parameters for the dataset. 
-
-```{figure} images/sbi_ricker_parameter_estimation_scatter_matrix.png
-:label: RicherParamrecov-fig
-:align: center
-:width: 700px
-
-Parameter recovery analysis for 10,000 datasets generated from the Ricker model.  The plots along the diagonal show the relationship between the true and estimated values and their correlation.  The plots in the lower triangle show the relationship between parameter estimates for each pair of parameters.
-```
-
-[](#RickerParamrecov-fig) shows the relationship between the true and estimated parameters on the diagonal.  We see that the correlations between true and estimated parameters are reasonable but that in some rare cases the estimates can veer far from the true values.  There is also faint evidence of some pathologies in model fitting: For both the phi and sigma parameters, there are bands of data points that suggest that the paramter estimation is being pulled towards specific ranges of values. If we were using this approach for real scientific work, we would probably want to dig more deeply to understand the source of this phenomenon.  The off-diagonal plots show the relationship between the estimated parameters for each pair of parameters.  This is useful to visualize because correlations between estimated parameters can reflect a lack of model identifiability, in which parameters trade off against one another.  In this case these relationships are very weak, suggesting that the model parameters are indeed identifiable.
 
 ## Conclusions on validation
 

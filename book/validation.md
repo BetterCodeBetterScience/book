@@ -851,7 +851,7 @@ where $\phi$ is a scale factor.  This is a model that is often used to understan
 
 The Ricker model does not have a tractable analytic likelihood; more importantly, it also has chaotic dynamics at higher $r$ values, such that tiny changes in initial values can have huge impacts on the resulting data.  This means that the loss landscape is very jagged and difficult to optimize over.  The idea of *synthetic likelihood* was first developed to analyze these kinds of data, in which one estimates the parameters using *summary statistics* of the data to estimate parameters rather than the data themselves.  If one chooses the appropriate summary statistics then it's possible to effectively model the data in this way, but this requires a deep understanding of the dynamics of the data; for example, Woods' [2010] synthetic likelihood implementation of the Ricker model involved the following summary statistics:
 
-> the autocovariances to lag 5; the coefficients of the cubic regression of the ordered differences $y_t − y_{t−1}$ on their observed values; the coefficients, $\beta_1$ and $\beta_2$, of the autoregression  $y_{t+1}^{0.3} \sim \beta_1 y_t^{0.3} + \beta_2 y_t^{0.6}$ where $\epsilon_t$ is ‘error’); the mean population; and the number of zeroes observed. 
+> the autocovariances to lag 5; the coefficients of the cubic regression of the ordered differences $y_t − y_{t−1}$ on their observed values; the coefficients, $\beta_1$ and $\beta_2$, of the autoregression  $y_{t+1}^{0.3} \sim \beta_1 y_t^{0.3} + \beta_2 y_t^{0.6}$ where $\epsilon_t$ is ‘error’); the mean population; and the number of zeroes observed. 
 
 More recently the manual identification of a set of summary statistics has been supplanted by the use of neural network models to generate low-dimensional *embeddings* of the data.  Here I will use a method called *Neural Posterior Estimation* [@greenberg:2019] in which a neural network model is trained to infer the posterior distribution of parameters from simulated data.  We also use a separate neural network model to generate a low-dimensional embedding of the observed data, which maintains information about temporal structure of the data and allows comparison of predicted and observed data in a common space.  
 
@@ -1227,6 +1227,14 @@ Plots showing the regression of bill length against depth in the penguin dataset
 When using analysis methods that involve random numbers, it is essential to establish that the results are robust to different random seeds, and also to determine the degree of variability across simulations due to random seed variability.  There is published evidence [@Ferrari-Dacrema:2021aa] that some authors may cherry-pick results across random seeds in order to obtain better results, which we sometimes refer to as *seed-hacking* on analogy to p-hacking.
 
 As an example (code [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/notebooks/random_seed_example.ipynb)), I generated 50 synthetic datasets for a classification problem, and assessed the performance of two different classifiers that involve random numbers: a simple neural network model (Perceptron), and a stochastic gradient descent classifier [^2].  Each classifier was applied to the each dataset using 1000 different random seeds and their accuracy was recorded.  The result (shown in [](#seed-fig)) was striking: although the average performance of the two models differed minimally across the 50,000 simulations (0.7276 for SGD versus 0.7280 for Perceptron), depending on the specific random seed one could find cases where each of the classifiers outperformed the other by almost 10%!  This highlights the importance of quantifying the degree of variability due to random seed choice.  
+
+```{figure} images/seed_variability_by_dataset.png
+:label: seed-fig
+:align: center
+:width: 700px
+
+A demonstration of variability in classification model accuracy due to different random seeds.  Each violin represents the distribution of performance across 1000 random seeds for a single dataset.
+```
 
 
 ### Sensitivity to modeling assumptions

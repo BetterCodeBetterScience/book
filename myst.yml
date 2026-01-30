@@ -27,9 +27,9 @@ project:
     - file: book/data_management.md
     - file: book/workflows.md
     - file: book/validation.md
-# - file: performance
-# - file: HPC
-# - file: sharing
+    - file: book/performance.md
+    - file: book/HPC.md
+    - file: book/sharing.md
 
 site:
   options:

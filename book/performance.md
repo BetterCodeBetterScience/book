@@ -548,7 +548,7 @@ Compare this to the result using the built-in dot product operator in NumPy, whi
 609 ns ± 2.17 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
 ```
 
-The practice of replacing loops with functions that act on entire arrays at once is known as *vectorization*. NumPy acheives this speedup by handing the entire operation to a lower-level library, which in this case would be the BLAS (Basic Linear Algebra Subprograms) library.  This library uses highly-optimized code that can take advantage of CPU features like SIMD (Single Instruction, Multiple Data), which allows the CPU to apply a single operation (such as multiplication) to multiple data points simultaneously in a single clock cycle.  
+The practice of replacing loops with functions that act on entire arrays at once is known as *vectorization*. NumPy achieves this speedup by handing the entire operation to a lower-level library, which in this case would be the BLAS (Basic Linear Algebra Subprograms) library.  This library uses highly-optimized code that can take advantage of CPU features like SIMD (Single Instruction, Multiple Data), which allows the CPU to apply a single operation (such as multiplication) to multiple data points simultaneously in a single clock cycle.  
 
 In addition to optimizing performance, vectorized calls often also make the code more readable, as loops can often make for unwieldy code that is difficult to read.
 
@@ -645,7 +645,7 @@ A demonstration of the interaction between HDF5 chunking patterns and data acces
 
 Performance optimization becomes critical when working with large datasets, particularly when the size of the data outstrips the memory capacity of one's computer.  I ran into this in an example that I was developing for this book, based on [data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) from the New York City Taxi and Limousine Commission. Their site shares data regarding individual taxi trips going back to 2009.  I decided to download data for the years 2015 through 2024 in order to generate a directed graph of taxi zones based on the number of trips between them.  These data comprised a total of over 752 million rides, which comprised about 11 GB of downloaded data (in heavily compressed parquet files).  However, when loaded into a pandas data frame, these data would require more than 200GB of RAM, well beyond the 128GB of RAM on my laptop.   
 
-The key to acheiving such an analysis is to ensure that the code never tries to load the entire dataset at once.  Here I will demonstrate two strategies, one using DuckDB and one using the Polars package.
+The key to achieving such an analysis is to ensure that the code never tries to load the entire dataset at once.  Here I will demonstrate two strategies, one using DuckDB and one using the Polars package.
 
 ### Large analyses with DuckDB
 
@@ -981,8 +981,278 @@ Benchmarking these two functions we see that the einsum implementation is about 
 
 ## A brief introduction to parallelism and multithreading
 
-## preloading data using threads
+At the beginning of this chapter I presented data showing the inexorable increase in transistor number within CPUs since the 1970's.  However, I didn't mention the fact that processor speeds have stalled since the 2000s, due to power/heat limits; what has changed that has allowed CPUs to continue growing is the addition of multiple *cores*.  You can think of each core as a separate processor that can execute code on its own, with all of the cores sharing memory and other processor features.  As of 2026 it's not uncommon to see CPUs with 16 cores (like the laptop I'm writing on now), and I've seen supercomputer systems with as many as 100 cores per CPU.  It is the move to multi-core systems that has allowed Moore's law to continue unabated. In this chapter I will focus primarily on utilizing multiple cores on a single system; in the later chapter on high-performance computing I'll discuss the use of supercomputers that can spread computations across thousands of CPUs.
+
+An important distinction must be made between *cores* and *threads*.  A core is a physical unit on the CPU, whereas a thread is a logical unit of computation.  I will use the term *multiprocessing* to refer to spreading processes across multiple cores with separate address spaces in memory.  The term *multithreading* is generally used to refer to the simultaneous execution of multiple threads that share a memory space (across one or more cores), and *simultaneous multithreading* is used to refer to running multiple threads on a single core (the most common form of multithreading today).  Most modern CPUs support some degree of multithreading, with 2 threads per core being a common configuration.  The architecture of multi-core CPUs becomes important in thinking about bottlenecks that can limit computational efficiency.  Each core in the CPU usually has a relatively small amount of *cache* memory associated with it (known as L1/L2 cache), which stores recently processed information.  However, cores generally share a high-level (L3) cache, which can lead to *cache-thrashing* as cores repeatedly take over the high-level cache storage. An even more important bottleneck is the system's RAM, which is generally shared across cores.  Because there is a limit on the bandwidth at which information can be read and written from RAM, memory access often becomes a bottleneck for multi-core processing. Another bottleneck that specifically affects multi-threading is access to the *floating point unit* (FPU) and *vector processing unit* (which are the basis for Numpy's speedup, often known as SIMD units), of which there is generally one per core.  Thus, if one's computations rely heavily on floating point arithmetic (which is common in scientific workflows), there will be very little benefit to simultaneous multithreading, and often a cost due to the overhead of switching between threads.  Thus, for numerical processing it's generally best to target the number of cores rather than the number of threads. It's also worth noting that some computer manufacturers have begun to move away from simultaneous mulththreading, such as Apple's M-series chip, so this distinction may become less relevant in the future.
+
+### Levels of parallelization
+
+There are different levels of parallelization, which vary in the ease with which they can be implemented and the potential speedup that they offer. The simplest is *implicit parallelization*.  If you have used NumPy you have already probably taken advantage of this.  Packages like NumPy are linked against high-performance math packages (like OpenBLAS, Apple's Accelerate, or Intel's MKL), which allow the execution of certain processes (particularly matrix operations) using multiple threads/cores.  In addition, NumPy takes advantage of the Single Instruction Multiple Data (SIMD) vector processing unit to apply the same operation across multiple data points within a single core.
+
+Whereas implicit parallelization requires no changes to one's code, parallel processing generally involves the use of specific libraries that can run processes in parallel.  With regard to parallel processing in Python, there is an elephant in the room, known as the *Global Interpreter Lock* (GIL). This is a language "feature" (or "bug", depending on one's point of view) that prevents execution of Python code by more than one thread/core simultaneously.  This was a design decision made early in the development of Python to simplify memory management (by preventing multiple threads from changing the same locations in memory simultaneously), before multi-core systems had become the norm.  Packages like NumPy are able to release the GIL when calling functions implemented in compiled languages, and the GIL can also be unlocked during I/O, but the GIL prevents concurrent execution of pure Python code across multiple cores.  
+
+There have been numerous attempts to overcome the single-thread limitation over time, but [PEP 703](https://peps.python.org/pep-0703/), which was accepted in 2023, reflects a commitment by the Python developers to make the GIL optional, which would greatly enhance the ability to parallelize Python processes.  Since Python 3.13 it has been possible to disable the GIL, and NumPy has experimental support for free-threaded Python as of version 2.1. I am not going to go into details about the GIL here, given that it will likely become a non-issue in coming years.  This will also be an interesting test for AI coding agents, which rely heavily upon older code; it's an open question as to how well and how quickly they will be able to adapt to major changes in Python programming patterns.
+
+
+### Parallelization: When is the juice worth the squeeze?
+
+The degree to which code can benefit from parallelization depends almost entirely on the nature of the computations that are being performed.  There is a large class of problems that are known as *embarrassingly parallel*, in which there are no dependencies between the operations that are meant to be performed in parallel.  Examples of these include randomization/permutation tests, bootstrap resampling, and Monte Carlo simulation.  A good sign for easy parallelization is when the code performs a loop in which separate runs through the loop don't depend on one another.  There is also a class of problems that are very difficult to parallelize, in which there are sequential dependencies between the steps in the code.  These include Markov Chain Monte Carlo (MCMC) sampling, recurrent neural network inference, and iterative optimization problems.  Sometimes these problems can be broken down and parallelized to some degree; for example, while each MCMC chain has sequential dependencies, it's common to run multiple chains, and these can be run in parallel.
+
+The degree of expected speedup due to parallelization is often described in terms of *Amdahl's Law* [@Amdahl:1967aa], which states that the benefit of parallelization depends on the proportion of execution time that is spent on code that can be parallelized (i.e. that doesn't involve serial dependencies).  This implies that before spending effort parallelizing a portion of code, it's important to understand how much time is spent on that portion of the code.  It's also important to understand that parallelization comes with overhead, since the different processes need to be managed and the results combined after parallel execution.  Memory limitations also become important here: If each process requires a large memory footprint, then memory limitations can quickly become the primary bottleneck.  
+
+The benefits of parallelization also depend upon keeping the available cores maximally busy for the entire computation time.  This is easy when each parallel job takes roughly the same amount of time; all jobs will start and finish together, releasing all of the CPU's resources at the same time. However, in some cases the parallel jobs may vary in the time they take to complete, and in some cases this finishing time distribution can have a very long tail, which means that most of the CPU's resources will be sitting idle waiting for the slowest process to finish. This can occur, for example, in optimization problems where some runs quickly converage while others can get stuck searching for a very long time.  It is possible to use sophisticated scheduling schemes that can reduce this problem somewhat, but for very long-tailed finishing times it's always going to an efficiency-killer.
+
+The greatest benefit from parallelization thus comes when:
+
+- The code primarily involves repeated execution of a process without sequential dependencies
+- The process takes relatively long per execution compared to parallelization overhead
+- The process has a relatively small memory footprint
+- The process has a relatively narrow distribution of finishing times across runs
+
+
+### Pitfalls of parallelization
+
+When it works well, parallelization can seem like magic.  However, there are a number of things that can go wrong when parallelizing code, and it can also make debugging of problems significantly harder.  Here are a few of the pitfalls one might encounter when writing parallelized code.
+
+#### Memory explosion
+
+The standard models for parallel processing in Python assume that each process has its own memory allocation.  This can become problematic in analytic workflows where the datasets are large, such that making multiple copies will quickly exhaust the available system memory. If possible, the easiest way to deal with this is to reduce the amount of information that is used by the parallelized process to its minimum. In cases where that's not possible, some of the Python tools (such as the `multiprocessing` package) have the ability to create shared memory objects that can be accessed across processes.  For read-only data this can be a game-changer with a minimal performance penalty.  
+
+It's also important to understand that different operating systems work differently when it comes to creating a new Python process and allocating memory.  Linux uses the "fork" method by default, which creates an exact copy of the existing process, but doesn't actually do the copying until the process tries to change something in memory (known as "copy-on-write").  This reduces the memory overhead, but can result in crashes in the new process. In addition, Python processes will generally force a copy even if they don't write to the memory, so memory explosion is still likely.  MacOS and Windows use the "spawn" method, which means that they create a new Python process from scratch based on a pickled version of the parent, rather than directly inheriting the memory contents of the parent process.  This is safer, but leads to memory explosion more quickly since every new process takes up the full memory footprint regardless of whether it is actually written to.  It is possible to force the `multiprocessing` package to use the spawn method via the command `multiprocessing.set_start_method('spawn')`, which is probably the safest option in general.
+
+#### Input/output
+
+Parallelization generally works poorly when the process involves I/O from disk or network.  Disk access does not scale well, even with the latest solid-state drives (SSDs); the bandwidth of the best current SSDs is roughly 10X lower than the bandwidth of RAM on the motherboard.  In addition, the latency of RAM is much lower (measured in nanoseconds) versus the latency of SSDs (measured in microseconds, and thus ~1,000x slower).  SSD performance further degrades when accessing random (versus sequential) locations on the drive, becoming much slower.  These limitations mean that even the best drives can become saturated with even just a few parallel jobs, and sustained loads can result in additional throttling due to heating of the SSD.  For these reasons it's best to avoid disk access (especially disk writing) within the parallelized process. 
+
+
+#### Random seeds for parallel processes
+
+Running simulations using parallel processing requires special care to ensure that random seeds are handled properly.  A particular failure mode would be code that used the same random seed for each parallel run, which would result in exactly the same results from each run, rendering the parallelization useless.  Numpy provides a function (`numpy.random.SeedSequence()`) that can generate a set of non-overlapping random number generators, which is best practice for parallel processing; we will see an example of this below.
+
 
 ## Writing parallelized code
 
-- mention numba paralleization
+We will first look at the use of the `multiprocessing` package for parallelization in Python.  I generated an example that simulates a simple problem: estimating the Mandelbrot set.  To do so, we start with the equation:
+
+$$
+z_{n+1} = z^2_n + c
+$$
+
+where $c$ is a point on the complex plane, and $z_0 = 0$.  A point is defined as being in the Mandelbrot set if it remains bounded (which is defined as $|Z| \le 2$) within a finite number of time steps.  This is an interesting problem for several reasons:
+
+- It's embarassingly parallel, as the points in space can be computed independently of one another
+- It's easily implemented in pure Python code
+- Different points vary in the time that they take to verify whether the point is bounded; unbounded points are likely to escape quickly, whereas points within the radius will take the maximum number of iterations to confirm boundedness.  This means that we need to think about load balancing across jobs of different lengths.
+
+Here is the initial code that I generated using Claude.  First, the function to calculate the escape time for a point:
+
+```python
+def get_mandelbrot_pixel(c_real, c_imag, max_iter):
+    """Calculates the escape time of a single point."""
+    z_real = 0
+    z_imag = 0
+    for i in range(max_iter):
+        # z = z^2 + c
+        new_real = z_real*z_real - z_imag*z_imag + c_real
+        new_imag = 2 * z_real * z_imag + c_imag
+        z_real, z_imag = new_real, new_imag
+        if z_real*z_real + z_imag*z_imag > 4:
+            return i
+    return max_iter
+```
+
+Note that this function contains a pure Python loop, which we would never actually use in real production code; rather, we would either vectorize it using Numpy or apply JIT compilation using Numba, but I'm using it for this example exactly because it's so computationally intensive. We then need to break up the data in order to perform the computation in groups across a single chunk of data, which we define as a set of rows in the image:
+
+```python
+def compute_mandelbrot_rows(args):
+    start_row, end_row, width, height, max_iter = args
+    
+    # Define the complex plane region
+    x_min, x_max = -2.5, 1.0
+    y_min, y_max = -1.0, 1.0
+    
+    total = 0
+    for row in range(start_row, end_row):
+        for col in range(width):
+            # Map pixel to complex plane
+            c_real = x_min + (x_max - x_min) * col / width
+            c_imag = y_min + (y_max - y_min) * row / height
+            
+            escape_time = get_mandelbrot_pixel(c_real, c_imag, max_iter)
+            total += escape_time
+    
+    return total
+```
+
+We then need to generate the chunks and run the process in parallel across them:
+
+```python
+def run_parallel(grid_size, ncores=None, chunking_factor=1):
+    width, height, max_iter = grid_size
+    
+    if ncores is not None:
+        n_cores = ncores
+    else:
+        n_cores = max(1, mp.cpu_count() - 1)
+    
+    # Split rows into chunks for parallel processing
+    n_chunks = chunking_factor * n_cores
+    rows_per_chunk = height // n_chunks
+    chunks = []
+    for i in range(n_chunks):
+        start_row = i * rows_per_chunk
+        # Last chunk gets any remaining rows
+        end_row = height if i == n_chunks - 1 else (i + 1) * rows_per_chunk
+        chunks.append((start_row, end_row, width, height, max_iter))
+    
+    start_time = time.time()
+    with mp.Pool(processes=n_cores) as pool:
+        results = pool.map(compute_mandelbrot_rows, chunks)
+    elapsed_time = time.time() - start_time
+    
+    # Sum results from all chunks
+    total_result = sum(results)
+    
+    return total_result, elapsed_time, n_cores
+```
+
+Notice that we pass in a `chunking_factor`, which helps determine the number of chunks that the data will be broken into, defaulting to 1 which means that the number of chunks equals the number of available cores. For comparison, we will also run it in serial on a single core:
+
+```python
+def run_serial(grid_size):
+    width, height, max_iter = grid_size
+    
+    start_time = time.time()
+    # Process all rows as a single task
+    result = compute_mandelbrot_rows((0, height, width, height, max_iter))
+    elapsed_time = time.time() - start_time
+    
+    return result, elapsed_time
+```
+
+[](#parallel-fig) shows the results for these simulations using a range of image sizes. We see a couple of interesting phenomena here.  First, the effectiveness of parallelization scales with the computational intensity of the problem, which is defined here by the number of pixels to be tested.  With small data, the parallel implementation actually performs *worse* than the serial implementation, due to the overhead related to parallelization as well as possible throttling of the CPU speed due to heat generation.  As the image size increases, the impact of parallelization increases.  Second, we see that adding more cores does not linearly improve performance.  This is clearest from the plot showing the parallel processing efficiency for each number of CPUs, which shows that efficiency (defined as the ratio of actual time to what would be expected if performance improved linearly with the number of cores) reaches almost 100% for 2 cores, but each increase in cores gives diminshing returns, such that 14 cores only gives about 60% improvement, again due to the overhead needed for parallelization.  
+
+```{figure} images/mandelbrot_scaling_cf10.png
+:label: scaling-fig
+:align: center
+:width: 500
+
+A simulation of the parallel acceleration on the Mandelbrot set problem with a chunking factor of 10. The left panel shows performance in terms of speedup factor as a function of the difficult of the problem, where perfect acceleration would occur when the speedup factor is equal to the number of cores. The gray line shows serial performance, showing that parallelization on small problems can lead to worse performance than serial processing due to overhead of parallelization.  The right panel shows efficiency (that is, the proportion of perfect acceleration) achieved, demonstrating that there are decreasing gains with increasing numbers of cores.
+```
+
+We also see that parallelization is more effective as the number of chunks increases.  This reflects the wide disribution of finishing times in the dataset; when the number of chunks is the same as the number of cores, then each core does a single job, and the finishing time will reflect the longest job amongst the cores, such that many cores will be sitting idle for much of the time.  Breaking the data into smaller chunks allows for a higher number of concurrent jobs, but also increases parallelization overhead.  To see the effects of chunking, I ran a simulation of the Mandelbrot problem with a 4096 x 4096 image using chunking factors ranging from 1 (i.e. as many chunks as cores) to 100 (e.g. 1400 chunks for 14 cores). [](#chunking-fig) shows how parallel performance improves as a function of chunking up to a point, but at some point the overhead of parallel processing kicks in, such that speedup actually drops for high levels of chunking with many processors.  This highlights the need for benchmarking to understand how parallel performance scales and what the optimal size of data chunks is for the problem at hand.
+
+```{figure} images/chunking_factor_speedup.png
+:label: chunking-fig
+:align: center
+:width: 500
+
+A simulation of the effect of data chunking on parallel performance.  The Mandelbrot problem was run on a 4096 x 4096 image, varying the number of cores and the chunking factor (which is a multiplier on the number of cores to determine the number of chunks of data).  The y-axis shows the relative speedup, where optimal speedup would be the number of cores (line shown on the diagonal).
+```
+
+## Parallel workflows using Dask
+
+For workflows built around NumPy/Pandas, the [Dask](https://docs.dask.org/en/stable/index.html) package is an attractive tool for parallelization.  Earlier in the chapter I discussed how we can use DuckDB or Polars to execute workflows on large datasets, but those workflows were limited to ones that could be implemented as an SQL query (for DuckDB) or in the Polars API.  What if we want to run custom Python code in parallel on data that are too large for our RAM?  This is where Dask shines.  Here I will focus on the use of Dask on a single system, but Dask also supports distributed computing across multiple CPUs, which I will discuss further in the later chapter on high-performance computing.
+
+Here is an example of using Dask to compute the mean trip distance across all pickup locations in the NYC Taxi dataset; this is a simple computation that doesn't need Dask, but it allows for comparison with Polars.  First we need to determine how many threads we can safely use, which I cap at 8 (out of the 16 total on my machine):
+
+```python
+import dask
+import psutil
+
+available_gb = psutil.virtual_memory().available / (1024**3)
+partition_size_gb = 1.0  # Conservative estimate
+safe_threads = max(1, int(available_gb / partition_size_gb / 2))  # Use half of what we could
+max_threads = 8
+safe_threads = min(safe_threads, psutil.cpu_count(), max_threads)  # Cap at max_threads for safety
+
+print(f"Available memory: {available_gb:.1f} GB")
+print(f"Using {safe_threads} threads (to limit concurrent partitions in memory)")
+```
+```
+Available memory: 77.7 GB
+Using 8 threads (to limit concurrent partitions in memory)
+```
+
+Then we load the data and run the computation in either serial or parallel mode:
+
+```python
+
+import dask.dataframe as dd
+
+ddf = dd.read_parquet(preproc_dir / "*.parquet")
+
+# Parallel
+start_time = time.time()
+with dask.config.set(num_workers=safe_threads):
+    _ = ddf.groupby('PULocationID')['trip_distance'].mean().compute()
+parallel_time = time.time() - start_time
+print(f"Parallel ({safe_threads} threads): {parallel_time:.2f} seconds")
+
+# Single-threaded
+start_time = time.time()
+with dask.config.set(scheduler='synchronous'):
+    _ = ddf.groupby('PULocationID')['trip_distance'].mean().compute()
+single_time = time.time() - start_time
+print(f"Single-threaded:         {single_time:.2f} seconds")
+
+print(f"\nSpeedup: {single_time / parallel_time:.2f}x")
+```
+```
+Parallel (8 threads): 4.07 seconds
+Single-threaded:         16.77 seconds
+
+Speedup: 4.12x
+```
+
+I also implemented the same computation using Polars, which completed in 3.98 seconds, basically equivalent to Dask's performance in parallel mode.  Because Dask shines with custom computations, I implemented a more complex computation on the NYC Taxi dataset: computing the bootstrap confidence intervals for the number of daily trips for each of the 262 taxi zones across the entire dataset.  This took quite a bit of effort to get it working (with numerous failed attempts by Claude Code), but it finally [worked](dask_parallel_example.py), completing the bootstrap estimation problem in less than four seconds.  The speed with which one can do this kind of computation on a dataset that wouldn't even fit in memory shows the power of Dask for data science applications.
+
+## GPU acceleration
+
+The graphics processing unit (GPU) is a specific component in a computer that was initially designed to perform a particular kind of computation that is involved in computer graphics.  Unlike the CPU, which is optimized to perform a single stream of computations very quickly (i.e. low latency), the GPU is optimized to perform a large number of operations in parallel (i.e. high throughput), since many operations in graphics rendering (such as transformations or shading) involve applying the same operations across many pixels at once.  Researchers in the 2000s began to realize that GPUs could be used for computations beyond graphics, though in the early days one had to disguise the computations as graphical computations in order to run them on the GPU hardware.  This changed with the release of the CUDA platform by NVIDIA (a major manufacturer of GPUs) in 2006, which allowed researchers to more easily perform general-purpose computations directly on the GPU.  GPU computation is one of the main reasons why deep neural networks (particularly large language models) have become so powerful, reflected in the fact that in 2026 NVIDIA had the highest market capitalization of any company in the world.
+
+GPU computation excels on problems where one needs to perform many mathematically-intensive operations in parallel, and feedforward artificial neural networks (ANNs) are a perfect example of such a computation.  Each forward pass of an ANN involves many consecutive matrix multiplications, followed by adjustment of the weights in each layer based on the loss (achieved using automated differentiation).  To see the impact of GPU acceleration let's train a simple neural network model, using the PyTorch package that I introduced in the earlier discussion on automatic differentiation. We first generate a dataset with 500,000 examples from 25 categories each with 784 features, and then train a neural network with four hidden layers to perform this, using either the CPU or GPU; in this case I used a relatively inexpensive NVIDIA graphics card, so we use the CUDA framework for GPU acceleration.  I generated [this code](pytorch_gpu_acceleration.py) using Claude, and upon examining the code noticed that it seemed to be doing something suboptimal, as seen in this snippet from the model training loop:
+
+```python
+...
+for epoch in range(n_epochs):
+        epoch_start = time.perf_counter()
+        
+        model.train()
+        running_loss = 0.0
+        correct = 0
+        total = 0
+        
+        for X_batch, y_batch in train_loader:
+            # Move data to device
+            X_batch = X_batch.to(device)
+            y_batch = y_batch.to(device)
+...
+```
+
+Here we see that each batch is copied separately to the GPU (via the `.to(device)` call).  Because video cards are generally attached via the computer's PCI bus, they are limited by its bandwidth, which is generally much lower than the bandwidth of the connection between CPU and RAM. This means that for small batch sizes there will be very many copying operations, which lead to extra memory transfer overhead that can really slow things down, whereas larger batches give the GPU enough work that it won't sit idle for too long waiting for memory transfers.  Noticing this I also asked Claude to optimize this by loading the entire dataset to the GPU prior to creating the batches; note that this requires that the GPU has sufficient memory to hold the dataset, such that it won't be possible for massive datasets:
+
+```python
+...
+    X_device = X.to(device)
+    y_device = y.to(device)
+    
+    # Create dataset and loader from GPU tensors
+    dataset = TensorDataset(X_device, y_device)
+    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+...
+```
+
+The train_loader now doles out batches from an object that is already on the GPU, reducing the need for copies. [](#gpuspeedup-fig) shows the results of this benchmarking. We see that the GPU offers benefits compared to CPU computation regardless of the batch size, but that the benefits increase as batch size increases, with greater performance for the optimized version of the code that copies all of the data into memory before creating batches.  
+
+
+```{figure} images/gpu_batch_size_scaling.png
+:label: gpuspeedup-fig
+:align: center
+:width: 700
+
+Timing results for training a neural network model using either CPU or GPU.  Left panel shows how model training times decrease as a function of batch size, and the right panel shows the same data in terms of relative speedup.
+```
+
+I've only skimmed the surface here regarding the use of GPUs to accelerate workflows.  As models and datasets get larger, there are a number of specialized techniques that can be used to further accelerate them, including sharing compute loads across multiple GPUs which requires even greater attention to memory allocation. However, even this basic level of knowledge about how to employ GPU computation can help drastically accelerate some common workflows.
+

@@ -1,4 +1,4 @@
-# Optimizing performance (TBD)
+# Optimizing performance
 
 The computing power available to scientists has increased in a shockingly consistent way since the first microprocessors were manufactured in the 1970's.  The left panel in [](@mooreslaw-fig) shows that the number of transistors on commercial CPU chips has doubled about every two years since the 1970s, very close to the two years predicted by Gordon Moore in 1965 [@Moore:1965] The number of transistors relates only indirectly to the computing power of the machine, and the right panel in [](@mooreslaw-fig) shows that the computer power of the world's top supercomputer (measured in the number of floating point operations per second) has increased even faster, doubling roughly every 1.2 years. 
 

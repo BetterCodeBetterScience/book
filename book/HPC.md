@@ -1,4 +1,4 @@
-# High-performance computing (TBD)
+# High-performance computing
 
 In previous chapters we have worked with examples where the code can be feasibly run on a standard personal computer, but at some point datasets get large enough that it's simply not feasible to do the work on a single machine.  For many scientists, the next move is to use a *cluster*, which involves a number of computers connected to one another.  It is certainly possible to build one's own cluster, and some researchers insist on running their own cluster; occasionally there are good reasons for running one's own cluster (I did it for several years early in my career), but if centralized high-performance computing (HPC) resources are available at one's institution (as they are at many universities) then it often makes sense to take advantage of these resources. First, they are generally administered by professional system administrators (known as *sysadmins*), who can ensure that they operate smoothly and securely. This also helps one avoid having to spend one's personal time scrambling to get the cluster working after a problem occurs. Second, they are generally going to be much larger than any system that an individual researcher or research group can afford to create. While it might make sense to have dedicated hardware if a group can utilize it at full capacity most of the time, it's more common for researchers to have usage patterns that are *bursty* such that they only occasionally need a large system, meaning that a dedicated system would be sitting idle most of the time.  Third, centralized systems will generally have dedicated power and cooling resources, whereas it's not uncommon for the "cluster in a closet" to overheat or overload the power system that wasn't designed to handle such a load. 
 
@@ -49,8 +49,16 @@ When I was a postdoc, we had a couple of computers in the lab that were used to 
 
 Working on a shared HPC system generally involves submitting a *batch job* to the job scheduler.  This is very different from "running a program" on a personal computer. Instead of executing the program immediately, the scheduler puts the job into a *queue*, in which the program waits until the resources required to run it are available. The job request includes details about the amount of compute (number of nodes/cores and amount of RAM) as well as the maximum amount of time requested. If the job requires few resources and requests a small amount of time then it may run in seconds; if it requests many resources and/or a long run time, it might have to wait a significant amount of time in the queue until the resources become available, depending on how busy the system is.  HPC systems often become very busy in the weeks before major conference abstract deadlines, leading to very long wait times; this is simply the tradeoff that one must make to gain access to such large systems.  On the large systems I have used at Stanford and the University of Texas, I have seen large jobs wait a day or two to run during busy times.  On some systems it is possible for researchers to purchase their own nodes which are put into a private queue, allowing dedicated resources for the group while still allowing those resources to be used by others when they are idle.  
 
-Job schedulers generally use a *Fairshare* system to allocate resources to users.  MORE HERE
+Job schedulers generally use a *Fairshare* system to allocate resources to users. This system computes the resources used by each user according to a sliding window over time, and assigns priority in such a way that users with heavy recent usage have a lower priority score for job execution.  One can see their priority score using the `sshare` command on systems using Slurm for scheduling:
 
+```
+$ sshare
+Account                    User  RawShares  NormShares    RawUsage  EffectvUsage  FairShare
+-------------------- ---------- ---------- ----------- ----------- ------------- ----------
+ russpold              russpold        100    0.033333        6533      0.000065   0.816451
+```
+
+The important number here is the "FairShare" value of 0.81. This is a value that ranges from 1 (lowest usage, highest priority) to zero (very high usage, lowest priority), with 0.5 representing having used one's "fair share", with neutral priority.  In order to protect one's FairShare score, it can be useful to spread jobs out over time.  If you end up with a low score, it should improve after a few days with low usage.
 
 ### Anatomy of a batch job
 
@@ -266,25 +274,46 @@ Ridge  ShuffleSplit  593
 ...
 ```
 
-NOTE: MAYBE PASS THE ID TO THE PYTHON FILE AND READ PARAMS WITHIN CODE RATHER THAN USING SED WHICH IS BRITTLE
-
-We would then include code in our sbatch script that reads the appropriate line from the params file for each job in the array:
+We could then pass the task ID to our Python script, which would read in the parameter file and select the row specified by the task ID to retrieve the parameters for that run:
 
 ```bash
 #SBATCH --array=1-100%10  # Run 100 tasks, but only 10 at a time (%)
 
-# Extract the specific line for this task index
-LINE=$(sed -n "${SLURM_ARRAY_TASK_ID}p" params.txt)
-
-# Run the script with those arguments
-python3 runmodel.py $LINE
+# The task ID tells the python script which line to use from the parameter file
+python3 runmodel.py $SLURM_ARRAY_TASK_ID
 ```
 
-Job arrays work well up to about 1000 jobs, beyond which schedulers often get unhappy; it's often useful to think about reorganizing the work so that there are fewer jobs but each job does more work. It's very important to include a throttle on the job array (the 10 in `--array=1-100%10`) when the array is large in order to prevent the filesystem from being overwhelmed if one is reading data.  It's also useful to create a file for each job that specifies that it completed successfully, which then allows rerunning the array in order to rerun any jobs that crashed, without rerunning those that were successful; alternatively one might consider using Snakemake, which interoperates very well with Slurm. 
+Job arrays work well up to about 1000 jobs, beyond which schedulers often get unhappy; it's often useful to think about reorganizing the work so that there are fewer jobs but each job does more work. It's very important to include a throttle on the job array (the 10 in `--array=1-100%10`) when the array is large, which causes it to run only a subset of the jobs at once, in order to prevent the filesystem from being overwhelmed if one is reading data.  It's also useful to create a file for each job that specifies that it completed successfully, which then allows rerunning the array in order to rerun any jobs that crashed, without rerunning those that were successful; alternatively one might consider using Snakemake, which interoperates very well with Slurm. 
 
-## Job dependencies
+### Job dependencies
 
---dependency=afterok:jobid
+Sometimes there are dependencies between jobs, such that one job must complete before another can start.  These are the kinds of dependencies that would often be handled by a workflow engine, but they can also be specified directly in Slurm using the `--dependency` flag. There are several dependency flags that can be used:
+
+- `afterok:jobid`: only run after `jobid` has completed successfully
+- `afternotok:jobid`: only run after `jobid` has failed
+- `afterany:jobid`: run after `jobid` completes regardless of status
+- `after:jobid`: only run after `jobid` has started
+- `singleton`: only run one job with the current job's name at a time
+
+For example, if you had a job that you wanted to run only after job 999444 had completed, you could use:
+
+```bash
+sbatch --dependency=afterok:999444 part2.sbatch
+```
+
+You can also retrieve the job ID from an sbatch command more easily by using the `--parseable` flag, which allows easy chaning of jobs:
+
+```bash
+# Submit first job, capture job ID
+JOB1=$(sbatch --parsable preprocess.sbatch)
+
+# Second job waits for first
+JOB2=$(sbatch --parsable --dependency=afterok:$JOB1 analyze.sbatch)
+
+# Third job waits for second
+sbatch --dependency=afterok:$JOB2 postprocess.sbatch
+```
+
 
 ## GPU computing on HPC systems
 
@@ -409,7 +438,7 @@ However, there is a rub: Because Docker requires that the user have root access 
 
 ### Interactive access to HPC systems
 
-- ondemand, jupyterhub, rstudio
+I have focused so far primarily on usage of HPC systems from the command line shell, which for many years was the only way to access these systems. However, HPC systems increasingly offer graphical interfaces to interact with their system.  One common platform is [OnDemand](https://www.openondemand.org/run-open-ondemand), which offers access to a large number of applications on an HPC system via a web interface.  Other systems offer access to Jupyter notebooks via [JupyterHub](https://jupyter.org/hub), and RStudio Server for R users.  These interactive tools still usually require launching a Slurm job, which is done automatically, but this means that one can still end up waiting in a queue before being able to access the system.
 
 ### Software development on an HPC system
 

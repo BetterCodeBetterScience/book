@@ -32,9 +32,9 @@ Many such labs have moved to using electronic lab notebooks, making it much easi
 However, an increasing amount of scientific work is now computational, and for this work it would seem somewhat inefficient to record information about the software development process separately from the code that is being written.
 There is in fact a tool that can provide the computational researcher with an integrated way to record the history their work, known as *version control.* While there are many tools that can be used to perform version control, *[git](https://git-scm.com/)* has become by far the most prevalent within the scientific computing ecosystem, largely due to the popularity of the [GitHub](http://github.com) website that enables the hosting and sharing of git repositories.
 
-In this section we will assume that the researcher has a basic knowledge of the *git* software tool; for researchers looking to learn *git*, there are numerous resources online, which we will not duplicate; see the suggested resources at the end of this chapter.
-Here we will focus on the ways in which version control tools like *git* can serve as important tools to improve scientific coding.
-While there are numerous graphical user interfaces (GUIs) for *git* (including those offered by various IDEs), we will focus on its use via the command line interface (CLI).
+In this section I will assume that the researcher has a basic knowledge of the *git* software tool; for researchers looking to learn *git*, there are numerous resources online, which we will not duplicate; see the suggested resources at the end of this chapter.
+Here I will focus on the ways in which version control tools like *git* can serve as important tools to improve scientific coding.
+While there are numerous graphical user interfaces (GUIs) for *git* (including those offered by various IDEs), I will focus on its use via the command line interface (CLI).
 Every researcher should have a basic knowledge of the *git* CLI, since this is a ubiquitous interface available across all OSes and environments.
 The CLI is sometimes the only interface that is available to the researcher, e.g., in a remote session on an HPC system or in the cloud.
 Moreover, the CLI provides an immediate exposure to available commands (see `git --help`) and options for each command (see `git COMMAND --help`), allowing users to discover a command or option that might not (yet) be exposed by any particular GUI tool.
@@ -54,7 +54,7 @@ The general workflow for version control using *git* is as follows:
 
 
 Here is an example using *git*.
-We will create a test directory (outside of our current *git* repository) and initialize it as a *git* repository:
+We first create a test directory (outside of our current *git* repository) and initialize it as a *git* repository:
 
 ```bash
 $ cd /tmp
@@ -167,8 +167,8 @@ Date:   Mon Feb 17 07:42:35 2025 -0800
 ```
 
 Now we can see our latest commit at the top of the list.
-If we were to push our repository to GitHub, then we could also see a much more user-friendly graphical view of commit history and the changes that occurred in each commit.
-Most IDEs also have an interface to work directly with *git*; for example, within VSCode there is a **Source Control** panel that would allow one to do everything that we did above using the command line.
+If I were to push our repository to GitHub, then we could also see a much more user-friendly graphical view of commit history and the changes that occurred in each commit.
+Most IDEs also have an interface to work directly with *git*; for example, within VSCode there is a **Source Control** panel that would allow one to do everything that I did above using the command line.
 
 ### Version control as a lab notebook
 
@@ -375,7 +375,7 @@ When the virtual environment is *activated* using a special command, these direc
 They can be easily removed from the path by deactivating the environment.
 
 There are numerous tools within the Python ecosystem for package management and virtual environments, to the degree that some have called it an ["inexcusable pain in the ass"](https://dublog.net/blog/so-many-python-package-managers/).
-We will focus on two solutions here (*uv* and *conda*), realizing that things will change over time and these recommendations will likely need to be updated (living textbooks FTW!).
+I will focus on two solutions here (*uv* and *conda*), realizing that things will change over time and these recommendations will likely need to be updated (living textbooks FTW!).
 
 
 ### Environment management using *uv*
@@ -512,7 +512,7 @@ numpy==2.2.3
 
 One note about locking: I have occasionally experienced conflicts when using the same code across multiple operating systems (MacOS and Linux in my case), where a package version that works on one OS causes a dependency conflict on another OS.  That's why I generally do not add the uv.lock file into version control, at least on projects where I expect to be running the code across platforms.
 
-This brief overview only scratches the surface of the many features within *uv*, which we recommend you explore in detail via the project documentation.
+This brief overview only scratches the surface of the many features within *uv*, which I recommend you explore in detail via the project documentation.
 
 ### Environment management using *conda*
 
@@ -571,7 +571,7 @@ After this training, the model has a lot of knowledge but is often not very well
 The large commercial models such as GPT-4, Claude, and Gemini are truly "black boxes" in the sense that we have no access to how they work internally or how they were trained.
 However, an ecosystem of "open source" language models has also burgeoned, allowing researchers to run powerful pre-trained models on their own computing hardware and providing some degree of insight into the function of the model.
 It's important to point out that the label "open source" is in many cases a misnomer, since it's relatively rare for the authors of these models to give full access to all of the code and data that went into training the model.
-Many of them are better described as "open-weight" models (a term we will use throughout this book), since the model weights and code necessary to perform inference are made openly available even if the training code and data are not.
+Many of them are better described as "open-weight" models (a term I will use throughout this book), since the model weights and code necessary to perform inference are made openly available even if the training code and data are not.
 Despite these limitations, the availability of these open-ish models has given researchers the opportunity to work more closely with these models and see into their inner workings.
 They also allow users to perform further fine-tuning to augment model performance in particular domains.
 
@@ -651,7 +651,7 @@ Research performed using commercial/closed large language models should be consi
 As an example, OpenAI [deprecated a number of models](https://platform.openai.com/docs/deprecations), including the widely used `text-davinci-002` model, meaning that they are no longer available to users.
 Research performed on open-weight models is in theory reproducible if the random seed is specified along with the specific model version used.
 However, in many cases it is also important to ensure that any results obtained using LLMs are robust to the specific random seed chosen.
-One should *never* cherry pick scientific results by trying different random seeds and only reporting the results that are most consistent with the hypothesis being tested; we refer to this as "seed-hacking", on analogy to the commonly used term "p-hacking". 
+One should *never* cherry pick scientific results by trying different random seeds and only reporting the results that are most consistent with the hypothesis being tested; I refer to this as "seed-hacking", on analogy to the commonly used term "p-hacking". 
 This issue is discussed in more detail in Chapter 9.
 
 

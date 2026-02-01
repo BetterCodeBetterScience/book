@@ -52,7 +52,7 @@ Other common types of errors included numerical errors, logical errors, and memo
 
 If professional coders make errors at a rate of 1-2 errors per hundred lines, it seems very likely that the error rates of amateur coders writing software for their research would be substantially higher.
 While not all coding errors will make a difference in the final calculation, it's likely that many will [@Soergel:2014aa].
-We have in fact experienced this within our own work (As described in [this blog post](https://reproducibility.stanford.edu/coding-error-postmortem/)).
+My group has in fact experienced this within our own work (As described in [this blog post](https://reproducibility.stanford.edu/coding-error-postmortem/)).
 In 2020 we posted a preprint that criticized the design of a particular aspect of a large NIH-funded study, the Adolescent Brain Cognitive Development (ABCD) study.
 This dataset is shared with researchers, and we also made the code openly available via GitHub.
 The ABCD team eagerly reviewed our code, and discovered an error due to an overly complex index scheme with double negatives that led to incorrect indexing of a data frame and thus changed the results.
@@ -75,9 +75,9 @@ Analyses of early versions of this model [@Bubeck:2023aa] showed that its abilit
 Later that year GPT-4 became available as part of the GitHub CoPilot AI assistant, and those of us using Copilot saw some quite astonishing improvements in the performance of the model compared to the GPT-3 version.
 I had been developing a workshop on software engineering practices for scientists, and the advent of this new tool led to some deep soul-searching about whether such training would even be necessary given the power of AI coding assistants.
 My colleagues and I [@Poldrack:2023aa] subsequently performed a set of analyses that asked three questions about the ability of GPT-4 to perform scientific coding.
-We will describe these experiments in more detail in Chapter 4, but in short, they showed that while GPT-4 was able to solve many coding problems quite effectively, it was far from being able to solve common coding problems completely on its own.  Coding assistants have continued to improve over time, but as I will discuss throughout the book, they still require close attention by the user to ensure that they function properly.
+I will describe these experiments in more detail in Chapter 4, but in short, they showed that while GPT-4 was able to solve many coding problems quite effectively, it was far from being able to solve common coding problems completely on its own.  Coding assistants have continued to improve over time, but as I will discuss throughout the book, they still require close attention by the user to ensure that they function properly.
 
-We believe that AI coding assistants have the potential to greatly improve the experience of coding and to help new coders learn how to code effectively.
+I believe that AI coding assistants have the potential to greatly improve the experience of coding and to help new coders learn how to code effectively.
 However, my experiences with AI-assisted coding have also led me to the conclusion that software engineering skills will remain *at least* as important in the future as they are now.
 First, and most importantly, the hardest problem in programming is not the generation of code; rather, it is the decomposition of the problem into a set of steps that can be used to generate code.
 The motivation for why coding will remain as an essential skill even if code is no longer being written by humans was expressed by Robert Martin in 2009, well before the current AI tools were even imaginable:
@@ -127,7 +127,7 @@ This phenomenon was first reported in 1994 by a group of researchers who reporte
 Hundreds of papers were published on the phenomenon over the subsequent decades, mostly using more simple laboratory tasks that didn't require a kitchen and oven in the laboratory to bake cookies.
 Nearly all of these subsequent studies reported to have found ego depletion effects.
 But two large-scale efforts to reproduce the finding, including data from more than 5,000 participants, have shown that the effect is so small as to likely be non-existent.
-Below we will talk more about the reasons that we now think these kinds of irreproducible findings can come about.
+Below I will talk more about the reasons that we now think these kinds of irreproducible findings can come about.
 
 ### What does "reproducibility" mean?
 
@@ -182,7 +182,7 @@ A particular concern is that not all software errors are created equal.
 Imagine that a graduate student is comparing the performance of a new machine learning method with their implementation of a previous method.
 Unbeknownst to them, their implementation of the previous method contains an error.
 If the error results in poorer performance of the previous method (thus giving their new method the edge), then they are less likely to go looking for a bug than they might be if the error caused performance of the competing method to be inaccurately high.
-We have referred to this before as "bug-hacking", and this problem is nicely exemplified by the comic strip shown in [](#BugHacking-fig).
+I have referred to this before as "bug-hacking", and this problem is nicely exemplified by the comic strip shown in [](#BugHacking-fig).
 
 ```{figure} http://www.phdcomics.com/comics/archive/phd033114s.gif
 :label: BugHacking-fig
@@ -237,7 +237,7 @@ One adaptation of this approach is to use pilot data or data that were discarded
 ## Beyond reproducibility: Getting valid answers
 
 Our discussion so far has focused on reproducibilty, but it is important to point out that a result can be completely reproducible yet wrong.
-A degenerate example is a data analysis program that always outputs zeros for any analysis regardless of the data; it will be perfectly reproducible, with the same data or different data, yet also perfectly wrong! This distinction goes by various names; we will adopt the terminology of "reliability" versus "validity" that is commonly used in many fields including psychology.
+A degenerate example is a data analysis program that always outputs zeros for any analysis regardless of the data; it will be perfectly reproducible, with the same data or different data, yet also perfectly wrong! This distinction goes by various names; I will adopt the terminology of "reliability" versus "validity" that is commonly used in many fields including psychology.
 A measurement is considered to be *reliable* if repeated measurements of the same type give similar answers; a measurement is perfectly reliable if it gives exactly the same answer each time it is performed, and increasing error variance leads to lower reliability.
 On the other hand, a measurement is considered to be *valid* if it accurately indexes the underlying feature that it is intended to measure; that is, the measure is *unbiased* with respect to the ground truth.
 
@@ -247,7 +247,7 @@ In Chapter 9 I will talk in much more detail about how to validate computational
 
 ## Guiding principles for this book
 
-The material that we will present in this book reflects a set of guiding principles:
+The material that I will present in this book reflects a set of guiding principles:
 
 - Scientific research increasingly relies upon code written by researchers with the help of AI agents.  Improving the quality of research code is a direct way to enhance the reliability of scientific research.
 - Scientists bear the ultimate responsibility for ensuring that their code provides answers that are both reliable and valid.  Fortunately, there are many software development tools that can help in this endeavor.

@@ -78,8 +78,8 @@ Note that throughout the book the symbol "$" refers to the UNIX command line.
 So far our new file is not being tracked, but we can add it to the database:
 
 ```bash
-> git add test_file.txt
-> git status
+$ git add test_file.txt
+$ git status
 On branch main
 
 No commits yet
@@ -87,26 +87,23 @@ No commits yet
 Changes to be committed:
   (use "git rm --cached <file>..." to unstage)
 	new file:   test_file.txt
-
-
 ```
 
 It's now in the staging area, but hasn't yet been committed to the database, as we can see if we print the log:
 
 ```bash
-> git log
+$ git log
 fatal: your current branch 'main' does not have any commits yet
-
 ```
 
 We can commit the items in the staging area (in this case, just our single added file) to the database and provide a message that labels the commit:
 
 ```bash
-> git commit -m"initial add"
+$ git commit -m"initial add"
 [main (root-commit) 752ca80] initial add
  1 file changed, 1 insertion(+)
  create mode 100644 test_file.txt
-> git status
+$ git status
 On branch main
 nothing to commit, working tree clean
 ```
@@ -115,7 +112,7 @@ Now that all changes have been committed, we are "clean", meaning that the files
 We can see the commit in the git log:
 
 ```bash
-> git log
+$ git log
 commit 752ca809cd662f846434dcb2c81f3000db640b4e (HEAD -> main)
 Author: Russell Poldrack <poldrack@gmail.com>
 Date:   Mon Feb 17 07:42:35 2025 -0800
@@ -134,8 +131,8 @@ The most important role for version control is to track changes in a file, along
 That is, it can serve as a digital version of a lab notebook! Let's make a change to the file to see this in action:
 
 ```bash
-> echo "another line" >> test_file.txt # add another line of text
-> git diff test_file.txt
+$ echo "another line" >> test_file.txt # add another line of text
+$ git diff test_file.txt
 diff --git a/test_file.txt b/test_file.txt
 index 16b14f5..0db3737 100644
 --- a/test_file.txt
@@ -150,11 +147,11 @@ This provides us with a (somewhat cryptic) description of the changes to the fil
 We can then add and commit the file and then view the new commit in the log:
 
 ```bash
-> git add test_file.txt
-> git commit -m"added a second line"
+$ git add test_file.txt
+$ git commit -m"added a second line"
 [main 5e8c41a] added a second line
  1 file changed, 1 insertion(+)
-> git log
+$ git log
 
 commit 5e8c41a075b2ab2d954d59cab6530d924c5e3e6a (HEAD -> main)
 Author: Russell Poldrack <poldrack@gmail.com>
@@ -171,7 +168,7 @@ Date:   Mon Feb 17 07:42:35 2025 -0800
 
 Now we can see our latest commit at the top of the list.
 If we were to push our repository to GitHub, then we could also see a much more user-friendly graphical view of commit history and the changes that occurred in each commit.
-Most IDEs also have an interface to work directly with `git`; for example, within VSCode there is a *Source Control* panel that would allow one to do everything that we did above using the command line.
+Most IDEs also have an interface to work directly with *git*; for example, within VSCode there is a **Source Control** panel that would allow one to do everything that we did above using the command line.
 
 ### Version control as a lab notebook
 
@@ -190,7 +187,7 @@ Scan of a page from Russ's lab notebook circa 2000.
 
 ### Version control best practices
 
-Version control systems like `git` can serve as an outstanding alternative to a written lab notebook for the computational researcher, but only if it used well.
+Version control systems like *git* can serve as an outstanding alternative to a written lab notebook for the computational researcher, but only if it used well.
 Here are a few best practices for ensuring good record-keeping:
 
 #### Use a consistent standard format for commit messages
@@ -209,7 +206,7 @@ The *type* tag describes the type of change, which could include tags like *feat
 The *summary* should include a brief summary (usually less than 72 characters) that summarizes what was done.
 You should avoid using generic or vague summaries such as "update" or "fix bug".
 
-By `git` convention, commit messages should be written in imperative mood, as if one is giving a command.
+By *git* convention, commit messages should be written in imperative mood, as if one is giving a command.
 For example, the message might say "add test for infinite edge case" rather than "added test for infinite edge case".
 
 Here is a example:
@@ -243,7 +240,7 @@ follows the OpenAI API conventions.
 One of the tricky aspects of learning to use version control is learning when to commit.
 One rule of thumb is that a commit should reflect a group of changes that solve a particular problem.
 For example, say that we have modified three source files to add the multiple API functionality listed above.
-We could on the one hand add and commit the changes from each file separately, leading to three separate commits.
+We could, on the one hand, add and commit the changes from each file separately, leading to three separate commits.
 This is too granular; if we later decide that we want to roll back those changes (which could be difficult depending on commit messages and our memory), we have to identify the three separate commits and then roll back each one separately.
 At the other extreme, it's not uncommon for users to check in all of the work that was done in a day, with a commit message like "all work from Tuesday".
 If one were to later decide that part of the work from that day needed to be rolled back, it would require a lot of extra work to isolate just those changes.
@@ -252,13 +249,13 @@ Thinking about the commit message can be helpful in considering when to commit; 
 
 #### Avoid blanket add/commit operations
 
-Another common `git` "anti-pattern" (i.e., a commonly used but bad solution to a common problem) is to simply add all files using `git add .` (which adds all files in the current directory, including those that have not been added) or `git add -A` (which does the similar thing recursively for the entire directory tree).
+Another common *git* "anti-pattern" (i.e., a commonly used but bad solution to a common problem) is to simply add all files using `git add .` (which adds all files in the current directory, including those that have not been added) or `git add -A` (which does the similar thing recursively for the entire directory tree).
 This kind of "blanket add/commit" is problematic for at least two reasons.
 First, there are often files that we don't want to add to version control, such as files containing credentials or files with details about the local system configuration.
-While we would usually want to add these files to our `.gitignore` file (which prevents them from being added), it's best practice to explicitly add files that we are working on.
+While we would usually want to add these files to our `.gitignore` file (which prevents them from being seen by *git*), it's best practice to explicitly add files that we are working on.
 A second reason to avoid blanket add/commit is that if we are working on more than one problem at a time, the resulting commit will bundle together files that address different problems and thus prevent writing a clean commit message as well as prevent a clean reversion of that code later.
 It would also require knowing exactly which files have been added in order to create an accurate commit message.
-The only time that we can imagine a blanket add/commit being reasonable is when one is initially creating a repository using a large number of files.
+The only time that I can imagine a blanket add/commit being reasonable is when one is initially creating a repository using a large number of files.
 
 A better practice is to explicitly name all files being added, which forces one to think about exactly what problem the commit is solving.
 If one is certain that they know exactly which code files have been changed, then a useful alternative can be to only add modified files (using `git add -u`), which can save a bit of time if there are numerous files being added.
@@ -266,20 +263,20 @@ However, it's important to make sure that the commit message always faithfully r
 
 ### Version control as developer productivity tool
 
-So far we have discussed version control primarily as a way to record the history of software development.
-But an arguably even more powerful aspect of version control is the way that it enables developer productivity by allowing one to try our new changes and easily revert to a previous version.
+So far I have discussed version control primarily as a way to record the history of software development.
+But an arguably even more powerful aspect of version control is the way that it enables developer productivity by allowing one to try out new changes and easily revert to a previous version.
 It's useful to first examine how this might be done without version control.
 Suppose a developer has a codebase and wants to try out a major change, such as changing the database backend used in the project.
 They would usually save a copy of all of the source files (perhaps with a timestamped label), and then start working on the problem.
 If at some point they wish to completely abandon the new project, they can always go back to the copy of the original.
 But what if they want to abandon the latest part (e.g., a specific database) without necessarily abandoning the rest of the work that it took to get there? Unless they are saving copies at every step (which quickly becomes a bookkeeping nightmare), this will be very challenging to pull off.
-On the other hand, with a solid version control workflow these problems are trivial to solve, because these systems are built exactly in order to solve this bookkeeping problem.
+On the other hand, with a solid version control workflow these problems are trivial to solve, because version control is designed exactly in order to solve this bookkeeping problem.
 
 
 #### Falling back on previous commits
 
-We will start first with a simple example that only involves the `main` branch of the repository; if you don't know what a "branch" is, this would be a good time to seek out your favorite `git` resource and learn about that concept.
-Later we will suggest that working directly in the main branch is not optimal, but it's common for many research projects with a single developer so we will start there, fitting with our mantra that we should never let the perfect be the enemy of the good.
+I will start first with a simple example that only involves the `main` branch of the repository; if you don't know what a "branch" is, this would be a good time to seek out your favorite *git* resource and learn about that concept.
+Later I will suggest that working directly in the main branch is not optimal, but it's common for many research projects with a single developer so I will start there, fitting with the mantra that we should never let the perfect be the enemy of the good.
 
 Let's say that we wish to try changing out the database backend for our project, which will require changes to several of the source files.
 Starting with a clean working tree (i.e., no uncommitted changes or untracked files not included in `.gitignore`), we would first create a new tag so that we can easily find the last commit in case we decide that we want to revert back to it:
@@ -294,10 +291,10 @@ It's easy to get back to the last commit simply by typing `git reset --hard HEAD
 In the case that we decide to abandon the entire project and want to go back to the state of the code when we started (which is denoted by the tag we created), we simply need to find the hash for that commit and then check out that version of the repository:
 
 ```bash
-> git show v0.2-pre-db-change
+$ git show v0.2-pre-db-change
 commit 5e8c41a075b2ab2d954d59cab6530d924c5e3e6a (HEAD -> main, tag: v0.2-pre-db-change, tag: v0.2)
-> git checkout 5e8c41a07 .
-> git commit -m"""
+$ git checkout 5e8c41a07 .
+$ git commit -m"""
 cleanup: Revert attempted database backend switch
 
 We tried to replace the database backend but realized after some
@@ -308,14 +305,14 @@ On branch main
 nothing to commit, working tree clean
 ```
 
-A look at the `git log` will now show that the HEAD matches the hash for the tagged commit.
+A look at the output of `git log` will now show that the HEAD matches the hash for the tagged commit.
 
 #### Using branches
 
-All `git` repositories start with a single default branch, usually called "main" (or sometimes the previous convention, "master").
-While it's possible to develop completely within the main branch of a repository, we generally prefer to use *development branches*, which can be thought of as different versions of the repository.
-In our preferred workflow, whenever we want to modify code we first create and then check out a new branch, in which we will do that work.
-One great benefit of this is that if the main branch was working when we created the development branch, it will remain in a working state even as we make our changes in the new branch.
+All *git* repositories start with a single default branch, usually called "main" (or sometimes the previous convention, "master").
+While it's possible to develop completely within the main branch of a repository, I generally prefer to use *development branches*, which can be thought of as different versions of the repository.
+In my preferred workflow, whenever I want to modify code I first create and then check out a new branch, in which I will do that work.
+One great benefit of this is that if the main branch was working when I created the development branch, it will remain in a working state even as I make our changes in the new branch.
 This provides much greater freedom to try out changes with no concern about breaking existing code, and also allows development to proceed without interfering with production code.
 
 It's important to name branches in way that makes clear what their purpose is.
@@ -326,26 +323,26 @@ For example, for our example above we might use "feature/swap-db-backend".
 We can create a new branch and check it out (making it the current branch) using `git checkout`:
 
 ```bash
-> git branch
+$ git branch
 * main
-> git checkout -b feature/swap-db-backend
+$ git checkout -b feature/swap-db-backend
 Switched to a new branch 'feature/swap-db-backend'
-> git branch
+$ git branch
 * feature/swap-db-backend
   main
 ```
 
 We can now go about our development work, committing as usual to the branch.
-If we were to later decide to abandon the new branch, we simply check out the main branch, and we are right back where we left off before creating the new branch.
-We could either delete the feature branch (to keep the repository clean), or keep it around in case we wish to go back later and look at it again.
+If I were to later decide to abandon the new branch, I would simply check out the main branch and be right back where I left off before creating the new branch.
+I could then either delete the feature branch (to keep the repository clean), or keep it around in case I wish to go back later and look at it again.
 
 ### Collaborative development using GitHub
 
 While git is very useful for the individual developer, it becomes even more powerful when used for collaborative development amongst a group of developers.
-For `git` users this is enabled by the popular [GitHub](http://github.com) web platform for version control.
-We will assume a basic familiarity with the use of GitHub: see the Suggested Resources at the end of the chapter for resources to learn how to use GitHub.
+For *git* users this is enabled by the popular [GitHub](http://github.com) web platform for version control.
+I will assume a basic familiarity with the use of GitHub: see the Suggested Resources at the end of the chapter for resources to learn how to use GitHub.
 
-Collaborative development requires choosing a workflow that the team will adhere to; a commonly used workflow for GitHub users is the [GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow), which goes as follows.
+Collaborative development requires choosing a workflow that the team will adhere to; a commonly used workflow for GitHub users is the "[GitHub flow](https://docs.github.com/en/get-started/using-github/github-flow)", which goes as follows.
 Let's say that we have two developers on our team, and one of them wants to attempt the database backend project that we described above.
 The process would be:
 
@@ -369,7 +366,7 @@ First, it allows different projects to use different versions of specific packag
 One often finds the need to install an older version of a particular dependency, or an older version of Python, in order to use a specific tool.
 Without virtual environments, managing different dependencies across projects can become impossible.
 If one project requires Python ≤3.9 while another needs Python ≥3.12, conflicts arise that virtual environments can easily resolve.
-Second, because the virtual environment specifies the exact version of each dependency and allows these to be exported, it is possible for other users on different machines to exactly recreate the package environment required by the author (assuming that those package versions are available on the users's operating system).
+Second, because the virtual environment specifies the exact version of each dependency and allows these to be exported, it is possible for other users on different machines to exactly recreate the package environment required by the author (assuming that those package versions are available for the users's operating system).
 This can greatly enhance the reproducibility of computational analyses across systems, and can also ease the implementation of software across multiple machines (e.g., when one wants to move code from a local machine into the cloud).
 On shared computing systems (such as academic computing clusters), virtual environments let users install their own packages without needing admin access.
 
@@ -378,18 +375,18 @@ When the virtual environment is *activated* using a special command, these direc
 They can be easily removed from the path by deactivating the environment.
 
 There are numerous tools within the Python ecosystem for package management and virtual environments, to the degree that some have called it an ["inexcusable pain in the ass"](https://dublog.net/blog/so-many-python-package-managers/).
-We will focus on two solutions here (uv and conda), realizing that things will change over time and these recommendations will likely need to be updated (living textbooks FTW!).
+We will focus on two solutions here (*uv* and *conda*), realizing that things will change over time and these recommendations will likely need to be updated (living textbooks FTW!).
 
 
 ### Environment management using *uv*
 
-[uv](https://docs.astral.sh/uv/) is a relatively new package management tool that has quickly gained momentum in the Python community, in large part because of its speed (10-100x faster than older tools) and its efficient use of disk space.
+*[uv](https://docs.astral.sh/uv/)* is a relatively new package management tool that has quickly gained momentum in the Python community, in large part because of its speed (10-100x faster than older tools) and its efficient use of disk space.
 To start, we simply initialize a new project, marking it as a package so that it will create the appropriate code structure:
 
 ```bash
-> uv init --package uv_example
+$ uv init --package uv_example
 Initialized project `uv-example` at `/private/tmp/uvtest/uv_example`
-> tree uv_example
+$ tree uv_example
 uv_example
 ├── pyproject.toml
 ├── README.md
@@ -402,12 +399,12 @@ We can then create a new virtual environment using the command `uv venv`.
 This is stored within the directory `.venv`.
 
 ```bash
-> cd uv_example
-> uv venv
+$ cd uv_example
+$ uv venv
 Using CPython 3.13.1
 Creating virtual environment at: .venv
 Activate with: source .venv/bin/activate
-> tree .venv
+$ tree .venv
 .venv
 ├── bin
 │   ├── activate
@@ -431,23 +428,23 @@ Activate with: source .venv/bin/activate
 └── pyvenv.cfg
 ```
 
-One thing to note here is that the `python` executable is actually a symbolic link to a version that is in a central location (under `.local/share/uv`).
+One thing to note here is that the `python` executable is actually a symbolic link to a version that is in a central cache (under `.local/share/uv`).
 This means that we can create numerous virtual environments, but there will only be one copy of that particular version of Python, saving space on disk.
 
 We can activate the environment by running its activation script, after which we see that the system path will point to the virtual environment:
 
 ```bash
-> which python
+$ which python
 python not found
-> source .venv/bin/activate
-> which python
+$ source .venv/bin/activate
+$ which python
 python is /private/tmp/uvtest/uv_example/.venv/bin/python
 ```
 
 If we wish to add dependencies, we can simply do this using `uv add`:
 
 ```bash
-> uv add numpy
+$ uv add numpy
 Resolved 2 packages in 394ms
    Built uv-example @ file:///private/tmp/uvtest/uv_example
 Prepared 2 packages in 431ms
@@ -460,7 +457,7 @@ Installed 2 packages in 8ms
 Here again, if we load this module within Python we will see that it is located within the virtual environment:
 
 ```bash
-> python
+$ python
 Python 3.13.1 (main, Dec 19 2024, 14:22:59) [Clang 18.1.8 ] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> import numpy
@@ -471,8 +468,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 The details regarding the package are stored within a file called "pyproject.toml" in the main project directory.
 Looking inside this file we can see that it contains details about the packages that have been added, including the specific version:
 
-```
-> more pyproject.toml
+```bash
+$ more pyproject.toml
 [project]
 name = "uv-example"
 version = "0.1.0"
@@ -494,7 +491,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 ```
 
-This file allows one to specify many other details about a Python package.
+This file allows one to specify many other details about a Python package, as I will discuss further in Chapter 12.
 It not only stores dependencies but also metadata about the project, making it useful for packaging and distribution, and learning more about its features is important for anyone looking to develop Python packages.
 
 #### Locking dependencies in uv
@@ -502,10 +499,10 @@ It not only stores dependencies but also metadata about the project, making it u
 Computational reproducibility requires that we be able to exactly recreate an environment, including the specific versions of all packages.
 If you look at the `pyproject.toml` file you will see that it doesn't specify exact versions for Python or the dependencies; instead, it specifies a lower bound; i.e., "numpy>=__DECIMAL_0__.3" means that the numpy version should be at least __DECIMAL_0__.3, but could be higher if a newer version became available.
 This is often fine, but for purposes of reproducibility we often wish to record the exact package versions that were used for a particular analysis.
-This is commonly done using a `requirements.txt` file, and `uv` allows exporting the current environment to such a file:
+This is commonly done using a `requirements.txt` file, and *uv* allows exporting the current environment to such a file:
 
 ```bash
-> uv pip compile pyproject.toml -o requirements.txt
+$ uv pip compile pyproject.toml -o requirements.txt
 Resolved 1 package in 78ms
 # This file was autogenerated by uv via the following command:
 #    uv pip compile pyproject.toml
@@ -513,24 +510,23 @@ numpy==2.2.3
     # via uv-example (pyproject.toml)
 ```
 
-This brief overview only scratches the surface of the many features within `uv`, which we recommend you explore in detail via the project documentation.
+One note about locking: I have occasionally experienced conflicts when using the same code across multiple operating systems (MacOS and Linux in my case), where a package version that works on one OS causes a dependency conflict on another OS.  That's why I generally do not add the uv.lock file into version control, at least on projects where I expect to be running the code across platforms.
+
+This brief overview only scratches the surface of the many features within *uv*, which we recommend you explore in detail via the project documentation.
 
 ### Environment management using *conda*
 
-Another popular tool for managing virtual environments is `conda`.
-It has much of the same functionality as uv and has been around much longer, but we have largely moved away from it for most projects for several reasons: `uv` is relatively more efficient when it comes to disk space and it is often faster than conda, especially as environments start to have many packages installed.
-In addition, there are sometimes conflicts between conda's native package management and the `pip` package management system.
-When using conda it's usually necessary to use `pip` to install some packages that aren't available within the conda library, but this can result in conflicts between the two package management systems.
+Another popular tool for managing virtual environments is *Conda*.
+It has much of the same functionality as uv and has been around much longer, but we have largely moved away from it for most projects in my lab for several reasons: *uv* is relatively more efficient when it comes to disk space and it is often faster than *Conda*, especially as environments start to have many packages installed.
+In addition, there are sometimes conflicts between *Conda*'s native package management and the *pip* package management system.
+When using *Conda* it's sometimes necessary to use *pip* to install some packages that aren't available within the *Conda* library, but this can result in conflicts between the two package management systems.
 
-There is one important way in which `conda` differs from `uv`.
-In fact, I switched to `uv` in 2024 after being a long-time user of `conda`, but I still use `conda` for some projects.
-The crucial feature of `conda` that has kept us using it for a limited set of projects is its ability to manage non-Python software elements alongside Python packages.
-We have found on a couple of occasions that some Python packages have dependencies that rely upon non-Python software components.
-Specifically, in cases where Python packages required a specific component (the LLVM compiler), we were unable to easily get the specific required version of that component working on our Mac using `uv`, whereas `conda` simply installs the required component and works out of the box.
-The speed and efficiency of `uv` generally outshine `conda` in our experience, but in some cases `conda` may help solve tricky non-Python dependency issues.
-
-**TODO**: more detail about use of Conda
-
+There is one important way in which *Conda* differs from *uv*.
+In fact, I switched to *uv* in 2024 after being a long-time user of *Conda*, but I still use *Conda* for some projects.
+The crucial feature of *Conda* that has kept me using it for a limited set of projects is its ability to manage non-Python software elements alongside Python packages.
+I have found on a couple of occasions that some Python packages have dependencies that rely upon non-Python software components.
+Specifically, in cases where Python packages required a specific component (the LLVM compiler), I was unable to easily get the specific required version of that component working on our Mac using *uv*, whereas *Conda* simply installed the required component and worked out of the box.
+The speed and efficiency of *uv* generally outshine *Conda* in my experience, but in some cases *Conda* may help solve tricky non-Python dependency issues.
 
 ## Large language models
 
@@ -556,7 +552,7 @@ These methods, together with the realization that graphical processing units (GP
 
 ### How LLMs are built and trained
 
-The LLMs that are most prominent today, such as GPT-4, Claude, and Google Gemini, are based on a specific neural network architecture known as a *transformer*, which was first introduced in 2017 [@Vaswani:2017aa].
+The LLMs that are most prominent as of 2026, such as GPT-4, Claude, and Google Gemini, are based on a specific neural network architecture known as a *transformer*, which was first introduced in 2017 [@Vaswani:2017aa].
 Transformers were developed in order to effectively learn how to map one sequence to another sequence, such as in the case of translating from a sentence in one language to a sentence in another.
 However, large transformers trained on massive datasets have since shown themselves to be able to adapt to many different types of problems that they were never explicitly trained to perform.
 For this reason, these models (along with other kinds of large pre-trained models) have been referred to as *foundation models* [@Bommasani:2022aa].
@@ -573,26 +569,19 @@ After this training, the model has a lot of knowledge but is often not very well
 ### "Open Source" language models
 
 The large commercial models such as GPT-4, Claude, and Gemini are truly "black boxes" in the sense that we have no access to how they work internally or how they were trained.
-However, in the last few years an ecosystem of "open source" language models has burgeoned, allowing researchers to run powerful pre-trained models on their own computing hardware and providing some degree of insight into the function of the model.
+However, an ecosystem of "open source" language models has also burgeoned, allowing researchers to run powerful pre-trained models on their own computing hardware and providing some degree of insight into the function of the model.
 It's important to point out that the label "open source" is in many cases a misnomer, since it's relatively rare for the authors of these models to give full access to all of the code and data that went into training the model.
 Many of them are better described as "open-weight" models (a term we will use throughout this book), since the model weights and code necessary to perform inference are made openly available even if the training code and data are not.
 Despite these limitations, the availability of these open-ish models has given researchers the opportunity to work more closely with these models and see into their inner workings.
 They also allow users to perform further fine-tuning to augment model performance in particular domains.
 
-| Feature | Open-Weight LLMs | True Open Source LLMs |
-|------------------|------------------|----------------------|
-| Model weights available? | ✅ Yes | ✅ Yes |
-| Training data available? | ❌ No | ✅ Yes |
-| Training code available? | ❌ No | ✅ Yes |
-| Can be fine-tuned? | ✅ Yes | ✅ Yes |
-
-Running large open source models with tens of billions of parameters (such as the well known Llama models released by Meta) can require significant GPU resources, but many of these models are also released in smaller versions that can be run with reasonable speed on a laptop with a GPU; for the examples in this book, all of the examples are run on a Macbook Pro M3 Max laptop.
+Running large open source models with tens of billions of parameters (such as the well known Llama models released by Meta) can require significant GPU resources, but many of these models are also released in smaller versions that can be run with reasonable speed on a laptop with a GPU; most of the examples in this book were run on a Macbook Pro M3 Max laptop.
 Users wishing to run the larger open-weight models can access them via service providers who provide API access to these models for a fee.
-We will discuss working with APIs in Chapter XXX.
+I will discuss working with APIs in more detail in Chapter 5.
 
 As an example of what we can do with open-weight language models, suppose that we want to compare the output of models before and after instruction tuning.
 While we can't access versions of commercial models such as GPT-4 prior to instruction tuning, there are a large number of open-weight models for which both versions are available.
-We will show results from the Qwen1.5-0.5B model, which is very small and thus runs relatively quickly even on a laptop.
+I will show results from the Qwen1.5-0.5B model, which is very small and thus runs relatively quickly even on a laptop.
 
 To see the difference that this fine-tuning makes, we can give the same prompt to a model with and without instruction tuning: "What is the best way to relax after a long day of Python coding?"
 
@@ -631,13 +620,13 @@ In this way, the model can "learn" without requiring any lasting changes in its 
 
 Understanding in-context learning is important for LLM power-users because it relates directly to the effectiveness of different prompting strategies.
 In particular, it suggests that an effective prompt should help build up enough relevant information in the context window that other relevant information is likely to be retrieved.
-We will return later in the book to the utility of prompting strategies.
+I will discuss this in much more detail in Chapter 5.
 
 ### Randomness in LLMs
 
 When an output is generated from an LLM, it doesn't uniquely specify a particular token to be output next.
 Instead, it outputs a set of values that are transformed into probabilities over tokens, and the next token is then chosen based on those probabilities.
-As an example, we can run the same prompt five times ('Output a random vegetable.') on a small LLM (Qwen-2.5-0.5B-Chat), removing any extraneous text generated by the model:
+As an example, I ran the same prompt five times ('Output a random vegetable.') on a small LLM (Qwen-2.5-0.5B-Chat), removing any extraneous text generated by the model:
 
 ```
 Sure, here's a random vegetable: Green beans
@@ -647,22 +636,23 @@ Sure, here's a random vegetable: Spinach.
 Sure, here's a random vegetable: Veggie: Broccoli
 ```
 
-In this case we ran each prompt with a different *random seed*, which is a value that allows one to reproducibly generate a set of random numbers.
+In this case I ran each prompt with a different *random seed*, which is a value that allows one to reproducibly generate a set of random numbers.
 Open source models, as well as some commercial models, allow specifying the random seed when submitting a prompt, usually requiring use of the API.
 
 When choosing amongst the possible responses based on their probabilities, one could simply always output the token with the highest probability, which is known as "greedy" selection.
 However, LLMs often introduce some variability in output (via a *softmax* operator).
 This procedure has a parameter known as *temperature* that allows one to scale the degree of randomness, from deterministic (greedy) responding when temperature = 0 to greater randomness at temperature increases.
-These systems often default to a small degree of randomness (with temperature in the range of 0.7) to allow some exploration without enabling surprising or bizarre responses.
+These systems often default to a small degree of randomness (with temperature in the range of 0.7) to allow some exploration without enabling highly surprising or bizarre responses.
 
 ### Reproducibilty challenges of LLMs
 
-The randomness of large language models is particularly important for researchers using them in contexts where reproducibilty is important.
+The randomness of large language models is particularly important for scientists who are using them in contexts where reproducibilty is important.
 Research performed using commercial/closed large language models should be considered irreproducible in principle; even if one records the system fingerprint (uniquely specifying which model was run) and sets the random seed, there is no guarantee that these models will remain available.
-As an example, OpenAI has [deprecated a number of models](https://platform.openai.com/docs/deprecations), including the widely used `text-davinci-002` model, meaning that they are no longer available to users.
+As an example, OpenAI [deprecated a number of models](https://platform.openai.com/docs/deprecations), including the widely used `text-davinci-002` model, meaning that they are no longer available to users.
 Research performed on open-weight models is in theory reproducible if the random seed is specified along with the specific model version used.
 However, in many cases it is also important to ensure that any results obtained using LLMs are robust to the specific random seed chosen.
-One should *never* cherry pick scientific results by trying different random seeds and only reporting the results that are most consistent with the hypothesis being tested; we refer to this as "seed-hacking", on analogy to the commonly used term "p-hacking".
+One should *never* cherry pick scientific results by trying different random seeds and only reporting the results that are most consistent with the hypothesis being tested; we refer to this as "seed-hacking", on analogy to the commonly used term "p-hacking". 
+This issue is discussed in more detail in Chapter 9.
 
 
 ## Suggested Resources

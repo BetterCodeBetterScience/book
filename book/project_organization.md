@@ -595,7 +595,13 @@ In addition to allowing the sharing of reproducible environments, containers als
 
 Their documentation also links to an example Dockerfile that makes it easy to implement this once you know how to use Docker.
 
+## Configuration management. 
+
+How to handle config files (YAML, TOML), command-line argument parsing, experiment tracking tools (MLflow, Weights & Biases), and the general problem of separating configuration from code
+
 ## Documentation
+
+docstrings, README conventions, API docs, documentation generators like Sphinx/MkDocs, and the question of how much documentation to write vs. relying on self-documenting code.
 
     *   Inline comments vs. Docstrings (and adhering to standards like Google/NumPy style).
     *   Self-documenting code (naming conventions).

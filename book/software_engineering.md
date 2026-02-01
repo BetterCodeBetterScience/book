@@ -816,6 +816,9 @@ AttributeError: Constants cannot be modified
 
 Using this method thus prevents the value of our constant from being inadvertently changed.
 
+## Type hints
+
+TBD
 
 ## Code formatting tools
 
@@ -1259,3 +1262,15 @@ Most projects will never reach this level of maturity, but we can use this as a 
 - An active issues page, with developers responding to issues relatively quickly
 
 You may well decide that the code from a project that doesn't meet these standards is still useful enough to rely upon, but you should make that decision only after thinking through what would happen if the project was no longer maintained in the future.  Considering and managing dependency risk is an essential aspect of building good software.
+
+## Debugging
+
+using a debugger, print-debugging effectively, reading tracebacks, debugging numerical issues (NaN propagation, floating point surprises), and using AI to help debug.
+
+## Logging and error handling
+
+Structured logging for long-running computations, choosing appropriate exception handling strategies, and making failures informative rather than silent. 
+
+## Code review
+
+TBD

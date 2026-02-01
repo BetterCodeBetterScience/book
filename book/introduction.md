@@ -13,13 +13,13 @@ These techniques, which bring unprecedented analytic power to scientists, can on
 The increasing prevalence of coding in scientific practice contrasts starkly with the lack of training that most researchers receive in software engineering.
 By "software engineering" I don't mean introductory classes in how to code in a particular language.
 Rather, I am referring to the set of practices that have been developed within the field of computer science and engineering that aim to improve the quality and efficiency of the software development process and the resulting software products.
-A glimpse into this field can be gotten from examining the [Software Engineering Body of Knowledge (SWEBOK)](https://www.computer.org/education/bodies-of-knowledge/software-engineering), first published in 2004 and updated most recently in 2024 (*NOTE: Not yet released but coming soon*).
+A glimpse into this field can be gotten from examining the [Software Engineering Body of Knowledge (SWEBOK)](https://www.computer.org/education/bodies-of-knowledge/software-engineering), first published in 2004 and updated most recently in 2024.
 While much of SWEBOK focuses on topics that are primarily relevant to large commercial software projects, it also includes numerous sections that are relevant to anyone writing code that aims to function correctly, such as how to test code for validity and how to maintain software once it has been developed.
 
-One of us (RP) has spent the last decade giving talks on scientific coding practices.
-He often starts by asking how many researchers in the audience have received software engineering training.
+I have spent the last decade giving talks regularly on scientific coding practices.
+I often start by asking how many researchers in the audience have received software engineering training.
 In most audiences the proportion of people raising their hands is well below 1/4; this is true both for the audiences of neuroscientists and psychologists that he usually speaks to, as well as researchers from other fields that he occasionally speaks to.
-This impression is consistent with the results of a poll conducted on the social media platform X by author RP, which showed that the majority of scientists responded that they had received no training in software engineering (see [](#XPoll-fig)).
+This impression is consistent with the results of a poll that I conducted on the social media platform X, which showed that the majority of scientists responded that they had received no training in software engineering (see [](#XPoll-fig)).
 
 ```{figure} images/x_poll.png
 :label: XPoll-fig
@@ -36,7 +36,7 @@ Thus, a large number of scientists today are operating as amateur software engin
 ## Why poor software engineering is a threat to science
 
 There is no such thing as bug-free code, even in domains where it really matters.
-In 1999 a NASA space probe called the *Mars Climate Orbiter* was destroyed when measurements sent in the English unit of pound-seconds were mistakenly interpreted as being in the metric unit of newton-seconds, causing the spacecraft to be destroyed when it veered to close to the Martial atmosphere.
+In 1999 a NASA space probe called the *Mars Climate Orbiter* was destroyed when measurements sent in the English unit of pound-seconds were mistakenly interpreted as being in the metric unit of newton-seconds, causing the spacecraft to be destroyed when it veered too close to the Martian atmosphere.
 The total amount lost on the project was over $300 million.
 Another NASA disaster occurred just a few months later when the *Mars Polar Lander* lost communication during its landing procedure on Mars.
 This is now thought to be due to software design errors rather than to a bug per se:
@@ -55,12 +55,12 @@ While not all coding errors will make a difference in the final calculation, it'
 We have in fact experienced this within our own work (As described in [this blog post](https://reproducibility.stanford.edu/coding-error-postmortem/)).
 In 2020 we posted a preprint that criticized the design of a particular aspect of a large NIH-funded study, the Adolescent Brain Cognitive Development (ABCD) study.
 This dataset is shared with researchers, and we also made the code openly available via GitHub.
-The ABCD team eagerly reviewed our code, and discovered an error due to an overly complex index scheme with double negatives to that led to incorrect indexing of a data frame and thus changed the results.
-This fortunately happened while the paper was under review, so we were able to motify the journal and modify the paper to reflect the bug fix; if we had not made the code publicly available then the error would either have never been caught, or would have been caught after publication, leading to the need for a published correction.
+The ABCD team eagerly reviewed our code, and discovered an error due to an overly complex index scheme with double negatives that led to incorrect indexing of a data frame and thus changed the results.
+This fortunately happened while the paper was under review, so we were able to notify the journal and modify the paper to reflect the bug fix; if we had not made the code publicly available then the error would either have never been caught, or would have been caught after publication, leading to the need for a published correction.
 
 This was a minor error, but there are also prominent examples of scientific claims that suffered catastrophic errors due to software errors.
 The best known is the case of Geoffrey Chang, a structural biologist who published several papers in the early 2000's examining the structure of a protein called the ABC transporter.
-Chang's group had to retract 5 papers, including 3 published in the prestigious journal *Science*, after learning that their custom analysis code had mistakenly flipped two columns of data, which ultimately led to an erroneous estimate of the protein structure [@Miller:2006aa].
+Chang's group had to retract 5 papers, including 3 published in the prestigious journal *Science*, after learning that their custom analysis code had mistakenly flipped the sign of two columns of data, which ultimately led to an erroneous estimate of the protein structure [@Miller:2006aa].
 This is an example of how a very simple coding mistake can have major scientific consequences.
 
 ## Is software development still important in the age of AI?
@@ -73,23 +73,13 @@ The presence of these tools has led to some breathless hand-wringing about wheth
 In early 2023 the frenzy about AI reached the boiling point with the introduction of the GPT-4 language model by OpenAI.
 Analyses of early versions of this model [@Bubeck:2023aa] showed that its ability to solve computer programming problems was on pair with human coders, and much better than the previous GPT-3 model.
 Later that year GPT-4 became available as part of the GitHub CoPilot AI assistant, and those of us using Copilot saw some quite astonishing improvements in the performance of the model compared to the GPT-3 version.
-One of us (RP) had been developing a workshop on software engineering practices for scientists, and the advent of this new tool led to some deep soul-searching about whether such training would even be necessary given the power of AI coding assistants.
-He and his colleagues [@Poldrack:2023aa] subsequently performed a set of analyses that asked three questions about the ability of GPT-4 to perform scientific coding.
-We will describe these experiments in more detail in Chapter XXX, but in short, they showed that while GPT-4 can solve many coding problems quite effectively, it is far from being able to solve common coding problems completely on its own.
+I had been developing a workshop on software engineering practices for scientists, and the advent of this new tool led to some deep soul-searching about whether such training would even be necessary given the power of AI coding assistants.
+My colleagues and I [@Poldrack:2023aa] subsequently performed a set of analyses that asked three questions about the ability of GPT-4 to perform scientific coding.
+We will describe these experiments in more detail in Chapter 4, but in short, they showed that while GPT-4 was able to solve many coding problems quite effectively, it was far from being able to solve common coding problems completely on its own.  Coding assistants have continued to improve over time, but as I will discuss throughout the book, they still require close attention by the user to ensure that they function properly.
 
 We believe that AI coding assistants have the potential to greatly improve the experience of coding and to help new coders learn how to code effectively.
-However, our experiences with AI-assisted coding have also led us to the conclusion that software engineering skills will remain *at least* as important in the future as they are now.
+However, my experiences with AI-assisted coding have also led me to the conclusion that software engineering skills will remain *at least* as important in the future as they are now.
 First, and most importantly, the hardest problem in programming is not the generation of code; rather, it is the decomposition of the problem into a set of steps that can be used to generate code.
-It is no accident that the section of SWEBOK on "Computing Foundations" starts with the following:
-
-
-- Problem Solving Techniques  
-  - Definition of Problem Solving  
-  - Formulating the Real Problem  
-  - Analyze the Problem  
-  - Design a Solution Search Strategy  
-  - Problem Solving Using Programs  
-
 The motivation for why coding will remain as an essential skill even if code is no longer being written by humans was expressed by Robert Martin in 2009, well before the current AI tools were even imaginable:
 
 > ...some have suggested that we are close to the end of code.
@@ -113,7 +103,7 @@ The goal of this book is to show you how to generate code that can reliably solv
 
 ## Why better code can mean better science
 
-One of our main motivations for writing this book is to help make science better.
+One of my main motivations for writing this book is to help make science better.
 In particular, we want to increase the *reproducibility* of scientific results.
 But what does *reproducibility* mean? And for that matter, what does it even mean for an activity to count as "science"?
 
@@ -126,9 +116,9 @@ The idea of replication as a sine qua non of science goes back to the 17th Centu
 Throughout the development of modern science, the ability for researchers to replicate results by other scientists has been a foundational feature of science.
 
 An example serves to show how well science can work when the stakes are high.
-In 1989, the chemists Martin Fleischmann and Stanley Pons reported that they had achieved nuclear fusion at temperatures much less than usually thought to be required.
+In 1989, the chemists Martin Fleischmann and Stanley Pons reported that they had achieved nuclear fusion at temperatures much higher than usually thought to be required.
 If true this would have been a revolutionary new source of energy for the world, so scientists quickly began to try to reproduce the result.
-Within just a few months, the idea of "cold fusion" was full discredited, while the New York Times labeled the cold fusion work as an example of ["pathological science"](https://www.nytimes.com/1989/09/24/magazine/cold-fusion-confusion.html), the entire episode showed how well science can sometimes self-correct.
+Within just a few months, the idea of "cold fusion" was fully discredited; while the New York Times labeled the cold fusion work as an example of ["pathological science"](https://www.nytimes.com/1989/09/24/magazine/cold-fusion-confusion.html), the entire episode actually showed how well science can sometimes self-correct.
 
 Cold fusion was a case in which science worked as it should, with other researchers quickly trying (and in this case failing) to reproduce a result.
 However, there are other cases in which scientific claims have lingered for years, only to be discredited when examined deeply enough.
@@ -142,7 +132,7 @@ Below we will talk more about the reasons that we now think these kinds of irrep
 ### What does "reproducibility" mean?
 
 There are many different senses of the term "reproducibility", which can cause confusion.
-A framework that we like for this concept comes from the [Turing Way](https://book.the-turing-way.org/), an outstanding guide for open and reproducible science practices.
+A framework that I like for this concept comes from the [Turing Way](https://book.the-turing-way.org/), an outstanding guide for open and reproducible science practices.
 This framework, shown in Figure [](#TuringWayReproducibility-fig), distinguishes between whether the data and analysis are either same or different between two analyses.
 
 ```{figure} images/reproducible-matrix.jpg
@@ -153,7 +143,7 @@ A schematic of the Turing Way framework for different concepts of reproducibilit
 Reproduced from The Turing Way under CC-BY.
 ```
 
-People sometimes get hung up on these terminological differences, but that's often just a distraction from the central point: We want to ensure that scientific research generates answers to questions that can generalize to a broad range of situations beyond the initial study.
+People sometimes get hung up on these terminological differences, but that's often just a distraction from the central point: We want to ensure that scientific research generates reliable answers to questions that can generalize to a broad range of situations beyond the initial study.
 
 ### A reproducibility "crisis"
 
@@ -178,18 +168,18 @@ There is a well known quote from Jonathan Buckheit and David Donoho [@Buckheit:1
 The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.
 
 There was surprisingly little focus on code during the reproducibility crisis, but it is clear that there are problems even with what would seem like the easiest quadrant of the Turing Way framework: namely, the ability to reproduce results give the same data and same analysis code.
-Tom Hardwicke, Michael Frank and colleagues have examined the ease of reproducing results from psychology papers where both the data are openly available, and the results were not encouraging.
+Tom Hardwicke, Michael Frank and colleagues have examined the ease of reproducing results from psychology papers where the data were openly available, and the results were not encouraging.
 In one analysis [@Hardwicke:2021aa], they attempted to reproduce the published results from 25 papers with open data.
 Their initial analyses showed major numerical discrepancies in about 2/3 of the papers; strikingly, for about 1/4 of the papers they were unable to reproduce the values reported in the original publication *even with the help of the authors*!
 
 It is increasingly common for researchers to share both code and data from their published research articles, in part due to incentives such as "badges" that are offered by some journals.
 However, in our experience, it can be very difficult to actually run the shared code, due to various problems that limit the portability of the code.
-Throughout this book we will discuss the tools and techniques that can help improve the portability of shared code and thus increase the reproducibility of published results.
+Throughout this book I will discuss the tools and techniques that can help improve the portability of shared code and thus increase the reproducibility of published results.
 
 ### Bug-hacking
 
 A particular concern is that not all software errors are created equal.
-Imagine that a graduate student is comparing the performance of a new machine learning method that they developed with their implementation of a previous method.
+Imagine that a graduate student is comparing the performance of a new machine learning method with their implementation of a previous method.
 Unbeknownst to them, their implementation of the previous method contains an error.
 If the error results in poorer performance of the previous method (thus giving their new method the edge), then they are less likely to go looking for a bug than they might be if the error caused performance of the competing method to be inaccurately high.
 We have referred to this before as "bug-hacking", and this problem is nicely exemplified by the comic strip shown in [](#BugHacking-fig).
@@ -237,15 +227,11 @@ Pre-registration has been used in medical research for more than two decades, an
 However, pre-registration can be challenging when the data are complex and the analytic methods are not clear from the outset.
 How can a researcher avoid bias while still making sure that the analyses are optimal for their data? There are several possible solutions, whose applicability will depend upon the specific features of the data in question.
 
-One solution is to set aside a portion of the data (which we call the "discovery" dataset) for code development, holding aside a "validation dataset" that remains locked away until the analysis code is fixed (and preferably pre-registered).
+One solution is to set aside a portion of the data (which we call the "discovery" dataset) for code development, holding aside a "validation dataset" that remains locked away until the analysis code is finalized (and preferably pre-registered).
 This allows the researcher to use the discovery dataset to develop the analysis code, ensuring that the code is well matched to the features of the dataset.
 As long as contact with the validation dataset is scrupulously avoided during the discovery phase, this can prevent analyses of the validation dataset from being biased by the specific features of those data.
 The main challenge of this approach comes about when the dataset is not large enough to split into two parts.
 One adaptation of this approach is to use pilot data or data that were discarded in the initial phase of data cleaning (e.g., due to data quality issues) as the discovery sample, realizing that these data will likely differ in systematic ways from the validation set.
-
-**TODO**:
-- Another solution is to modify the data in order to blind the researcher.  TBD
-- Yet another solution is to generate simulated data that are then used to develop the analysis code. TBD
 
 
 ## Beyond reproducibility: Getting valid answers
@@ -256,7 +242,7 @@ A measurement is considered to be *reliable* if repeated measurements of the sam
 On the other hand, a measurement is considered to be *valid* if it accurately indexes the underlying feature that it is intended to measure; that is, the measure is *unbiased* with respect to the ground truth.
 
 The distinction between reliability and validity implies that we can't simply focus on making our analyses reproducible; we also need to make sure that they reproducibly give a valid answer.
-In Chapter XXX we will talk in much more detail about how to validate computational analyses using simulated data.
+In Chapter 9 I will talk in much more detail about how to validate computational analyses using simulated data.
 
 
 ## Guiding principles for this book

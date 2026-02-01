@@ -2,26 +2,26 @@
 
 ## The tools and why we use them
 
-We hope that the principles and strategies outlined in this book will transcend any particular software platform or programming language, but for the purposes of explication we will focus on a particular language (Python) and a particular set of tools for software development/engineering and AI coding assistance.
-Here we briefly outline our motivation for these particular tools.
+I hope that the principles and strategies outlined in this book will transcend any particular software platform or programming language, but for the purposes of explication I will focus on a particular language (Python) and a particular set of tools for software development/engineering and AI coding assistance.
+Here I briefly outline our motivation for these particular tools.
 
 ### Why Python?
 
-For the coding examples in this book we will use the Python programming language.
-We have chosen Python first and foremost because it is a language that we know well, as well as being one of the most popular languages today in science.
+For the coding examples in this book I will use the Python programming language.
+I have chosen Python first and foremost because it is a language that I know well, as well as being one of the most popular languages today in science.
 Python is a relatively high level programming language, which means that it can be understandable (if written correctly) even by someone with relatively little experience.
 It is also free and open source, which means that anyone with a computer can download it and run it at no cost.
-In addition, Python is a language that has exceptionally good support from AI coding assistants such as GitHub Copilot, which has been trained on a huge corpus of Python code (along with code from many other languages as well).
+In addition, Python is a language that has exceptionally good support from AI coding assistants, which have usually been trained on a huge corpus of Python code (along with code from many other languages as well).
 Python also has a large and growing ecosystem of packages and tools that make it possible to solve many different problems easily.
 If you are interested in working on machine learning or AI, the tools in Python are especially good.
 
-Across many different domains of science there are specialized Python packages to solve domain-specific problems: Examples include [astropy](https://www.astropy.org/) (astronomy), [geopandas](https://geopandas.org/en/stable/getting_started/introduction.html) (geospatial sciences), [quantecon](https://quantecon.org/) (economics), [sunpy](https://sunpy.org/) (solar physics), and [psychopy](https://www.psychopy.org/), just to name a few.
-We should note that different scientific communities have often converged on particular high-level languages.
+Across many different domains of science there are specialized Python packages to solve domain-specific problems: Examples include [astropy](https://www.astropy.org/) (astronomy), [geopandas](https://geopandas.org/en/stable/getting_started/introduction.html) (geospatial sciences), [quantecon](https://quantecon.org/) (economics), [sunpy](https://sunpy.org/) (solar physics), and [psychopy](https://www.psychopy.org/) (psychology), just to name a few.
+I should note that different scientific communities have often converged on particular high-level languages.
 The above are some examples of Python packages, but in some fields the ecosystem is much more elaborated in R, Julia, Perl or Matlab.
-We hope that most of the lessons in this book will be relevant to these other languages as well.
+I hope that most of the lessons in this book will be relevant to these other languages as well, though some of these other langauges do not provide the same level of software engineering tools as Python.
 
-If you don't already know Python, then we suggest that you try to follow along with the examples anyway; our aim is to write them in a way that anyone with a general knowledge of programming should be able to read and understand them.
-In some cases we may use programming constructs that are specific to Python; if you are coming from another language and you see something you don't understand, then we would recommend asking an AI assistant to explain it to you, since current AI tools are very good at explaining the intent of Python code! As we discuss in Chapter XXX, learning a new programming language is a great way to expand your programming skills, and Python is currently a great language to learn.
+If you don't already know Python, then I suggest that you try to follow along with the examples anyway; my aim is to write them in a way that anyone with a general knowledge of programming should be able to read and understand them.
+In some cases I will use programming constructs that are specific to Python; if you are coming from another language and you see something you don't understand, then I would recommend asking an AI assistant to explain it to you, since current AI tools are very good at explaining the intent of Python code! Learning a new programming language is also a great way to expand your programming skills, and Python is currently a great language to learn.
 
 
 ## Version control
@@ -30,40 +30,39 @@ Scientists in many fields have traditionally kept a *lab notebook* to record the
 This is still the case in domains such as biology where the work often involves manual experimentation at a lab bench.
 Many such labs have moved to using electronic lab notebooks, making it much easier to search and find relevant information.
 However, an increasing amount of scientific work is now computational, and for this work it would seem somewhat inefficient to record information about the software development process separately from the code that is being written.
-There is in fact a tool that can provide the computational researcher with an integrated way to record the history their work, known as *version control.* While there are many tools that can be used to perform version control, [git](https://git-scm.com/) has become by far the most prevalent within the scientific computing ecosystem, largely due to the popularity of the [GitHub](http://github.com) website that enables the hosting and sharing of git repositories.
+There is in fact a tool that can provide the computational researcher with an integrated way to record the history their work, known as *version control.* While there are many tools that can be used to perform version control, *[git](https://git-scm.com/)* has become by far the most prevalent within the scientific computing ecosystem, largely due to the popularity of the [GitHub](http://github.com) website that enables the hosting and sharing of git repositories.
 
-In this section we will assume that the researcher has a basic knowledge of the `git` software tool; for researchers looking to learn `git`, there are numerous resources online, which we will not duplicate; see the suggested resources at the end of this chapter.
-Here we will focus on the ways in which version control tools like `git` can serve as important tools to improve scientific coding.
-While there are numerous graphical user interfaces (GUIs) for git (including those offered by various IDEs), we will focus on its use via the command line interface (CLI).
-Every researcher should have a basic knowledge of the `git` CLI, since this is a ubiquitous interface available across all OSes and environments.
+In this section we will assume that the researcher has a basic knowledge of the *git* software tool; for researchers looking to learn *git*, there are numerous resources online, which we will not duplicate; see the suggested resources at the end of this chapter.
+Here we will focus on the ways in which version control tools like *git* can serve as important tools to improve scientific coding.
+While there are numerous graphical user interfaces (GUIs) for *git* (including those offered by various IDEs), we will focus on its use via the command line interface (CLI).
+Every researcher should have a basic knowledge of the *git* CLI, since this is a ubiquitous interface available across all OSes and environments.
 The CLI is sometimes the only interface that is available to the researcher, e.g., in a remote session on an HPC system or in the cloud.
-Moreover, the CLI provides an immediate exposure to available commands (run `git --help`) and options for each command (run `git COMMAND --help`), allowing users to discover a command or option that might not (yet) be exposed by any particular GUI tool.
+Moreover, the CLI provides an immediate exposure to available commands (see `git --help`) and options for each command (see `git COMMAND --help`), allowing users to discover a command or option that might not (yet) be exposed by any particular GUI tool.
 
 ### How version control works
 
 The goal of a version control system is to provide an annotated history of all changes that occur to the tracked files.
-Here we will provide a brief overview of the conceptual structure of version control, using the `git` system as our example.
+Here I will provide a brief overview of the conceptual structure of version control, using *git* system as the example.
 
-The general workflow for version control using `git` is as follows:
+The general workflow for version control using *git* is as follows:
 
 - Initial check-in: A file is added to the database.
 - The file is *modified* by the user, but the changes are not added to the database.
 - The file is *added* to the staging area, which tracks the changes in the file and marks the new version to be added to the database.
 - The file is *committed*, which stores it in the base along with a *commit message* that describes the changes.
 
-**TODO**: Provide visualizations for git/github concepts?
 
 
-Here is an example using `git`.
-We will create a test directory (outside of our current git repository) and initialize it as a git repository:
+Here is an example using *git*.
+We will create a test directory (outside of our current *git* repository) and initialize it as a *git* repository:
 
 ```bash
-> cd /tmp
-> mkdir git-test
-> cd git-test
-> git init
-> echo "test file" > test_file.txt
-> git status
+$ cd /tmp
+$ mkdir git-test
+$ cd git-test
+$ git init
+$ echo "test file" > test_file.txt
+$ git status
 On branch main
 
 No commits yet
@@ -73,9 +72,9 @@ Untracked files:
 	test_file.txt
 
 nothing added to commit but untracked files present (use "git add" to track)
-
 ```
 
+Note that throughout the book the symbol "$" refers to the UNIX command line.  
 So far our new file is not being tracked, but we can add it to the database:
 
 ```bash

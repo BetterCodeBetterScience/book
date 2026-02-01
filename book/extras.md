@@ -504,3 +504,30 @@ We can build function that takes in a set of parameters and outputs response tim
 - *non-decision time*:
 
 
+performance:
+
+- high-level libraries
+    - joblib for embarassingly parallel loops
+    - dask for parallelizing numpy/pandas
+    - numba's prange for C-style multithreading within JIT-compiled functions, bypass the GIL
+
+- mention numba paralleization
+
+- keeping batch size small to stay within L1/L2 cache
+
+from gemini:
+
+Topics You Definitely Should Cover (The "Must-Haves")
+1. concurrent.futures.ProcessPoolExecutor
+This is the modern, "clean" way to do multiprocessing in Python. It’s much more engineering-friendly than the older multiprocessing module.
+
+3. Progress Tracking in Parallel
+Scientists love progress bars. Mentioning how to use tqdm with parallel maps is a small "quality of life" engineering tip that makes code much more usable.
+
+Suggested "Engineering" Case Study for this section:
+Bootstrap Resampling.
+It’s a perfect example:
+Serial: Too slow for 10^ 6 iterations.
+Vectorized: Might run out of memory.
+Parallel: The "Goldilocks" solution where you send chunks of iterations to different cores.
+This provides a narrative arc: You start with the math, realize the serial version is too slow, try vectorizing but hit a memory limit, and finally arrive at parallelization as the engineering solution.

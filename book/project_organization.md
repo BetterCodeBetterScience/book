@@ -595,3 +595,10 @@ In addition to allowing the sharing of reproducible environments, containers als
 
 Their documentation also links to an example Dockerfile that makes it easy to implement this once you know how to use Docker.
 
+## Documentation
+
+    *   Inline comments vs. Docstrings (and adhering to standards like Google/NumPy style).
+    *   Self-documenting code (naming conventions).
+    *   Automated documentation tools (Sphinx, MkDocs, ReadTheDocs).
+    *   Writing a good `README.md` (the first thing a user sees).
+

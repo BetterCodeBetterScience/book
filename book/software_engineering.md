@@ -3,17 +3,17 @@
 
 Just as mechanical engineering is the science of building physical things like airports or engines, software engineering is the science of building software.
 Its goal is to identify the principles and practices that allow building of software that is robust, efficient, and maintainable.
-Just as a person can build a table at home without any formal knowledge of mechanical engineering, one can build software without knowing any of the principles of software engineering.
+And just as a person can build a table at home without any formal knowledge of mechanical engineering, one can build software without knowing any of the principles of software engineering.
 However, this software is likely to suffer from exactly the same kinds of instability and poor functionality as the average homemade table.
 Knowing a few basic ideas from software engineering can help scientists build software more effectively and generate outputs that will be more robust and maintainable over time.
 
-We have already talked about some of the basic tools of software engineering, such as version control.
-In this chapter we will focus on some of the "big ideas" from software engineering, highlighting how their adoption can improve the life of nearly anyone who develops software.
+I have already talked about some of the basic tools of software engineering, such as version control.
+In this chapter I will focus on some of the "big ideas" from software engineering, highlighting how their adoption can improve the life of nearly anyone who develops software.
 
 ## Why software engineering matters in the age of AI-assisted coding
 
-One might ask why we are spending an entire chapter talking about software engineering; when it's likely that AI tools going to write much of the code in our projects going forward.
-First, think back to the point we made in Chapter 1: Programming is not equivalent to writing code.
+One might ask why I am spending an entire chapter talking about software engineering; when it's likely that AI tools going to write much of the code in our projects going forward.
+First, think back to the point I made in Chapter 1: Programming is not equivalent to writing code.
 Even if the AI system can write computer code (e.g., in Python), a human needs to describe the problem(s) that the software is meant to solve, and to iterate with the code to debug any failures to solve the problem.
 This requires that a human write the specification that tells the computer how to solve the problem: we may have traded Python for English as the programming language of choice, but nonetheless the human needs to precisely specify the goals of the software.
 Thus, an understanding of the software development process will remain essential even as AI assistants write an increasing amount of code.
@@ -36,7 +36,7 @@ Software engineers love acronyms, and a commonly used acronym that targets this 
 Within commercial software engineering, it was once common to develop a detailed requirements document before one ever started writing code, and then move on to code writing using those fixed requirements.
 This is known as the "waterfall" method for project management; it can work well in some domains (like physical construction, where the plans can't change halfway through building, and the materials need to be on hand before construction starts), but in software development it often led to long delays that occurred once the initial plan ran into challenges at the coding phase.
 Instead, most software development projects now use methods generally referred to as *Agile*, in which there are much faster cycles between planning and development.
-One of the most important [principles](https://agilemanifesto.org/principles.html) of the Agile movement is that "Working software is the primary measure of progress.".
+One of the most important [principles](https://agilemanifesto.org/principles.html) of the Agile movement is that "Working software is the primary measure of progress."
 It's worth noting that a lot of dogma has grown up around Agile and related software development methodologies (such as *Scrum* and *Kanban*), most of which is overkill for scientists producing code for research.
 But there are nonetheless some very useful concepts and processes that we can take from these methodologies to help us build scientific software better and faster.
 
@@ -69,12 +69,12 @@ User stories are also useful for thinking through the potential impact of new fe
 Perhaps the most common example of violations of YAGNI comes about in the development of visualization tools.
 In this example, the developer might decide to create an visualizer to show how the original dataset is being converted into the new format, with interactive features that would allow the user to view features of individual files.
 The question that you should always ask yourself is: What user stories would this feature address? If it's difficult to come up with stories that make clear how the feature would help solve particular problems for users, then the feature is probably not needed. "If you build it, they will come" might work in baseball, but it rarely works in scientific software.
-This is the reason that I regularly tells my trainees to post a note in their workspace with one simple mantra: "MVP".
+This is the reason that I regularly tell my trainees to post a note in their workspace with one simple mantra: "MVP".
 
 
 ## Refactoring code
 
-Throughout our discussion we will regularly mention the concept of *refactoring* (as we just did in the previous section), so we should introduce it here.
+Throughout the book I will regularly mention the concept of *refactoring* (as I just did in the previous section), so I should introduce it here.
 When we refactor a piece of code, we modify it in a way that doesn't change its external behavior.
 The idea long existed in software development but was made prominent by Martin Fowler in his book *Refactoring: Improving the Design of Existing Code*.
 As the title suggests, the goal of refactoring is to improve existing code rather than adding features or fixing bugs - but why would we spend time modifying code once it's working, unless our goal is to add something new or fix something that is broken?
@@ -93,11 +93,11 @@ Most importantly, we may want to make the code *easier to maintain*.
 This in turn often implies making it easier to read and understand, as we discuss further below in the context of *clean coding*.
 For example, we might want to break a large function out into several smaller functions so that the logical structure of the code is clearer from the code itself.
 Making code easier to understand and maintain also helps make it easier to add features to in the future.
-There are many other ways in which one can improve code, which are the focus of Fowler's book; we will outline more of them below when we turn later to the problem of "code smells".
+There are many other ways in which one can improve code, which are the focus of Fowler's book; I will outline more of them below when I turn later to the problem of "code smells".
 
 It is increasingly possible to use AI tools to refactor code.
 As long as one has a solid testing program in place, this can help save time and also help learn how to refactor code more effectively.
-This suggests that testing needs to be a central part of our coding process, which is why we will devote an entire chapter to it later in the book.
+This suggests that testing needs to be a central part of our coding process, which is why I will devote an entire chapter to it.
 
 
 ## Test-driven development
@@ -120,25 +120,25 @@ For example, one might start by creating a script with comments that describe ea
 # Step 5: save the data to the required format
 ```
 
-A sensible way to get started would be march through the steps and write a function to accomplish each one, and then test the entire package once all of the functions are created.
+A sensible way to proceed would then be march through the steps and write a function to accomplish each one, and then test the entire package once all of the functions are created.
 However, this approach has a couple of drawbacks.
 First, since you can't run the application until all of the code is written, you can't know whether each component is working properly until the entire package is built.
 Second, it's easy to end up writing code that will end up not needing, since you haven't specified exactly what the inputs and outputs are for each component.
 Finally, once you start integrating all of the components, you won't have a way to know if you have introduced a bug.
 
 One answer to these problems is to start the process by creating a set of *tests*, which tell us whether the code has solved our intended problems.
-The process of writing tests before writing code to solve the problem is known as *test-driven development* (TDD), and we think that it is a very useful framework to use when writing scientific code, especially if one plans to use LLMs for code generation.
-Test-driven development is somewhat controversial within the software engineering field, in part because many people take it too far and become obsessive with testing, such that the tests come to be the tail that wags the dog; in particular we would caution against using the amount of test coverage as a metric for success.
-But we think that when it is used in a thoughtful way, TDD can be a powerful way to increase the effectiveness and accuracy of one's code.
+The process of writing tests before writing code to solve the problem is known as *test-driven development* (TDD), wich I think is a very useful framework to use when writing scientific code, especially if one plans to use LLMs for code generation.
+Test-driven development is somewhat controversial within the software engineering field, in part because many people take it too far and become obsessive with testing, such that the tests come to be the tail that wags the dog; in particular I would caution against using the amount of test coverage as a metric for success.
+But I think that when it is used in a thoughtful way, TDD can be a powerful way to increase the effectiveness and accuracy of one's code.
 
-We will dive deeply into testing in a later chapter; here we will simply outline a simple test-driven development workflow for the data transformation problem described above.
+I will dive deeply into testing in a later chapter; here I will simply outline a simple test-driven development workflow for the data transformation problem described above.
 The TDD workflow can be summarized in a cycle involving three steps:
 
 - *Red*: Create a test that initially fails for the intended function.
 - *Green*: Create a function that passes the test.
 - *Refactor*: Modify the code to make it more maintainable, readable, and robust
 
-These processes are then repeated until the software solves the intended problem.
+These processes are then repeated until the software solves the intended problem in a way that meets the needs of the project (such as maintainability).
 This process helps prevent the developer from writing code to solve problems that don't exist yet, since the only aim is to create code that passes the specific test in question.
 
 
@@ -162,7 +162,7 @@ Another way to think about clean code is that it makes it as easy as possible fo
 And it's essential to remember that this "other programmer" is mostly like to refer to future you! When we look back at code that we wrote more than a few months ago, we are likely to remember very little of it, meaning that we need to rediscover the design and structure of the code.
 
 There are many different interpretations of the concept of clean code.
-Here we will lay out the principles that we think are most important for the creation of code in the context of scientific research (as opposed to commercial software development).
+Here I will lay out the principles that I think are most important for the creation of code in the context of scientific research (as opposed to commercial software development).
 Fortunately, the code generated by AI coding assistants is often quite clean, as we found in our analyses of code generated by GPT-4 [@Poldrack:2023aa].
 But as we work alongside these assistants, it's important to develop a mindset of continuous improvement, always seeking to make the code cleaner and simpler whenever we can.
 
@@ -174,11 +174,11 @@ In fact, one of the 19 guiding principles of the Python language, enshrined in [
 #### Naming things well
 
 The book ["Naming Things"](https://leanpub.com/naming-things) by Tom Benner is subtitled "The Hardest Problem in Software Engineering", which might sound hyperbolic but really can turn out to be true once you start trying to come up with good names as you program.
-Benner provides a summary on his blog of what he calls ["The 7 principles of naming"](https://www.namingthings.co/naming-things-principles), a subset of which we detail here.
-However, we highly recommend the book for much more detail on how to follow each of the principles.
+Benner provides a summary on his blog of what he calls ["The 7 principles of naming"](https://www.namingthings.co/naming-things-principles), a subset of which I will detail here.
+However, I highly recommend the book for much more detail on how to follow each of the principles.
 It's particularly important to point out that these different principles may sometimes clash with one another, requiring the judgment of the developer to determine the best name to use.
 
-##### Consistency
+**Consistency**
 
 > "Each concept should be represented by a single, unique name."
 
@@ -188,7 +188,7 @@ This might occur when a similar concept appears across multiple functions, but i
 Conversely, using the same name to represent two different concepts can lead the reader to think that they are referring to the same thing, which is called a "jingle fallacy." For example, if one were to use the variable name `model` to refer to a model class within one function but to a string containing the model name in another function.
 This fallacy is particularly likely to occur when one uses names that are too simple (see below).
 
-##### Understandability
+**Understandability**
 
 > "A name should describe the concept it represents."
 
@@ -198,7 +198,7 @@ More generally, when creating a variable name it's worth thinking about what kin
 For example, it can be particularly useful to select terms that are common within the relevant scientific domain when available.
 Other important guidelines for understandability are using the right pluralization (e.g., a variable with a pluralized name should contain more than one thing, and vice versa for variables with a single name) and the right part of speech (for example, functions should generally use verbs while variables and classes should generally use nouns).
 
-##### Specificity
+**Specificity**
 
 > "A name shouldn’t be overly vague or overly specific."
 
@@ -207,7 +207,7 @@ In addition, the name of a function should highlight its intended use, rather th
 For example, say that we develop a function that uses a fast Fourier transform to perform bandpass filtering a timeseries.
 A name like `filter_timeseries_bandpass` focuses on the intended use, whereas a name like `fft_timeseries` would highlight the implementation details without specifying what the function is meant to do.
 
-##### Brevity
+**Brevity**
 
 > "A name should be neither overly short nor overly long."
 
@@ -215,9 +215,9 @@ Most coders tend to err on the side of variables names that are too short, with 
 One useful concept from Martin's *Clean Code* is that the length of a variable name should be related to the scope of the variable.
 When a single-letter variable name is used in the context of a very compact loop, its meaning will be immediately obvious.
 However, as a variable is used across a broader scope, using a more detailed name will allow the reader to understand the variable without having to look back at where it was previously used to understand its meaning.
-We would generally suggest to err on the side of using names that are too long versus too short, since the cost to typing longer names is reduced by the autocompletion features present in modern IDEs.
+I would generally suggest to err on the side of using names that are too long versus too short, since the cost to typing longer names is reduced by the autocompletion features present in modern IDEs.
 
-##### Pronounceability
+**Pronounceability**
 
 > "A name should be easy to use in common speech."
 
@@ -225,7 +225,7 @@ Pronounceability is primarily important for cognitive reasons: We are much more 
 In addition, an unpronounceable name makes communicating about the object with others (e.g., in a code review) very difficult.
 So while `bfufftots` might seem like a clever acronym for "bandpass filter using FFT on time series", `filter_timeseries_bandpass` is probably more effective and will certainly be clearer to readers.
 
-##### Austerity
+**Austerity**
 
 > "A name should not be clever or rely on temporary concepts."
 
@@ -236,7 +236,7 @@ Object names should be boring and matter-of-fact to ensure that they are as wide
 #### Using empty space properly
 
 Another important aspect of readability is the judicious use of empty space.
-While users of other languages sometimes revolt at the fact that empty space plays a syntactic role in Python, we actually view this is a very useful feature of the language, because it enhances the readability of code.
+While users of other languages sometimes revolt at the fact that empty space plays a syntactic role in Python, I actually view this is a very useful feature of the language, because it enhances the readability of code.
 For example, the following code is perfectly legitimate in R, but inferring its structure from a quick glance is difficult:
 
 ```R
@@ -262,7 +262,7 @@ In this case, this helps make more visually apparent the fact that there is like
 Vertical empty space also plays a role in readability, by helping to distinguish conceptually or logically related section of code.
 At the same time, it's important to not overuse vertical white space; our ability to understand code that we can see at once is much better than understanding code that spreads across multiple screen pages (which requires holding information in working memory), so it's important to use vertical empty space judiciously.
 
-#### Commenting code
+### Commenting code
 
 There are few topics where the common understanding differs so much from expert consensus as in the use of comments within code.
 For many programmers, the term "documentation" is largely synonymous with code comments, and it is common to hear novice programmers complaining about the need to add comments to their code before releasing it.
@@ -275,11 +275,11 @@ On the other hand, one of the most consistent messages from the software enginee
 The overall goal of code comments should be to help the reader know as much as the writer knows about the code.
 We will start by outlining the kinds of things that do *not* warrant comments, and then turn to the legitimate uses of comments.
 
-##### What not to comment
+#### What not to comment
 
-###### Ugly or indecipherable code
+**Ugly or indecipherable code**
 
-Rather that adding comments, one should instead refactor so that the code is understandable.
+Rather that adding comments, one should instead refactor so that the code is understandable.  Here is an example of indecipherable code with a comment as deodorant:
 
 ```python
 # function to create a random normal variate
@@ -291,7 +291,7 @@ def crv(a=0, b=1):
     return a + b * z
 ```
 
-• instead, use understandable names:
+We could instead use understandable names to make the code more readable:
 
 ```python
 def random_normal_variate(mean=0, stddev=1):
@@ -304,7 +304,7 @@ def random_normal_variate(mean=0, stddev=1):
 In this case, we don't need a comment to explain the function because its name and the names of its arguments make clear what its function is and how to use it.
 By using the variable name `box_mueller_z0` we also make clear what algorithm this computation reflects (the Box-Mueller transform).
 
-###### The obvious
+**The obvious**
 
 Anything that is clear from the structure of the code or the names of the variables doesn't need to be commented.
 Here are some examples of unnecessary comments:
@@ -322,8 +322,7 @@ def create_random_normal_variate(mean, sd):
 In general one should assume that the reader of code has a good understanding of the language, such that they could understand that first example involves a loop over states.
 An exception to this rule is when one is writing code for educational purposes; in that case, one might want to include comments that are more didactic even though they would cause clutter for an experienced programmer.
 
-
-###### Historical information
+**Historical information**
 
 Rather than including historical notes about the code:
 
@@ -353,9 +352,9 @@ It's then possible to see who is responsible for each line in a particular sourc
 73cee79c (Russell Poldrack 2025-02-22 07:55:19 -0800 8)     return mean +  stddev * box_mueller_z0
 ```
 
-##### What to comment
+#### What to comment
 
-###### Intention (aka “Director's Commentary”)
+**Intention (aka “Director's Commentary”)**
 
 Comments should help the reader understand important design choices that would not be evident from simply reading the code.
 For example:
@@ -365,9 +364,8 @@ For example:
 # a pandas DataFrame for performance reasons
 ```
 
-**TODO**: More examples here
 
-###### Known flaws or TODO items
+**Known flaws or TODO items**
 
 It's often the case that there are remaining known issues with code that the developer has not yet had the time to address.
 These should be noted with a consistent heading (e.g., "TODO") so that they can be easily searched for.
@@ -378,7 +376,7 @@ For example:
 # - should parallelize to improve performance
 ```
 
-###### Comments on constant values
+**Comments on constant values**
 
 When including constant values, it can be useful to describe the motivation for the specific value chosen.
 
@@ -450,7 +448,7 @@ Also note the use of vertical empty space to highlight the distinct logical comp
 
 #### Magic numbers
 
-A *magic number* is a number that is included in code directly rather than via assignment to a variable For example:
+A *magic number* is a number that is included in code directly rather than via assignment to a variable. For example:
 
 ```python
 def proportion_significant(data):
@@ -475,10 +473,10 @@ One way that Python coders sometimes get around specifying long parameter lists 
 For example:
 
 ```python
-In [36]: def myfunc(**kwargs):
+>>> def myfunc(**kwargs):
             print(kwargs)
 
-In [37]: myfunc(myarg=1, mybool=True)
+>>> myfunc(myarg=1, mybool=True)
 {'myarg': 1, 'mybool': True}
 ```
 
@@ -497,9 +495,7 @@ def run_llm_prompt(prompt, model='gpt4', random_seed=None, stream=True,
 
 ```
 
-We could instead first create a configuration class that allows us to define all of the optional parameters:
-
-*TODO*: DO WE ACTUALLY WANT TO USE TYPE HINTS THROUGHOUT? IF SO, WE PROBABLY NEED TO INTRODUCE THEM EARLIER
+We could instead first create a configuration class that allows us to define all of the optional parameters; note that this code uses *type hints* which will be described in detail later in the chapter:
 
 ```python
 from dataclasses import dataclass, field
@@ -519,7 +515,7 @@ class LLMConfig:
 def run_llm_prompt(prompt, config):
     ...
 
-# we could then use it like this, first setting any optional 
+# we could then use it like this
 config = LLMConfig(
     temperature=0.8,
 )
@@ -561,8 +557,8 @@ random_sample = stats.vonmises.rvs(2, loc=10, size=1000)
 
 Another key to making a system understandable is to make it *modular*, meaning that its functions can be decomposed into separate components that interact with one another only through defined interfaces.
 Complex modular systems are also usually *hierarchical*, in the sense that they have multiple levels of organization and each component at one level can be broken down into a set of components at a lower level.
-In a 1962 paper entitled *The Architecture of Complexity *[@Simon:1962aa], Herbert Simon argued that our ability to understand many different types of complex systems (physical, biological, and social) relies heavily on the *near-decomposability* that arises in systems where the different modules are insulated from each other except through specific interfaces.
-The importance of insulating different modules in computer programming was introduced in [-@Parnas:1972aa] by David Parnas , who pointed out that decomposing code based on the concept of "information hiding" can make code much easier to modify than a decomposition based on the logical "flowchart" of the problem being solved.
+In a 1962 paper entitled *The Architecture of Complexity* [@Simon:1962aa], Herbert Simon argued that our ability to understand many different types of complex systems (physical, biological, and social) relies heavily on the *near-decomposability* that arises in systems where the different modules are insulated from each other except through specific interfaces.
+The importance of insulating different modules in computer programming was introduced in 1972 by David Parnas [@Parnas:1972aa], who pointed out that decomposing code based on the concept of "information hiding" can make code much easier to modify than a decomposition based on the logical "flowchart" of the problem being solved.
 
 A common expression of the idea of modularity in software development is the *Single Responsibility Principle*, which states that a function or class should only have one reason to change.
 This principle is often summarized as saying that a function or class should only "do one thing", but that's too vague; a clearer way to state this is that a function or class should have a clear and cohesive purpose at the appropriate level of abstraction.
@@ -601,7 +597,7 @@ These kinds of objects are sometimes referred to as "God objects" since they are
 In 2019, I started developing data processing and analysis code for large project called the Neuroimaging Analysis Replication and Prediction Study (NARPS).
 We won't go into the details here; if you are interested, you can find more detail in a paper that we published in 2020 [@Botvinik-Nezer:2020aa], and the codebase is available at [https://github.com/poldrack/narps](https://github.com/poldrack/narps).
 The brief description is that 70 research groups were given the same raw brain imaging dataset and asked to analyze it and submit their results; it was these results that I was analyzing in order to determine how different analysis methods might lead to different results.
-It had been a while since I had developed a project of scope, and I decided to use an object-oriented approach to developing the code.
+I decided to use an object-oriented approach to developing the code.
 This project ended up being one of the main reasons I became more interested in software engineering practices, but at this point I had not yet dived into the literature on good coding practices.
 
 I started by creating a main object, called `Narps`, which was meant to take in all of the information about the project and contain methods to perform all of the main analysis procedures.
@@ -706,20 +702,20 @@ More generally, there are a couple of problems with the use of a single large cl
 
 
 Perhaps unsurprisingly, working with this code base became increasingly unwieldy as the project went on, with many hours spent debugging problems that arose from the deep coupling of different parts of the workflow. (Remember that this was before we had AI tools to help us debug and refactor our code!) If I were going to rewrite this code today, I would instead use a set of Python *data classes* to store configuration and data separately, and move the processing operations into functions defined separately.
-I would then create a separate class to manage the execution of the full analysis workflow.
+I would then create a separate class to manage the execution of the full analysis workflow, or more likely use a *workflow engine* like those that I will introduce in Chapter 8.
 The use of separate functions (rather than methods) to perform the processing operations helps to separate responsibilities, and makes it easier to test the functions individually without requiring initialization of a large class.
 
 
 ### Global variables
 
 > Since our earliest days of writing software, we were warned of the perils of global data — how it was invented by demons from the fourth plane of hell, which is the resting place of any programmer who dares to use it.
-And, although we are somewhat skeptical about fire and brimstone, it’s still one of the most pungent odors we are likely to run into. (Fowler,p. 74)
+And, although we are somewhat skeptical about fire and brimstone, it’s still one of the most pungent odors we are likely to run into. (Fowler, p. 74)
 
 In Python, the accessibility (or *scope*) of a variable is determined by where it is defined.
 A variable defined at the top level of a script, notebook, or module (that is, not inside any other function) has *global scope*, which means that it can be accessed from within any other functions that are defined within that same file.
 The problem with global variables is that they break the insulation that is usually provided by functions.
 Global variables can in theory be modified anywhere they appear within the code, and thus can change in ways that can be very difficult to understand.
-In this example, we use the `ic` function from the `icecream` library to report the value of the global variable before and after executing the function that modifies it:
+In this example, I will use the `ic` function from the `icecream` library to report the value of the global variable before and after executing the function that modifies it:
 
  ```python
 from icecream import ic
@@ -732,7 +728,14 @@ def myfunc():
 ic(GLOBALVAR)
 myfunc()
 ic(GLOBALVAR)
- ```
+```
+
+Which results in the output:
+
+```
+ic| GLOBALVAR: 1
+ic| GLOBALVAR: 2
+```
 
 If we were to use the global variable elsewhere, we couldn't know what its value would be without knowing how many times `myfunc()` had been executed.
 
@@ -758,10 +761,9 @@ C = 299792458
 We could then import this from our module within the iPython shell:
 
 ```
-In: from bettercode.constants import C
-
-In: C
-Out: 299792458
+>>> from bettercode.constants import C
+>>> C
+299792458
 ```
 
 #### Creating immutable variables
@@ -770,10 +772,9 @@ We would generally like to define constants in such a way that their value is *i
 Unfortunately, importing a variable from a module doesn't prevent it from being modified:
 
 ```
-In: C = 43
-
-In: C
-Out: 43
+>>> C = 43
+>>> C
+43
 ```
 
 Unlike some other languages, Python doesn't offer a simple way to define a variable as a constant in a way that prevents it from being modified, but there are several tricks we can play to create an immutable constant.
@@ -790,17 +791,15 @@ class Constants:
         raise AttributeError("Constants cannot be modified")
 ```
 
-Then within our iPython shell, we generate an instance of the Constants class, and see what happens if we try to change the value once it's instantiated:
+Then within the Python shell, we generate an instance of the Constants class, and see what happens if we try to change the value once it's instantiated:
 
 ```
-In: from bettercode.constants import Constants
+>>> from bettercode.constants import Constants
+>>> constants = Constants()
+>>> constants.C
+299792458
 
-In: constants = Constants()
-
-In: constants.C
-Out: 299792458
-
-In: constants.C = 42
+>>> constants.C = 42
 ---------------------------------------------------------------------------
 AttributeError                            Traceback (most recent call last)
 Cell In[4], line 1
@@ -811,24 +810,105 @@ File ~/Dropbox/code/BetterCodeBetterScience/src/bettercode/constants.py:11, in C
 ---> 11     raise AttributeError("Constants cannot be modified")
 
 AttributeError: Constants cannot be modified
-
 ```
 
 Using this method thus prevents the value of our constant from being inadvertently changed.
 
 ## Type hints
 
-TBD
+One of the ways in which Python differs from some other languages (e.g. C/C++, Java, or Rust) is that the data type of a variable does not have to be specified when the variable is created; this is referred to as *dynamic typing*, whereas languages that require the variable type to be specified when it is created are referred to as *statically typed*.  
+
+For example, to assign the value of zero to a variable called `counter` that is meant to contain integer values, we would do the following in Python:
+
+```python
+counter = 0
+```
+
+Here are the equivalent commands from several other languages:
+
+- Rust: `let counter: i32 = 0;`
+- C++: `int counter = 0;`
+- Java: `int counter = 0;`
+
+In each of these cases, the type of the variable must be defined, either as `int` (for integer) or more specifically as a 32-bit integer (`i32` in Rust).  Instead of requiring specification of types when creating a variable, Python instead determines the appropriate type for each variable at runtime.  This makes writing code much easier in Python than these other languages, but it comes with two costs. First, there is a computational cost to determining the type of each variable, which is partly responsible for Python's relative slowness compared to these other languages.  Second, it makes it very difficult to tell what kind of input a function is expecting.  Function signatures in these other languages also include type specification:
+
+- Rust: `fn calculate(name: &str, count: i32) -> f64 {`
+- C++: `double calculate(std::string name, int count) {`
+- Java: `double calculate(String name, int count) {`
+
+In standard Python there is no type information present in the function signature:
+
+```python
+def calculate(name, count):
+    ...
+```
+
+However, it is increasingly popular to use *type hints* in Python, which specify the expected data type for input variables to functions and for variables within classes.  For this example, the resulting code would be:
+
+```python
+def calculate(name: str, count: int) -> float:
+    ...
+```
+
+The major difference between type hints in Python and the typing in statically typed languages is that type hints are not actually enforced in Python. If you were to pass in a floating point variable to the `count` argument in any of those other languages it would result in an error in compilation, whereas Python is perfectly happy to take an input that violates the type hints.  However, it is possible to check Python code for violations of type hints using *mypy*. As an example, take the following Python code:
+
+```python
+def compute_mean(values: list[float]) -> float:
+    return sum(values) / len(values)
+
+result = compute_mean("not a list")
+print(result)
+```
+
+The function expects a list of float values, but the call to `compute_mean()` passes in a string.  Python will attempt to run this but exit with a runtime error:
+
+```bash
+$ uv run python src/bettercode/mypy_example.py
+Traceback (most recent call last):
+  File "/Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/mypy_example.py", line 5, in <module>
+    result = compute_mean("not a list")
+  File "/Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/mypy_example.py", line 2, in compute_mean
+    return sum(values) / len(values)
+           ~~~^^^^^^^^
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+```
+
+However, mypy will identify the type mismatch prior to running the code, in a clearer way that would be more useful for identifying and fixing the problem:
+
+```bash
+$ uv run mypy src/bettercode/mypy_example.py
+src/bettercode/mypy_example.py:5: error: Argument 1 to "compute_mean" has incompatible type "str"; expected "list[float]"  [arg-type]
+Found 1 error in 1 file (checked 1 source file)
+```
+
+Even if they aren't enforced, type hints can play a huge role in making code more understandable.  Without them, a programmer may spend significant time trying to figure out what kind of variables are expected by function or what it's return type is, whereas type hints make this obvious.  They are particularly valuable for functions within a model that will be called from other code, since that's where the greatest potential for confusion lies.  In addition, IDEs will often use them to provide feedback about type mismatches.
+
+The examples above showed how scalar variable types like string or integer work, but there are also other types that can be very useful. Most of these are built in to standard Python (at least after version 3.10), but some additional ones are found in the *typing* module:
+
+- Container variable types, such as `list`, `set`, `tuple`, and `dict`
+    - the type of variable in the container is specified in brackets, e.g. `list[int]`
+    - for dicts, we need to specify both the key and value type, e.g. `dict[str, float]`
+- Unions of types are specified by the "|" operator
+    - e.g. a list that can contain `int` or `str` variables would be `list[int|str]`
+- Optional values are specified using `typing.Optional`, e.g. `Optional[float]`
+    - This is equivalent to `float | None`
+- Numpy arrays are specified using `numpy.typing.NDArray`
+    - e.g. for an array of 64-bit floats, `numpy.typing.NDArray[np.float64]`
+- Empty return type is specified using `None`
+- Functions that return functions are specified as `typing.Callable`, e.g. `Callable[[int, float], float]` would take in an int and float and return a float
+- Generators are specified as `typing.Iterator`
+
+The *mypy* project has a handy [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) for type hints.
 
 ## Code formatting tools
 
 Writing standards-compliant and well-formatted code requires a deep knowledge of the relevant standards, which in the context of Python is primarily contained in the [Style Guide for Python Code](https://peps.python.org/pep-0008/), also known as *PEP8*.
 I'd venture a guess that very few coders have actually sat down and read PEP8.
 Instead, many of us have learned Python style implicitly by looking at others' code, but increasingly we resort to the use of automated *static analysis* tools, which can identify potential errors and reformat code without actually executing the code.
-These tools are commonly known as *linters*, after the `lint` static analysis tool used in the C language.
-There are numerous such tools for Python; for our examples we will use the `ruff` formatter, which has become popular due in part to its speed.
+These tools are commonly known as *linters*, after the *lint* static analysis tool used in the C language.
+There are numerous such tools for Python; for our examples we will use the *ruff* formatter, which has become popular due in part to its speed.
 
-A very useful feature of static analysis tools like `ruff` is that they can easily be integrated into most IDEs, so that they can flag problems in the code as it is written.
+A very useful feature of static analysis tools like *ruff* is that they can easily be integrated into most IDEs, so that they can flag problems in the code as it is written.
 In addition, most modern IDEs will automatically suggest changes to improve the formatting of code.
 
 Let's start with writing some poorly formatted code, using the VSCode IDE.
@@ -841,16 +921,16 @@ Let's start with writing some poorly formatted code, using the VSCode IDE.
 
 IDE suggestions to fix poorly formatted or problematic code within VSCode.
 The top panel shows two lines of problematic code.
-The squiggly underlines reflect `ruff`'s detection of problems in the code, which are detailed in the popup window as well as the *Problems* panel below.
+The squiggly underlines reflect *ruff*'s detection of problems in the code, which are detailed in the popup window as well as the **Problems** panel below.
 The IDE is also auto-suggesting a fix to the poorly formatted code on line 8.
 ```
 
 
-We see that `ruff` detects both formatting problems (such as the lack of spaces in the code) as well as problematic code patterns (such as the use of star-imports).
-We can also use `ruff` from the command line to detect and fix code problems:
+We see that *ruff* detects both formatting problems (such as the lack of spaces in the code) as well as problematic code patterns (such as the use of star-imports).
+We can also use *ruff* from the command line to detect and fix code problems:
 
 ```bash
-❯ ruff check src/bettercode/formatting_example.py
+$ ruff check src/bettercode/formatting_example.py
 src/bettercode/formatting_example.py:6:1: F403 `from numpy.random import *` used; unable to detect undefined names
   |
 4 | # Poorly formatted code for linting example
@@ -872,15 +952,14 @@ src/bettercode/formatting_example.py:8:7: F405 `randint` may be undefined, or de
 Found 2 errors.
 ```
 
-Most linters can also automatically fix the issues that they detect in the code. `ruff` modifies the file in place, so we will first create a copy (so that our original remains intact) and then run the formatter on that copy:
+Most linters can also automatically fix the issues that they detect in the code. *ruff* modifies the file in place, so we will first create a copy (so that our original remains intact) and then run the formatter on that copy:
 
 ```bash
-❯ cp src/bettercode/formatting_example.py src/bettercode/formatting_example_ruff.py
-
-❯ ruff format src/bettercode/formatting_example_ruff.py
+$ cp src/bettercode/formatting_example.py src/bettercode/formatting_example_ruff.py
+$ ruff format src/bettercode/formatting_example_ruff.py
 1 file reformatted
 
-❯ diff src/bettercode/formatting_example.py src/bettercode/formatting_example_ruff.py
+$ diff src/bettercode/formatting_example.py src/bettercode/formatting_example_ruff.py
 1,3d0
 <
 <
@@ -893,7 +972,7 @@ Most linters can also automatically fix the issues that they detect in the code.
 
 ```
 
-The `diff` result shows that `ruff` reformatted the code on line 8 (to add spaces in compliance with PEP8) and also removed some empty lines in the file.
+The *diff* result shows that *ruff* reformatted the code on line 8 (to add spaces in compliance with PEP8) and also removed some empty lines in the file.
 It did not, however, change the import statement; that's a level of modification that is beyond the power of a static analysis tool.
 
 
@@ -929,11 +1008,11 @@ The model could certainly be prompted to make more extensive changes on more com
 ## Defensive coding
 
 Given that even professional programmers make errors on a regular basis, it seems almost certain that researchers writing code for their scientific projects will make their fair share of errors too. *Defensive coding* means writing code in a way that tries to protect against errors.
-One essential aspect of defensive coding is a thorough suite of tests for all important functions; we will dive much more deeply into this in a later chapter.
-Here we focus on robustness to *runtime errors*; that is, errors that are not necessarily due to errors in the code per se, but rather due to errors in the logic of the code or errors or invalid assumptions about the data that are being used by code.
+One essential aspect of defensive coding is a thorough suite of tests for all important functions; I will dive much more deeply into this in the next chapter.
+Here I focus on robustness to *runtime errors*; that is, errors that are not necessarily due to errors in the code per se, but rather due to errors in the logic of the code or errors or invalid assumptions about the data that are being used by code.
 
 A central aspect of defensive coding is to detect errors and announce them in a loud way.
-For example, in a recent code review, a researcher showed the following code:
+For example, in a recent code review in our group, a researcher showed the following code:
 
 ```python
 def get_subject_label(file):
@@ -977,14 +1056,12 @@ def get_subject_label(file: str) -> str:
 In some cases we might want the script to stop if it encounters a filename without a subject label, in which case we simply call the function:
 
 ```python
-In [11]: file = '/data/sub-s001/run-1_bold.nii.gz'
+>>> file = '/data/sub-s001/run-1_bold.nii.gz'
+>>> get_subject_label(file)
+'s001'
 
-In [12]: get_subject_label(file)
-Out[12]: 's001'
-
-In [13]: file = '/data/nolabel/run-1_bold.nii.gz'
-
-In [14]: get_subject_label(file)
+>>> file = '/data/nolabel/run-1_bold.nii.gz'
+>>> get_subject_label(file)
 ---------------------------------------------------------------------------
 AttributeError                            Traceback (most recent call last)
 Cell In[14], line 1
@@ -1002,12 +1079,12 @@ In other cases we might want to handle the exception without halting the program
 Let's say that we simply want to skip over any files for which there is no subject label:
 
 ```python
-In [13]: for file in files:
-            try:
-                subject_label = get_subject_label(file)
-                print(subject_label)
-            except AttributeError:
-                print(f'no subject label, skipping: {file}')
+>>> for file in files:
+        try:
+            subject_label = get_subject_label(file)
+            print(subject_label)
+        except AttributeError:
+            print(f'no subject label, skipping: {file}')
 s001
 no subject label, skipping: /tmp/foo
 
@@ -1019,11 +1096,11 @@ But what if the input is `None`?
 
 ```python
 
-In [14]: file = None
-            try:
-                subject_label = get_subject_label(file)
-            except AttributeError:
-                print(f'no subject label, skipping: {file}')
+>>> file = None
+    try:
+        subject_label = get_subject_label(file)
+    except AttributeError:
+        print(f'no subject label, skipping: {file}')
 ---------------------------------------------------------------------------
 TypeError                                 Traceback (most recent call last)
 Cell In[14], line 3
@@ -1041,7 +1118,7 @@ Cell In[1], line 2, in get_subject_label(file)
 TypeError: expected string or bytes-like object, got 'NoneType'
 ```
 
-Because `None` is not a string and `re.search()` expects a string, we get a `TypeError`, which is not caught by the catch statement and subsequently stops the execution.
+Because `None` is not a string and `re.search()` expects a string, we get a `TypeError`, which is not caught by the catch statement and subsequently stops the execution.  While it can be tempting to use try/catch with a "bare exception" (i.e. catching all possible exceptions rather than specific exceptions), this should be avoided, particularly because it can make debugging very challenging if it results in unexpected exceptions being ignored.
 
 ### Checking assumptions using assertions
 
@@ -1060,8 +1137,8 @@ assert df['age'].between(18, 80).all(), "Error: ages out of bound"
 If all values are in bounds, then this simply passes to the next statement, but if a value is out of bounds it raises and exception:
 
 ```python
-In [23]: df.loc[0, 'age'] = 32757
-In [24]: assert df['age'].between(18, 80).all(), "Error: Not all ages are between 18 and 80"
+>>> df.loc[0, 'age'] = 32757
+>>> assert df['age'].between(18, 80).all(), "Error: Not all ages are between 18 and 80"
 ---------------------------------------------------------------------------
 AssertionError                            Traceback (most recent call last)
 Cell In[24], line 1
@@ -1110,7 +1187,7 @@ fmripath = '/home/jb07/joe_python/fmri_analysis/'
 Even if you don't plan to share your code with anyone else, writing portably is a good idea because you never know when your system configuration may change.
 
 A particularly dangerous practice is the direct coding of credentials (such as login credentials or API keys) into code files.
-Several years ago one member of our lab had embedded credentials for the lab's Amazon Web Services account into a piece of code, which was kept in a private Github repository.
+Several years ago one member of our lab had embedded credentials for the lab's Amazon Web Services (AWS) account into a piece of code, which was kept in a private Github repository.
 At some point this repository was made public (forgetting that it contained those credentials), and cybercriminals were able to use the credentials to spend more than $8000 on the account within a couple of days before a spending alarm alerted us to the compromise.
 Fortunately the money was refunded, but the episode highlights just how dangerous the leakage of credentials can be.
 
@@ -1123,8 +1200,8 @@ Environment variables are variables that exist in the environment and are readab
 Environment variables can be set from the command line using the `export` command:
 
 ```bash
-❯ export MY_API_KEY='5lkjdlvkni5lkj5sklc'
-❯ echo $MY_API_KEY
+$ export MY_API_KEY='5lkjdlvkni5lkj5sklc'
+$ echo $MY_API_KEY
 5lkjdlvkni5lkj5sklc
 ```
 
@@ -1132,18 +1209,17 @@ In addition, these environment variables can be made persistent by adding them t
 The values of these environment variables can then be obtained within Python using the `os.environ` object:
 
 ```python
-In [1]: import os
-In [2]: os.environ['MY_API_KEY']
-Out[2]: '5lkjdlvkni5lkj5sklc'
+>>> import os
+>>> os.environ['MY_API_KEY']
+'5lkjdlvkni5lkj5sklc'
 ```
 
 Often we may have environment variables that are project-specific, such that we only want them loaded when working on that project.
 A good solution for this problem is to create a `.env` file within the project and include those settings within this file.
 
 ```bash
-❯ echo "PROJECT_KEY=934kjdflk5k5ks592kskx" > .env
-
-❯ cat .env
+$ echo "PROJECT_KEY=934kjdflk5k5ks592kskx" > .env
+$ cat .env
 ───────┬─────────────────────────────────────────────────────────────────────────
        │ File: .env
 ───────┼─────────────────────────────────────────────────────────────────────────
@@ -1154,17 +1230,17 @@ A good solution for this problem is to create a `.env` file within the project a
 Once that file exists, we can use the `python-dotenv` project to load the contents into our environment within Python:
 
 ```python
-In [1]: import dotenv
-In [2]: dotenv.load_dotenv()
-Out[2]: True
-In [4]: import os
-In [5]: os.environ['PROJECT_KEY']
-Out[5]: '934kjdflk5k5ks592kskx'
+>>> import dotenv
+>>> dotenv.load_dotenv()
+True
+>>> import os
+>>> os.environ['PROJECT_KEY']
+'934kjdflk5k5ks592kskx'
 ```
 
 ### Configuration files
 
-In some cases one may want more flexibility in the specification of configuration settings than provided by environment variables.
+Often one may want more flexibility in the specification of configuration settings than provided by environment variables.
 In this case, another alternative is to use *configuration files*, which are text files that allow a more structured and flexible organization of configuration variables.
 There are many different file formats that can be used to specify configuration files; here we will focus on the [YAML](https://yaml.org/) file format, which is highly readable and provides substantial flexibility for configuration data structures.
 Here is an example of what a YAML configuration file might look like:
@@ -1205,12 +1281,11 @@ analysis:
 We can easily load this configuration file into Python using the `PyYAML` module, which loads it into a dictionary:
 
 ```python
-In [1]: import yaml
-In [2]: config_file = 'config.yaml'
-In [3]: with open(config_file, 'r') as f:
-           config = yaml.safe_load(f)
-In [6]: config
-Out[6]:
+>>> import yaml
+>>> config_file = 'config.yaml'
+>>> with open(config_file, 'r') as f:
+        config = yaml.safe_load(f)
+>>> config
 {'project': {'name': 'Multi-source astronomy analysis',
   'version': '1.0.0',
   'description': 'Analysis of multi-source astronomical data',
@@ -1233,7 +1308,7 @@ For this reason, one should always add any configuration files to the `.gitignor
 ## Managing technical debt
 
 The Python package ecosystem provides a cornucopia of tools, such that for nearly any problem one can find a package on PyPI or code on Github that can solve the problem.
-Most coders never think twice about installing a package that solves their problem; how could it be a bad thing? While we also love the richness of the Python package ecosystem, there are reasons to think twice about relying on arbitrary packages that one finds.
+Most coders never think twice about installing a package that solves their problem; how could it be a bad thing? While I certainly love the richness of the Python package ecosystem, there are reasons to think twice about relying on arbitrary packages that one finds.
 
 The concept of *technical debt* refers to work that is deferred in the short term in exchange for higher costs in the future (such as maintenance or changes).
 The use of an existing package counts as technical debt because there is uncertainty about how well any package will be maintained in the long term.
@@ -1263,14 +1338,83 @@ Most projects will never reach this level of maturity, but we can use this as a 
 
 You may well decide that the code from a project that doesn't meet these standards is still useful enough to rely upon, but you should make that decision only after thinking through what would happen if the project was no longer maintained in the future.  Considering and managing dependency risk is an essential aspect of building good software.
 
-## Debugging
-
-using a debugger, print-debugging effectively, reading tracebacks, debugging numerical issues (NaN propagation, floating point surprises), and using AI to help debug.
-
-## Logging and error handling
-
-Structured logging for long-running computations, choosing appropriate exception handling strategies, and making failures informative rather than silent. 
-
 ## Code review
 
-TBD
+*Code review* is the process of having someone else examine one's code.  It might seem like the main rationale for code review is to find bugs in the code. While that *is* an important goal of code review, an even more important goal is ensuring the clarity of the code; that is, can someone else read it and understand it.  Thus, code review is an essential check on the cleanliness of the code.
+
+Code review is particularly important when working with AI coding agents, since they can generate well-formatted code that can have subtle problems.  As I will discuss later, AI coding agents are trained to please, which means that they often produce code that seems to "work" at the expense of correctness and robustness. Some particular issues that are likely to arise include:
+
+- Unnecessary complexity (e.g. using complex Python structures when they are not needed)
+- Use of deprecated module or API calls
+- Incorrect handling of edge cases
+- Dumbed-down or incorrect tests
+- Incorrect implementation of scientific logic
+
+In the next chapter I will discuss software testing in detail.  It's important to realize that code review is a complement to testing, not a substitute.  In fact, it's *particularly* important to review the tests, since they define the behavior that is expected of the code.  
+
+### Running a code review
+
+A code review can be performed online or in person.  In my laboratory we often do in-person code reviews during our lab meeting, which is admittedly a bit nerve-wracking for the code owner but ends up being a great learning experience for the entire group. I also regularly do one-on-one reviews with my trainees. More commonly, code reviews are done asynchronously using pull requests (PRs) on Github.  The process is as follows:
+
+- If the coder owns the repo then they create a development branch; otherwise they first fork the repo, and then create a development branch
+- Once the proposed changes are complete, the coder pushes the development branch to GitHub, creates a PR against the main branch, and requests a review from another team member
+- The team member reviews and comments on the code
+- Once the comments are addressed and reviewer is satisfied, the PR is merged into the main branch
+
+It's also important to establish some ground rules for code review (expanding upon [@petre:2014] and [@Rokem:2024aa]):
+
+- **Be kind.** The most important is that it's a review of the code, not the owner .  It's best if the language of the reviewer focuses on the code itself ("I see that there is a loop here where a vectorized operation would be more efficient.") rather than the person ("I see that you used a loop, why did you do that?").  As Ariel Rokem said in his article "Ten simple rules for scientific code review" [@Rokem:2024aa] (which I would recommend for more on the topic), "Be kind."  
+- **Provide a rationale.** Another important ground rule is that comments on the code should include the rationale for the change (e.g. "You should consider vectorizing this operation, since vectorized operations are generally much faster than loops."). Otherwise the review misses out on an important learning opportunity for the owner.  
+- **Make clear must-haves verus nice-to-haves**: Comments should make clear whether the owner must make the change (e.g. to fix a clear inaccuracy) or whether it would be nice to have (e.g. to improve performance or to make the code cleaner)
+- **Praise good code.**Finally, it's important to point out what's good in addition to noting criticisms and making suggestions for change, especially for relatively novice coders who aren't yet confident in their abilities. 
+- **Keep PRs short**: There is also one important rule for the coder: If the code review is happening via PRs, it's also important to keep them relatively small and focused on a single feature or logical change. This will make it more likely that the reviewer can perform the review quickly without losing focus or feeling overloaded.
+
+If you don't have anyone else to serve as a code reviewer, it is definitely possible to self-review one's own code. This is best done after stepping away from the code for a day or more, to help the details fade from memory a bit. It is also possible to use AI tools as a code reviewer, either through a chat interface or by requesting an AI-driven code review from Github when submitting a pull request.  The AI reviewer will not necessarily have the depth of scientific knowledge to detect issues related to the logic of the code, but they are very good at identifying problems in code implementation.  Reading the AI code reviews is also a great way to learn to become a better code reviewer, but it's important to remember that AI tools will sometimes confidently recommend problematic changes or misunderstand the goal of the code.  
+
+## Logging
+
+Logging is the act of recording information about the runtime behavior of our code.  While logging is often viewed in terms of helping to understand and debug errors, it is equally important when nothing goes wrong, because it provides a way to record what happened: e.g. what parameters or inputs were used, or what intermediate results were generated? It's also essential for tracking progress in long-running program executions.  
+
+It's very common for researchers to use `print()` statements to perform logging operations.  While this is better than nothing, there is a much better way to perform logging in Python, via the `logging` module.  Here is an example of the module in use:
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+
+def load_and_process(filepath: str, threshold: float) -> list[float]:
+    logger.info("Loading data from %s", filepath)
+    logger.debug("Threshold set to %f", threshold)
+
+    data = read_data(filepath)
+    logger.info("Loaded %d records", len(data))
+
+    if len(data) < 30:
+        logger.warning("Sample size is %d, results may be unreliable", len(data))
+
+    results = []
+    for record in data:
+        try:
+            results.append(analyze(record, threshold))
+        except ValueError as e:
+            logger.error("Failed to analyze record %s: %s", record.id, e)
+
+    return results
+```
+
+First note that the `logger` object is generated as a global object in the module.  This is a customary exception to the rule that I described earlier discouraging the use of global variables. The use of a global logger at the module level (which is created by passing `__name__` to the `getLogger()` function) ensures that all functions in the module have access to the same logger.  )
+
+
+Structured logging for long-running computations
+
+logging is proactive
+it's also part of defensive coding and important for robust code.
+
+## Debugging
+
+debugging is reactive
+
+highlight utility of logging for helping to figure out bugs - e.g. debug level 
+
+using a debugger, print-debugging effectively, reading tracebacks, debugging numerical issues (NaN propagation, floating point surprises), and using AI to help debug.

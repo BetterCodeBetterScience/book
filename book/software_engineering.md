@@ -1364,10 +1364,10 @@ A code review can be performed online or in person.  In my laboratory we often d
 It's also important to establish some ground rules for code review (expanding upon [@petre:2014] and [@Rokem:2024aa]):
 
 - **Be kind.** The most important is that it's a review of the code, not the owner .  It's best if the language of the reviewer focuses on the code itself ("I see that there is a loop here where a vectorized operation would be more efficient.") rather than the person ("I see that you used a loop, why did you do that?").  As Ariel Rokem said in his article "Ten simple rules for scientific code review" [@Rokem:2024aa] (which I would recommend for more on the topic), "Be kind."  
-- **Provide a rationale.** Another important ground rule is that comments on the code should include the rationale for the change (e.g. "You should consider vectorizing this operation, since vectorized operations are generally much faster than loops."). Otherwise the review misses out on an important learning opportunity for the owner.  
+- **Provide a reason.** Another important ground rule is that comments on the code should include the rationale for the change (e.g. "You should consider vectorizing this operation, since vectorized operations are generally much faster than loops."). Otherwise the review misses out on an important learning opportunity for the owner.  
 - **Make clear must-haves verus nice-to-haves**: Comments should make clear whether the owner must make the change (e.g. to fix a clear inaccuracy) or whether it would be nice to have (e.g. to improve performance or to make the code cleaner)
 - **Praise good code.**Finally, it's important to point out what's good in addition to noting criticisms and making suggestions for change, especially for relatively novice coders who aren't yet confident in their abilities. 
-- **Keep PRs short**: There is also one important rule for the coder: If the code review is happening via PRs, it's also important to keep them relatively small and focused on a single feature or logical change. This will make it more likely that the reviewer can perform the review quickly without losing focus or feeling overloaded.
+- **Keep PRs short**: This rule applied to the coder rather than the reviewer: If the code review is happening via PRs, it's also important to keep them relatively small and focused on a single feature or logical change. This will make it more likely that the reviewer can perform the review quickly without losing focus or feeling overloaded.
 
 If you don't have anyone else to serve as a code reviewer, it is definitely possible to self-review one's own code. This is best done after stepping away from the code for a day or more, to help the details fade from memory a bit. It is also possible to use AI tools as a code reviewer, either through a chat interface or by requesting an AI-driven code review from Github when submitting a pull request.  The AI reviewer will not necessarily have the depth of scientific knowledge to detect issues related to the logic of the code, but they are very good at identifying problems in code implementation.  Reading the AI code reviews is also a great way to learn to become a better code reviewer, but it's important to remember that AI tools will sometimes confidently recommend problematic changes or misunderstand the goal of the code.  
 
@@ -1375,12 +1375,13 @@ If you don't have anyone else to serve as a code reviewer, it is definitely poss
 
 Logging is the act of recording information about the runtime behavior of our code.  While logging is often viewed in terms of helping to understand and debug errors, it is equally important when nothing goes wrong, because it provides a way to record what happened: e.g. what parameters or inputs were used, or what intermediate results were generated? It's also essential for tracking progress in long-running program executions.  
 
-It's very common for researchers to use `print()` statements to perform logging operations.  While this is better than nothing, there is a much better way to perform logging in Python, via the `logging` module.  Here is an example of the module in use:
+It's very common for researchers to use `print()` statements to perform logging operations.  While this might be slightly better than nothing, there is a much better way to perform logging in Python, via the `logging` module.  Here is an example of the module in use:
 
 ```python
 import logging
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)  # configure root logger
 
 
 def load_and_process(filepath: str, threshold: float) -> list[float]:
@@ -1403,18 +1404,417 @@ def load_and_process(filepath: str, threshold: float) -> list[float]:
     return results
 ```
 
-First note that the `logger` object is generated as a global object in the module.  This is a customary exception to the rule that I described earlier discouraging the use of global variables. The use of a global logger at the module level (which is created by passing `__name__` to the `getLogger()` function) ensures that all functions in the module have access to the same logger.  )
+First note that the `logger` object is generated as a global object in the module.  This is a customary exception to my earlier proscription against the use of global variables. The use of a global logger at the module level (which is created by passing `__name__` to the `getLogger()` function) ensures that all functions in the module have access to the same logger. Second, note that there are a number of different calls to the logger object, using different methods.  These different methods relate to different *logging levels*, which are ordered as follows:
 
+- `DEBUG`: Information used only for debugging purposes
+- `INFO`: Informational outputs, such as parameter settings or other information that should be recorded any time the code is executed
+- `WARNING`: Warnings that do not trigger exceptions but should be noted
+- `ERROR`: Information about errors that occur during execution
+- `CRITICAL`: A serious error that will likely cause execution to halt
 
-Structured logging for long-running computations
+Second, note the command near the top of our code:
 
-logging is proactive
-it's also part of defensive coding and important for robust code.
+```python
+logging.basicConfig(level=logging.DEBUG)  # configure root logger
+```
+
+This sets the *logging level* for the logger, which determines which messages will be output.  The logging level specifies the lowest level of message that will be output.  Thus, if it's set to `DEBUG` then the output might look like this:
+
+```
+2026-01-15 14:23:01,234 mypackage.analysis INFO Loading data from data/raw/subjects.csv
+2026-01-15 14:23:01,234 mypackage.analysis DEBUG Threshold set to 0.050000
+2026-01-15 14:23:01,891 mypackage.analysis INFO Loaded 22 records
+2026-01-15 14:23:01,891 mypackage.analysis WARNING Sample size is 22, results may be unreliable
+2026-01-15 14:23:02,107 mypackage.analysis ERROR Failed to analyze record S017: missing response time
+```
+
+If we were to change the logging level to `INFO`, then the messages from `logger.debug()` would no longer appear:
+
+```
+2026-01-15 14:23:01,234 mypackage.analysis INFO Loading data from data/raw/subjects.csv
+2026-01-15 14:23:01,891 mypackage.analysis INFO Loaded 22 records
+2026-01-15 14:23:01,891 mypackage.analysis WARNING Sample size is 22, results may be unreliable
+2026-01-15 14:23:02,107 mypackage.analysis ERROR Failed to analyze record S017: missing response time
+```
+
+This should hopefully make it obvious why using a logger is better than a bunch of print statements:  As soon as the code has been debugged, you can simply set the logging level to `INFO` and the debug messages disappear.  
+
+### When to use logging
+
+There are several points at which logging becomes very valuable.
+
+- **Parameter settings and input files**: this can help ensure that the intended parameters and input files are actually being used in the program
+- **Progress updates**: For long-running programs, progress updates can help you determine whether the program is running successfully and estimate completion time. 
+- **Special modes**: Sometimes the code is run in a special mode, such as an abbreviated mode to test on a smaller dataset.  This should always be logged.
+- **Summary statistics**: Intermediate results that might be used to assess data quality
+- **Warnings about unusual situations**: Any time there is a situation that you would want to be aware of if it occurred, a warning should be logged
+
+### When not to log
+
+There are also situations where logging should be avoided:
+
+- **Tight loops**: If you are running a large number of computations in a tight loop, logging can kill performance and fill the logs with useless information
+- **Sensitive data**: Never log any information that might be senstive, since logs might be shared without knowing that they contain sensitive information
+
+### Saving logs to disk
+
+The logger by default will output to the standard out, and it's common to capture this by simply redirecting to a file, e.g. `python myscript.py > mylog.out`.  However, this is a suboptimal way to save logging outputs, primarily because the standard output contains everything that is printed, which would clutter the log information.  Instead, it's best practice to use the built-in file output functions in the `logging` logger.  This has the added benefit that you can set different logging levels for the file output and console output.  Here is an example:
+
+```python
+import logging
+from datetime import datetime
+from pathlib import Path
+import os
+
+# get log directory from env variable if it exists
+log_dir = Path(os.getenv("LOG_DIR", "logs"))
+log_dir.mkdir(exist_ok=True)
+
+# use a timestamped log file
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+log_filepath = log_dir / f"analysis_{timestamp}.log"
+
+# set up logger 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)  # capture everything, filter at handler level
+
+file_handler = logging.FileHandler(log_filepath)
+file_handler.setLevel(logging.DEBUG)
+
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s %(message)s")
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
+...
+```
+
+This ensures that debugging information continues to be saved to the file, but won't clutter the console.  It's best to save log files to a location outside of the code repository, or to include the log directory in the `.gitignore` file so that it won't clutter the git status report.
+
+The idea that one can turn debug logging off and on at a global level is nice, but when working on a larger codebase I find it useful to have granular logging for just the portion of code that I'm debugging; otherwise the specific debug commands for that section would be buried in a sea of debug messages from previously fixed bugs.  For this reason, I often remove or comment out my debugging output statements once the bug is fixed. 
+
 
 ## Debugging
 
-debugging is reactive
+There is probably no aspect of computer programming that is so replete with memorable quotes as debugging:
 
-highlight utility of logging for helping to figure out bugs - e.g. debug level 
+> "As soon as we started programming and running programs, we found to our surprise that it wasn't as easy to get programs right as we thought it would be. You know, even the moon had to be discovered, and debugging had to be discovered. I can remember the exact instant ... when I realized that a large part of my life from then on was going to be spent in finding mistakes in my own programs." Maurice Wilkes, ["The Birth and Growth of the Digital Computer"](https://www.youtube.com/watch?v=MZGZfsr1KfY&t=1504s)
 
-using a debugger, print-debugging effectively, reading tracebacks, debugging numerical issues (NaN propagation, floating point surprises), and using AI to help debug.
+> "Everyone knows that debugging is twice as hard as writing a program in the first place. So if you're as clever as you can be when you write it, how will you ever debug it?" [@Kernighan:1978aa]. 
+
+The term "bug" is often dated back to September 9, 1947, when Grace Hopper supposedly discovered a moth in the Mark II computer that she was working with [](#bug-fig), though this historical priority has been disputed [@Shapiro:1987aa]. Regardless of its etymology, "bug" a term that is burned into the brain of anyone who learned to program prior to AI coding tools, and most of us at some point experienced a bug that was much more than twice as difficult to debug than it was to write the initial code.  
+
+
+```{figure} images/First_Computer_Bug_1947.jpg
+:label: bug-fig
+:align: center
+:width: 500
+
+Grace Hopper's note from September 9, 1947, containing the actual moth that is often claimed to have initiated the use of the term "bug" in computer science.  From [Wikimedia Commmons](https://commons.wikimedia.org/wiki/File:First_Computer_Bug,_1947.jpg), image in the public domain.
+```
+
+Whereas AI coding tools have been a game-changer for code generation, they are more like a revelation when it comes to debugging.  Simply by pasting the error message into a chat window in the IDE (which also has access to the code), it's now generally very easy to debug many problems using AI. Mostly gone are the days of beating one's head against the wall for hours trying to find out why a program is failing. Unfortunately, the AI tools don't always get it right, and sometimes the proposed fix can be worse than the initial problem, so it remains necessary to be able to understand how to debug code.  
+
+There are two main types of bugs.  *Loud bugs* are those that result in a program failure at runtime; in Python this could be an unhandled exception that causes a crash, or a system problem (like an out-of-memory situation) that causes the program to be killed by the operating system, sometimes with no information about the cause.  *Silent bugs* are those that cause the program to perform incorrect computations without any evidence of problems.  Loud bugs are always preferred to silent bugs, since they stop the program in its tracks, whereas code with a silent bug can provide seemingly reasonable but incorrect results that can ultimately make it into scientific publications.  Another axis along which to classify bugs is whether they are *deterministic* (i.e. they occur every time) or *stochastic*, occuring in a seemingly unpredictable manner depending on other factors.  These latter bugs, sometimes referred to as "Heisenbugs" after Heisenberg's uncertainty principle, can be particularly challenging to diagnose, even with AI tools.
+
+### Debugging loud bugs
+
+- learn how to read tracebacks
+The most common type of loud bug occurs when a program stops executing due to an unhandled exception.  For example, here is a simple Python program with an error, which may not be obvious to a novice Python programmer:
+
+```python
+x = set([1, 2, 3])
+
+x[1] = 4
+```
+
+If we run the program, we see a *traceback*, which provides some information about where the exception occurred and what kind of exception it was:
+
+```python
+Traceback (most recent call last):
+  File "src/bettercode/debugging/exception_test.py", line 3, in <module>
+    x[1] = 4
+    ~^^^
+TypeError: 'set' object does not support item assignment
+```
+
+This tells us that the exception occurred on line 3, in the assignment statement, due to a `TypeError`, reflecting the fact that we are trying to assign an item to an object type (a *set*) that doesn't allow item assignment (because sets are immutable). This report is called a "traceback" because it also provides the details needed to trace the error back to its source when it occurs deep in a stack of function calls. For example, here is a program with an error that is embedded three functions deep:
+
+```python
+def func1(x):
+   func2(x)
+
+def func2(x):
+    func3(x)
+
+def func3(x):
+    x[4] = 0
+
+if __name__ == "__main__":
+    data = [1, 2, 3]
+    func1(data)
+```
+Running this code results in this traceback:
+
+```python
+Traceback (most recent call last):
+  File "/Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/debugging/exception_test2.py", line 12, in <module>
+    func1(data)
+    ~~~~~^^^^^^
+  File "/Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/debugging/exception_test2.py", line 2, in func1
+    func2(x)
+    ~~~~~^^^
+  File "/Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/debugging/exception_test2.py", line 5, in func2
+    func3(x)
+    ~~~~~^^^
+  File "/Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/debugging/exception_test2.py", line 8, in func3
+    x[4] = 0
+    ~^^^
+IndexError: list assignment index out of range
+```
+
+This is an example of how sometimes the traceback doesn't provide all of the information that one needs to debug the problem.  Note that the statement at the bottom of the traceback (`x[4] = 0`) is not incorrect on its own; the error occurs because that statement makes an assumption about the data (namely that it has a length of 5 or more), which turns out to be wrong in the data that we have passed in.  One way to get rid of this exception would be to surround the offending statement in a try-except statement:
+
+```python
+def func3(x):
+    try:
+        x[4] = 0
+    except:
+        pass
+```
+
+This would essentially hide the exception, but it's a *really bad* idea, since it's like sweeping dust under the rug - it doesn't go away, you just don't see it.   In general, we want problems to be announced as loudly as possible, and then once we understand the problem we want to handle it in the most appropriate way.  One option would be to catch the exception using a try-except block and report the error:
+
+```python
+if __name__ == "__main__":
+    data = [1, 2, 3]
+    try:
+        func1(data)
+    except IndexError as e:
+        logger.error("Processing failed: %s", e)
+```
+
+However, this would also seem to give up too quickly.  The root cause here is that `func3()` is making a very specific assumption about the shape of the data, which seems very brittle.  Why is it zeroing out the fifth element in the list?  This kind of statement has a code smell, since in this case 4 is a *magic number*.  Truly debugging this problem would require figuring out what the intention was of this assignment, and then determining if there is a more robust way to achieve that intention.
+
+### Debugging system crashes
+
+Occasionally a program will simply stop in its tracks with no traceback.  This generally reflects some sort of system error, such as a *segmentation fault* which occurs when a program tries to access an invalid location in memory.  Unfortunately these crashes often occur with no feedback at all. Here is an example:
+
+```python
+import faulthandler
+
+def func1(x):
+    try:
+        x[4] = 0
+    except:
+        faulthandler._sigsegv()
+
+if __name__ == "__main__":
+    data = [1, 2, 3]
+    func1(data)
+    print(data)
+``` 
+
+We can use the `faulthandler._sigsegv()` function to cause a segmentation fault (or *segfault*), which in this case will occur whenever the assignment statement `x[4] = 0` fails.  If we were to run the present version (which has invalid data), the program would simply stop; the only way that we would know that there was a problem is that nothing would be printed to the screen.  This highlights the utility of Python's exceptions, which loudly announce problems.
+
+One useful tool for diagnosing system problems is the *faulthandler* module. We used it to artificially generate a segfault in the previous example, but it also has a very useful feature: It can enable reporting of system errors instead of having them occur silently.  This can be enabled at the command line simply by adding `-X faulthandler` to the python call:
+
+```python
+$ uv run python -X faulthandler exception_test4.py
+Fatal Python error: Segmentation fault
+
+Current thread 0x00000001f02b6c40 (most recent call first):
+  File "src/bettercode/debugging/exception_test4.py", line 7 in func1
+  File "src/bettercode/debugging/exception_test4.py", line 11 in <module>
+```
+
+The faulthandler module can also be enabled with the code using `faulthandler.enable()`.  This should be a go-to for debugging of system crashes.
+
+### Debugging silent bugs
+
+Silent bugs are in general much more difficult to debug than loud bugs or system crashes, and logging is the programmer's most important tool for debugging. By outputting relevant information leading up to the bug, it's often possible to identify the root cause of the problem, which is the first step to fixing the problem. Here is an example of a function that is meant to compute the percent change between measurements:
+
+```python
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
+logger = logging.getLogger(__name__)
+
+
+def compute_percent_change(old_values: list[float], new_values: list[float]) -> list[float]:
+    """Compute percent change between paired measurements."""
+    logger.info("Computing percent change for %d pairs", len(old_values))
+    
+    results = []
+    for i, (old, new) in enumerate(zip(old_values, new_values)):
+        logger.debug("Pair %d: old=%.2f, new=%.2f", i, old, new)
+        change = (old - new) / old * 100  # bug: should be (new - old)
+        logger.debug("Pair %d: change=%.2f%%", i, change)
+        results.append(change)
+    
+    logger.info("Mean change: %.2f%%", sum(results) / len(results))
+    return results
+
+
+if __name__ == "__main__":
+    before = [100.0, 50.0, 200.0]
+    after = [110.0, 55.0, 180.0]
+    
+    changes = compute_percent_change(before, after)
+    print(f"Changes: {changes}")
+```
+
+If we run it with logging level set to `INFO`, we would get outputs that seem reasonable:
+
+```
+$ uv run python silent_example1.py
+INFO Computing percent change for 3 pairs
+INFO Mean change: -3.33%
+Changes: [-10.0, -10.0, 10.0]
+```
+
+However, looking more closely at the output for each data point (by setting logging level to `DEBUG`) would reveal a problem:
+
+```
+$  uv run python silent_example1.py
+INFO Computing percent change for 3 pairs
+DEBUG Pair 0: old=100.00, new=110.00
+DEBUG Pair 0: change=-10.00%
+DEBUG Pair 1: old=50.00, new=55.00
+DEBUG Pair 1: change=-10.00%
+DEBUG Pair 2: old=200.00, new=180.00
+DEBUG Pair 2: change=10.00%
+INFO Mean change: -3.33%
+```
+
+Here we can see that the sign of the change is reversed, such that increases from old to new are being expressed as negative changes.  
+
+### General debugging strategies
+
+There are several strategies that I find very useful when debugging.
+
+- **Reproduce the bug**: If you can't reliably reproduce the bug then it will be very difficult to verify that you have fixed it, so first figure out how to reliably reproduce it.
+- **Create a minimal example**: Isolating and simplifying the problem to its essence can often be very helpful, and generating a minimal example that still triggers the bug.  This will also help make it easier for AI agents to identify the cause, and it also essential if one wants to submit a bug report for a software package.
+- **Write a test to verify that it's fixed**: In the next chapter we will dive deep into software testing, and a principle that you will learn there is *bug-driven testing*: Any time you find a bug, create a test that will only pass once the bug is fixed. This has the added benefit that it will signal if the bug is ever re-introduced.
+- **Check assumptions**: Very often bugs occur when the code makes assumptions that are not fulfilled.  If you can't figure out a bug, think through what the assumptions are that the code is making.
+- **Talk to an inanimate object**: Programmers often refer to *rubber-duck debugging*, which is the idea that whenever one can't figure out a problem they should try to describe it to someone else, or to an inanimate object like a rubber duck (or, increasingly, an AI agent). Very often one will suddenly discover the solution in the course of describing the problem.  
+
+
+### Using a debugger
+
+Debuggers are tools that allow one to stop the execution of the code and inspect the internal values of variables.  I will admit to a dirty little secret: I basically never use a debugger when writing code.  I'm sure that there are cases where this has impaired my ability to understand and fix a bug, but in general I find that the overhead of using a debugger costs more than the benefits are worth, compared to using debug logging or embedded print statments.  However, a debugger can be particularly useful when it's not clear which variables to look at. Most IDEs also come with graphical debuggers, which can be helpful for those who aren't comfortable with using the interactive command-line *Pdb* tool that I will focus on here.
+
+Here is an example:
+
+```python
+def analyze_experiment(subjects: list[dict]) -> float:
+    """Compute mean percent improvement across subjects."""
+    improvements = []
+    for subject in subjects:
+        baseline = subject["baseline"]
+        treatment = subject["treatment"]
+        improvement = treatment - baseline / baseline * 100
+        improvements.append(improvement)
+    return sum(improvements) / len(improvements)
+
+
+if __name__ == "__main__":
+    data = [
+        {"id": "S01", "baseline": 50.0, "treatment": 65.0},
+        {"id": "S02", "baseline": 48.0, "treatment": 72.0},
+        {"id": "S03", "baseline": 55.0, "treatment": 60.0},
+    ]
+    result = analyze_experiment(data)
+    print(f"Mean improvement: {result:.1f}%")  
+```
+
+The output of this code is:
+
+```
+Mean improvement: -34.3%
+```
+
+In reality all of the subjects improved, so the result should be positive.  To debug this, we can add a `breakpoint()` command within the loop, which stops execution and drops us into an interactive debugger:
+
+```python
+    for subject in subjects:
+        baseline = subject["baseline"]
+        treatment = subject["treatment"]
+        improvement = treatment - baseline / baseline * 100 
+        breakpoint()
+```
+
+We can then use this interactive debugger session to inspect the values of the variables and see that the error is due to an operator precedence error in the computation:
+
+```python
+ uv run python debugger_example.py
+> src/bettercode/debugging/debugger_example.py(8)analyze_experiment()
+-> breakpoint()
+(Pdb) improvement
+-35.0
+(Pdb) baseline
+50.0
+(Pdb) treatment
+65.0
+(Pdb) treatment - baseline / baseline * 100
+-35.0
+(Pdb) (treatment - baseline) / baseline * 100
+30.0
+```
+
+#### Postmortem debugging using IPython
+
+*IPython* is an enhanced version of the Python shell.  One of its nice features is that it can run Python scripts from the shell, and if the script crashes all of the variables that were active within the script can be accessed within the shell.  Here is an example running our earlier exception-causing code:
+
+```python
+In [1]: %run exception_test.py
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+File ~/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/debugging/exception_test.py:3
+      1 x = set([1, 2, 3])
+----> 3 x[1] = 4
+
+TypeError: 'set' object does not support item assignment
+
+In [2]: x
+Out[2]: {1, 2, 3}
+```
+
+This shows how we can run the code (using the `%run` operator), and then access the variables once it has raised an exception, if those variables are in the global scope of the script.  This is usually my go-to when I run into an exception in a script. If the error occurs within a function, then one can access the variable values within the function scope using the `%debug` operator, which drops into an interactive debugger at the point where the error occurred.
+
+
+### Debugging using AI coding tools
+
+As I mentioned above, AI tools are exceptionally good at debugging.  As an example, I gave the code above to Claude Sonnet 4.5 within the VSCode Copilot Chat, so that it had access to the code, with the prompt:
+
+> This code is outputting a mean improvement of -34.3%, but all of the subjects clearly have a positive response. please fix this error.
+
+Here was its output:
+
+```
+I'll examine the code to identify the issue causing the incorrect mean improvement calculation.
+
+I found the bug! The issue is in line 7 with the order of operations. The current formula is:
+
+    improvement = treatment - baseline / baseline * 100
+
+Due to operator precedence, this is being evaluated as:
+
+    improvement = treatment - (baseline / baseline) * 100
+
+Which simplifies to: treatment - 100
+
+The correct formula should use parentheses to calculate the percentage change properly:
+
+    improvement = (treatment - baseline) / baseline * 100
+
+Fixed! The issue was a missing set of parentheses around (treatment - baseline). Without them, due to operator precedence, the division happened first (baseline / baseline = 1), then multiplication by 100, and finally subtraction from treatment, giving you negative values.
+
+Now the formula correctly calculates: (treatment - baseline) / baseline * 100, which will give you the proper percentage improvement for each subject.
+```
+
+In general, whenever I see an exception my first inclination is to paste it into the Chat window alongside the code.  For simple problems, this almost always works. For more complex problems it can fail, but it often will still provide helpful insight into the cause of the problem, even if the agent needs some help in finding and effective fix.

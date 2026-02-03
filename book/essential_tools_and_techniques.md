@@ -23,7 +23,6 @@ I hope that most of the lessons in this book will be relevant to these other lan
 If you don't already know Python, then I suggest that you try to follow along with the examples anyway; my aim is to write them in a way that anyone with a general knowledge of programming should be able to read and understand them.
 In some cases I will use programming constructs that are specific to Python; if you are coming from another language and you see something you don't understand, then I would recommend asking an AI assistant to explain it to you, since current AI tools are very good at explaining the intent of Python code! Learning a new programming language is also a great way to expand your programming skills, and Python is currently a great language to learn.
 
-
 ## Version control
 
 Scientists in many fields have traditionally kept a *lab notebook* to record their experimentation.
@@ -465,6 +464,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 /private/tmp/uvtest/uv_example/.venv/lib/python3.13/site-packages/numpy/__init__.py
 ```
 
+(Note that I will use `>>>` throughout the book to denote commands with an interactive Python shell.) 
 The details regarding the package are stored within a file called "pyproject.toml" in the main project directory.
 Looking inside this file we can see that it contains details about the packages that have been added, including the specific version:
 

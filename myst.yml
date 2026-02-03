@@ -7,9 +7,9 @@ project:
   bibliography:
     - book/references.bib
   exports:
-    - format: pdf
-      template: plain_latex_book
-      output: exports/book.pdf
+#    - format: pdf
+#      template: plain_latex_book
+#      output: exports/book.pdf
     - format: md
     - format: docx
       template: https://github.com/myst-templates/docx_default.git

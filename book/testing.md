@@ -26,16 +26,18 @@ Focusing on tests can help keep the coder's "eyes on the MVP prize" and prevent 
 
 A third reason to write tests is that they can help drive modularity in the code.
 It's much easier to write tests for a simple function that does a single thing than for a complex function with many different roles.
-Testing can also help drive modularity by causing you to think more clearly about what a function does when developing the test; the inability to easily write a test for a function can suggest that the function might be overly complex and should be refactored.
+Testing can also help drive modularity by causing one to think more clearly about what a function does when developing the test; the inability to easily write a test for a function can suggest that the function might be overly complex and should be refactored.
 In this way, writing tests can give us useful insights into the structure of the code.
 
 A final reason to write tests is that they make it much easier to make changes to the code.
 Without a robust test suite, one is always left worried that changing some aspect of the code will have unexpected effects on its former behavior (known as a "regression").
 Tests can provide you with the comfort you need to make changes, knowing that you will detect any untoward effects your changes might have.
-This includes refactoring, where the changes are not meant to modify the function but simply to make the code more robust and readable.
+This includes refactoring, where the changes are not meant to modify the functionality but simply to make the code more robust and readable.
 
 
 ## Types of tests
+
+There are many different types of tests that are discussed in software engineering, but here I will focus on two types that are most important for scientific code: unit tests and regression tests.
 
 ### Unit tests
 
@@ -100,10 +102,10 @@ def test_escape_velocity():
     assert np.allclose(ev_expected, ev_computed), "Test failed!"
 ```
 
-We can run this using `pytest` (more about this later), which tells us that the test passes:
+We can run this using *pytest* (more about this later), which tells us that the test passes:
 
 ```bash
-❯ pytest tests/test_escape_velocity.py::test_escape_velocity
+$ pytest tests/test_escape_velocity.py::test_escape_velocity
 ====================== test session starts ======================
 
 tests/test_escape_velocity.py .                            [100%]
@@ -116,7 +118,7 @@ If the returned value didn't match the known value (within a given level of tole
 For example, if we had mis-specified the expected value as 1186.0, we would have seen an error like this:
 
 ```bash
-❯ pytest tests/test_escape_velocity.py::test_escape_velocity
+$ pytest tests/test_escape_velocity.py::test_escape_velocity
 ====================== test session starts =====================
 
 tests/test_escape_velocity.py F                           [100%]
@@ -167,7 +169,7 @@ def escape_velocity(mass: float, radius: float, G=6.67430e-11):
 ```
 
 We can then specify a test that checks whether the function properly raises an exception when passed a negative value.
-To do this we can use a feature of the `pytest` package (`pytest.raises`) that passes only if the specified exception is raised:
+To do this we can use a feature of the *pytest* package (`pytest.raises`) that passes only if the specified exception is raised:
 
 ```python
 def test_escape_velocity_negative():
@@ -182,12 +184,12 @@ def test_escape_velocity_negative():
 ## When to write tests
 
 Too often researchers decide to write tests after they have written an entire codebase.
-Having any tests is certainly better than having no tests, but integrating testing into ones development workflow from the start can help improve the development experience and ultimately lead to better and more maintainable software.
-In Chapter 1 we mentioned the idea of *test-driven development*, which we outline in more detail below, but we first discuss a simple approach to introducing testing into the development process.
+Having any tests is certainly better than having no tests, but integrating testing into one's development workflow from the start can help improve the development experience and ultimately lead to better and more maintainable software.
+In Chapter 3 I mentioned the idea of *test-driven development*, which I outline in more detail below, but I first discuss a simple approach to introducing testing into the development process.
 
 ### Bug-driven testing: Any time you encounter a bug, write a test
 
-An easy way to introduce testing into the development process is to write a new test any time one encounters a bug, which we refer to as *bug-driven testing*.
+An easy way to introduce testing into the development process is to write a new test any time one encounters a bug, which I refer to as *bug-driven testing*.
 This makes it easy to then work on fixing the bug, since the test will determine when the bug has been fixed.
 In addition, the test will detect if future changes reintroduce the bug.
 
@@ -281,12 +283,12 @@ Running this with the original function definition, we see that it fails:
 
 ```python
 ➤  pytest tests/test_find_outliers.py
-============================= test session starts ==============================
+========================== test session starts ===========================
 
-tests/test_find_outliers.py .F                                           [100%]
+tests/test_find_outliers.py .F                                     [100%]
 
-=================================== FAILURES ===================================
-_____________________ test_find_outliers_identical_values ______________________
+================================ FAILURES ================================
+__________________ test_find_outliers_identical_values ___________________
 
     def test_find_outliers_identical_values():
         data = [5, 5, 5, 5, 5]  # All identical values
@@ -295,7 +297,7 @@ _____________________ test_find_outliers_identical_values ______________________
                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 tests/test_find_outliers.py:16:
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 ...
         # Bug: division by zero when std is 0 (all values are identical)
@@ -307,10 +309,10 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 E           ZeroDivisionError: float division by zero
 
 src/bettercode/bug_driven_testing.py:34: ZeroDivisionError
-=========================== short test summary info ============================
+======================== short test summary info =========================
 FAILED tests/test_find_outliers.py::test_find_outliers_identical_values - 
 ZeroDivisionError: float division by zero
-========================= 1 failed, 1 passed in 0.08s ==========================
+====================== 1 failed, 1 passed in 0.08s =======================
 
 ```
 
@@ -319,7 +321,8 @@ We can now fix the code by returning an empty list if zero standard deviation is
 ```python
     ...
     if std == 0:
-        # If standard deviation is zero, all values are identical, so no outliers
+        # If standard deviation is zero, all values are identical,
+        # so no outliers
         return []
 ```
 
@@ -327,7 +330,7 @@ Here we add a comment to explain the intention of the statement.
 Running the tests now will show that the problem is fixed:
 
 ```python
-❯ pytest src/bettercode/bug_driven_testing.py
+$ pytest src/bettercode/bug_driven_testing.py
 =========================== test session starts ===========================
 
 tests/test_find_outliers.py ..                                       [100%]
@@ -412,7 +415,7 @@ def test_simple_scaler_internals():
 ```
 
 Both of these tests pass against the class definition shown above.
-However, if we were to change the way that the transformation is performed (for example, we decide to use the `StandardScaler` function from `scikit-learn` instead of writing our own), then the implementation-aware tests are likely to fail unless the sample internal variable names are used.
+However, if we were to change the way that the transformation is performed (for example, we decide to use the `StandardScaler` function from `scikit-learn` instead of writing our own), then the implementation-aware tests are likely to fail unless the same internal variable names are used.
 In general we should only interact with a function or class via its explicit interfaces.
 
 ### Tests should be independent
@@ -481,7 +484,7 @@ In a later section we will discuss the use of *fixtures* which allow this kind o
 ## Testing frameworks
 
 One could write tests without the help of any specialized packages, but we generally use a testing framework to help automate the activities of testing.
-There are several testing frameworks for Python; we will focus on the popular and flexible `pytest` framework.
+There are several testing frameworks for Python; we will focus on the popular and flexible *pytest* framework.
 
 We will start with a very simple example: a function that generates the Euclidean distance between two points.
 Copilot generates the following for us based on the prompt in the comment:
@@ -500,7 +503,7 @@ def distance(p1, p2):
 ```
 
 Now we would like to generate some tests for this code to make sure that it works properly.
-If we ask Copilot to generate some tests, it does a seeming decent job:
+If we ask Copilot to generate some tests, it does a seemingly decent job:
 
 ```python
 def test_distance_zero():
@@ -543,16 +546,16 @@ tests/test_distance.py:17: AssertionError
 ```
 
 Here we see that the value returned by our function is different from the one expected by the test; in this case, the test value generated by Copilot is incorrect.
-In our research, it was not uncommon for ChatGPT to generate incorrect test values, so these must always be checked by a domain expert.
+In our research, it was not uncommon for AI coding tools to generate incorrect test values, so these must always be checked by a domain expert.
 Once we fix the expected value for that test (the square root of 89), then we can rerun the tests and see that they have passed:
 
-```bash
+```python
 ➤  pytest tests/test_distance.py                                          
-============================= test session starts ==============================
+======================== test session starts =========================
 
-tests/test_distance.py ......                                            [100%]
+tests/test_distance.py ......                                   [100%]
 
-============================== 6 passed in 0.07s ===============================
+========================= 6 passed in 0.07s ==========================
 ```
 
 ### Potential problems with AI-generated tests
@@ -560,7 +563,7 @@ tests/test_distance.py ......                                            [100%]
 If we are going to rely upon AI tools to generate our tests, we need to be sure that the tests are correct.
 One of my early forays into AI-driven test generation uncovered an interesting example of how this can go wrong.
 
-In our early project that examined the performance of GPT-4 for coding [@Poldrack:2023aa], one of the analyses that we performed first asked GPT-4 to do was to generate a set of functions related to common problems in several scientific domains, and then to generate tests to make sure that the function performed correctly.
+In our early project that examined the performance of GPT-4 for coding [@Poldrack:2023aa], one of the analyses that we performed first asked GPT-4 to generate a set of functions related to common problems in several scientific domains, and then to generate tests to make sure that the function performed correctly.
 One of the functions that was generated was the escape velocity function shown above, for which GPT-4 generated the [following test](https://github.com/poldrack/ai-coding-experiments/blob/main/data/conceptual_prompting/testdirs/conceptual_prompting06/test_answer.py):
 
 
@@ -585,7 +588,7 @@ def test_escape_velocity():
 
 When we run this test (renaming it `test_escape_velocity_gpt4`), we see that one of the tests fails:
 
-```bash
+```python
 ➤  pytest tests/test_escape_velocity.py::test_escape_velocity_gpt4      
 ============================= test session starts ==============================
 
@@ -630,33 +633,33 @@ NASA’s [Jupiter fact sheet](https://nssdc.gsfc.nasa.gov/planetary/factsheet/ju
 This is correct when computed using the equatorial radius of 71492 km.
 However, the radius given for Jupiter in GPT-4's test (69911 km) is the volumetric mean radius rather than the equatorial radius, and the value generated by the code (60.2 km/s) is correct when computed using the volumetric mean radius.
 Thus, the test failed not due to any problems with the code itself, but due to a mismatch in assumptions regarding the combination of test values.
-This example highlights the importance of understanding and checking the tests that are generated by AI coding tools.
+This example highlights the importance of understanding and checking the tests that are generated by AI coding tools based on domain knowledge.
 
 ## Test-driven development and AI-assisted coding
 
-Here we will dive into a more realistic example of an application that one might develop using AI assistance, specifically looking at how we could develop the application using a test-driven development (TDD) approach.
-We will develop a Python [application](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/pubmed.py) that takes in a query for the PubMed database and returns a data frame containing the number of database records matching that query for each year.
-We start by decomposing the problem and sketching out the main set of functions that we will need to develop, with understandable names for each:
+Here I will dive into a more realistic example of an application that one might develop using AI assistance, specifically looking at how we could develop the application using a test-driven development (TDD) approach.
+I will develop a Python [application](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/pubmed.py) that takes in a query for the PubMed database and returns a data frame containing the number of database records matching that query for each year.
+I start by decomposing the problem and sketching out the main set of functions that we will need to develop, with understandable names for each:
 
-- `get_PubmedIDs_for_query`: A function that will search pubmed for a given query and return a list of pubmed IDs
-- `get_record_from_PubmedID`: A function that will retrieve the record for a given pubmed ID
-- `parse_year_from_Pubmed_record`: A function that will parse a record to extract the year of publication
+- `get_PubMedIDs_for_query`: A function that will search PubMed for a given query and return a list of PubMed IDs
+- `get_record_from_PubMedID`: A function that will retrieve the record for a given PubMed ID
+- `parse_year_from_PubMed_record`: A function that will parse a record to extract the year of publication
 - A function that will summarize the number of records per year
 - The main function that will take in a query and return a data frame with the number of records per year for the query
 
-We start by creating `get_PubmedIDs_for_query`.
+We can then get started by creating `get_PubMedIDs_for_query`.
 We could use the `Biopython.Entrez` module to perform this search, but Biopython is a relatively large module that could introduce technical debt.
 Instead, we will directly retrieve the result using the Entrez API and the built-in `requests` module.
-Note that for all of the code shown here we will not include docstrings, but they are available in the code within the repository.
+Note that for all of the code shown here I will not include docstrings, but they are available in the code within the repository.
 
 If we are using the TDD approach, we would first want to develop a set of [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/test_textmining.py) to make sure that our function is working correctly.
 The following three tests specify several different outcomes that we might expect.
 First, we give a query that is known to give a valid result, and test whether it in fact gives such a result:
 
 ```python
-def test_get_PubmedIDs_for_query_check_valid():
+def test_get_PubMedIDs_for_query_check_valid():
     query = "friston-k AND 'free energy'"
-    ids = get_PubmedIDs_for_query(query)
+    ids = get_PubMedIDs_for_query(query)
 
     # make sure that a list is returned
     assert isinstance(ids, list)       
@@ -667,9 +670,9 @@ def test_get_PubmedIDs_for_query_check_valid():
 Second, we give a query with a known empty result, and make sure it returns an empty list:
 
 ```python
-def test_get_PubmedIDs_for_query_check_empty():
+def test_get_PubMedIDs_for_query_check_empty():
     query = "friston-k AND 'fizzbuzz'"
-    ids = get_PubmedIDs_for_query(query)
+    ids = get_PubMedIDs_for_query(query)
 
     # make sure that a list is returned
     assert isinstance(ids, list)   
@@ -682,7 +685,7 @@ With the minimal tests in place, we then move to writing the code for the module
 We first create an empty function to ensure that the tests fail:
 
 ```python
-def get_PubmedIDs_for_query(query: str, 
+def get_PubMedIDs_for_query(query: str, 
                             retmax: int = None,
                             esearch_url: str = None) -> list:
     return None
@@ -691,49 +694,48 @@ def get_PubmedIDs_for_query(query: str,
 The test result shows that all of the tests fail:
 
 ```bash
-❯ python -m pytest -v tests/test_textmining.py
-================================== test session starts ===================================
+$ python -m pytest -v test_textmining.py
+============================= test session starts =============================
 ...
-tests/test_textmining.py::test_get_PubmedIDs_for_query_check_valid FAILED [ 50%]
-tests/test_textmining.py::test_get_PubmedIDs_for_query_check_empty FAILED [100%]
+test_textmining.py::test_get_PubMedIDs_for_query_check_valid FAILED [ 50%]
+test_textmining.py::test_get_PubMedIDs_for_query_check_empty FAILED [100%]
 
-======================================== FAILURES ========================================
-________________________ test_get_PubmedIDs_for_query_check_valid ________________________
+=================================== FAILURES ==================================
+___________________ test_get_PubMedIDs_for_query_check_valid ___________________
 
 ids = None
 
-    def test_get_PubmedIDs_for_query_check_valid(ids):
+    def test_get_PubMedIDs_for_query_check_valid(ids):
 >       assert isinstance(ids, list)
 E       assert False
 E        +  where False = isinstance(None, list)
 
-tests/test_textmining.py:32: AssertionError
-________________________ test_get_PubmedIDs_for_query_check_empty ________________________
+test_textmining.py:32: AssertionError
+___________________ test_get_PubMedIDs_for_query_check_empty ___________________
 
-    def test_get_PubmedIDs_for_query_check_empty():
+    def test_get_PubMedIDs_for_query_check_empty():
         query = "friston-k AND 'fizzbuzz'"
-        ids = get_PubmedIDs_for_query(query)
+        ids = get_PubMedIDs_for_query(query)
 >       assert len(ids) == 0
                ^^^^^^^^
 E       TypeError: object of type 'NoneType' has no len()
 
-tests/test_textmining.py:39: TypeError
-================================ short test summary info =================================
-FAILED tests/test_textmining.py::test_get_PubmedIDs_for_query_check_valid - assert False
-FAILED tests/test_textmining.py::test_get_PubmedIDs_for_query_check_empty - 
+test_textmining.py:39: TypeError
+=========================== short test summary info ==============================
+FAILED test_textmining.py::test_get_PubMedIDs_for_query_check_valid - assert False
+FAILED test_textmining.py::test_get_PubMedIDs_for_query_check_empty - 
 TypeError: object of type 'NoneType' has no len()
-=================================== 2 failed in 0.12s ====================================
+============================== 2 failed in 0.12s =================================
 ```
 
 Now we work with Copilot write the code to make the tests pass:
 
 ```python
 # define the eutils base URL globally for the module
-# - not best practice but probably ok here
 BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 
 
-def get_PubmedIDs_for_query(
+def get_PubMedIDs_for_query(
     query: str, retmax: int = None, esearch_url: str = None
 ) -> list:
     """
@@ -777,21 +779,21 @@ def get_idlist_from_response(response: requests.Response) -> list:
 Note that we have split parts of the functionality into separate functions in order to make the code more understandable.
 Running the tests, we see that both of them pass.
 Assuming that our tests cover all possible outcomes of interest, we can consider our function complete.
-We can also add additional tests to cover additional functions that we generated; we won't go into the details here, but you can see them on the Github repo.
+We can also add additional tests to cover additional functions that we generated; we won't go into the details here, but you can see them on the [Github repo](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/test_textmining.py).
 
 
 ## Test coverage
 
 It can be useful to know if there are any portions of our code that are not being exercised by our tests, which is known as *code coverage*.
-The `pytest-cov` extension for the `pytest` testing package can provide us with a report of test coverage for these tests:
+The *pytest-cov* extension for the *pytest* testing package can provide us with a report of test coverage for these tests:
 
 ```bash
 ---------- coverage: platform darwin, python 3.12.0-final-0 ----------
-Name                                                   Stmts   Miss  Cover   Missing
-------------------------------------------------------------------------------------
-src/bettercode/textmining.py                              30      1    97%   70
-------------------------------------------------------------------------------------
-TOTAL                                                     30      1    97%
+Name                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------
+src/bettercode/textmining.py                30      1    97%   70
+----------------------------------------------------------------------
+TOTAL                                       30      1    97%
 ```
 
 This report shows that of the 30 statements in our code, one of them is not covered by the tests.
@@ -808,21 +810,21 @@ We can address this by adding a test that makes sure that an exception is raised
 To check for an exception, we need to use the `pytest.raises` context manager:
 
 ```python
-def test_get_PubmedIDs_for_query_check_badurl():
+def test_get_PubMedIDs_for_query_check_badurl():
     query = "friston-k AND 'free energy'"
     # bad url
     base_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.f'
     
     # make sure that the function raises an exception
     with pytest.raises(Exception):
-        ids = get_PubmedIDs_for_query(query, base_url=base_url)
+        ids = get_PubMedIDs_for_query(query, base_url=base_url)
     
 ```
 
 After adding this test, we see that we now have 100% coverage.
 It's important not to get too hung up on test coverage; rather than always aspiring to 100% coverage, it's important to make sure that the most likely possible situations are tested.
 Just because you have 100% coverage doesn't mean that your code is perfectly tested, since there could always be situations that you haven't checked for.
-And spending too much time testing for unlikely problems can divert your efforts from other most useful activities.
+And spending too much time testing for unlikely problems can divert your efforts from other more useful activities.
 
 
 ## Test fixtures
@@ -833,7 +835,7 @@ This also helps maintain isolation between tests, since the order of tests shoul
 
 For our example above, it's likely that we will need to reuse the list of pubmed IDs from the search to perform various tests on the subsequent functions.
 We can create a single version of this list of IDs by creating a fixture.
-In the `pytest` framework we do this using a special Python operator called a *decorator*, which is denoted by the symbol `@` as a prefix.
+In the *pytest* framework we do this using a special Python operator called a *decorator*, which is denoted by the symbol `@` as a prefix.
 A decorator is function that takes another function as input, modifies its functionality, and returns another function; you don't need to understand in detail how decorators work for this particular usage.
 To refactor our tests above, we would first create the fixture by decorating the function that generates the fixture with the `@pytest.fixture` decorator, setting the `scope` variable to "session" so that the fixture is only generated once within the session:
 
@@ -841,36 +843,36 @@ To refactor our tests above, we would first create the fixture by decorating the
 @pytest.fixture(scope="session")
 def ids():
     query = "friston-k AND 'free energy'"
-    ids = get_PubmedIDs_for_query(query)
+    ids = get_PubMedIDs_for_query(query)
     return ids
 ```
 
 We can then refactor our tests for a valid query to use the fixture by passing it as an argument to the test function:
 
 ```python
-def test_get_PubmedIDs_for_query_check_valid(ids):
+def test_get_PubMedIDs_for_query_check_valid(ids):
     assert isinstance(ids, list)
     assert len(ids) > 0
 ```
 
 The result is the same, but we now have a set of ids that we can reuse in subsequent tests, so that we don't have to make repeated queries.
-It's important to note while using a session-scoped fixture: If any of the subsequent tests modify the fixture, those modifications will persist, which will break the isolation between tests.
+It's important to note that when one is using a session-scoped fixture, any modifications of the fixture by subsequent tests will persist, which will break the isolation between tests.
 We could prevent this by removing the `scope="session"` argument, which would then default to the standard scope which is within a specific function.
 If you wish to use session-scoped fixtures and need to modify them within the test function, then it is best to first create a copy of the fixture object (e.g., `my_ids = ids.copy()`) so that the global fixture object won't be modified.
 
 ## Mocking
 
 Sometimes tests require infrastructure that is outside of the control of the tester.
-In the example above, we are assuming that the Pubmed API is working correctly for our tests to run; if we were to try to run these tests without an internet connection, they would fail.
+In the example above, we are assuming that the PubMed API is working correctly for our tests to run; if we were to try to run these tests without an internet connection, they would fail.
 In other cases, code may rely upon a database system that may or may not exist on a particular system.
-In these cases, we can create a mock object that can stand in for and simulate the behavior of the system that the code needs to interact with.
+In these cases, we can create a *mock* object that can stand in for and simulate the behavior of the system that the code needs to interact with.
 
 In our example, we want to create a mock response that looks sufficiently like a response from the real API to pass our tests.
-Using pytest's *monkeypatch* fixture, we can temporarily replace the real requests.get function with our own fake function that returns a predictable, controlled response.
-We first need to create a class that can replace the `requests.get` call in `get_PubmedIDs_for_query`, replacing it with a mock version that outputs a fixed simulacrum of an API response via its `.json()` method.
+Using *pytest*'s `monkeypatch` fixture, we can temporarily replace the real requests.get function with our own fake function that returns a predictable, controlled response.
+We first need to create a class that can replace the `requests.get` call in `get_PubMedIDs_for_query`, replacing it with a mock version that outputs a fixed simulacrum of an API response via its `.json()` method.
 
 ```python
-class MockPubmedResponse:
+class MockPubMedResponse:
     status_code = 200
 
     def json():
@@ -893,16 +895,16 @@ In my initial attempt, I created created a fixture based on the mocked response 
 def ids_mocked(monkeypatch):
 
     def mock_get(*args, **kwargs):
-        return MockPubmedResponse()
+        return MockPubMedResponse()
 
     # apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "get", mock_get)
 
     query = "friston-k AND 'free energy'"
-    ids = get_PubmedIDs_for_query(query)
+    ids = get_PubMedIDs_for_query(query)
     return ids
 
-def test_get_PubmedIDs_for_query_check_valid_mocked(ids_mocked):
+def test_get_PubMedIDs_for_query_check_valid_mocked(ids_mocked):
     assert isinstance(ids_mocked, list)
     assert len(ids_mocked) == 2
 
@@ -910,14 +912,14 @@ def test_get_PubmedIDs_for_query_check_valid_mocked(ids_mocked):
 
 Turning off my network connection shows that the mocked test passes, while the tests that require connecting to the actual API fail.
 However, my usual code review (using Google's Gemini 2.5 Pro) identified a problem with this fixture: it conflates the setup (creating the mock API) with the execution of the function that uses the mock API.
-A better approach (recommended by Gemini) is move the function execution out of the fixture and into the test:
+A better approach is move the function execution out of the fixture and into the test:
 
 ```python
 # Fixture ONLY does the setup (the mocking)
 @pytest.fixture
 def mock_pubmed_api(monkeypatch):
 
-    class MockPubmedResponse:
+    class MockPubMedResponse:
         status_code = 200
         def json(self):
             return {
@@ -931,16 +933,16 @@ def mock_pubmed_api(monkeypatch):
             }
 
     def mock_get(*args, **kwargs):
-        return MockPubmedResponse()
+        return MockPubMedResponse()
 
     # Apply the monkeypatch for requests.get to mock_get
     monkeypatch.setattr(requests, "get", mock_get)
 
 # The test requests the setup, then performs the action and assertion.
-def test_get_PubmedIDs_for_query_check_valid_mocked(mock_pubmed_api):
+def test_get_PubMedIDs_for_query_check_valid_mocked(mock_pubmed_api):
     # Action: Call the function under test
     query = "friston-k AND 'free energy'"
-    ids = get_PubmedIDs_for_query(query)
+    ids = get_PubMedIDs_for_query(query)
 
     # Assertion: Check the result
     assert isinstance(ids, list)
@@ -955,20 +957,20 @@ In fact, it's always a good idea to have tests that specifically assess the usag
 Often a function needs to accept a range of inputs that can result in different behavior, and we want to test each of the possible inputs to ensure that the function works correctly across the range.
 When the different inputs are known, one way to achieve this is to use a *parameterized test*, in which the test is repeatedly run across combinations of different possible values.
 
-For our example, let's move forward and develop the function `parse_year_from_Pubmed_record` to extract the year from Pubmed records, which can differ in their structure.
-We first need to develop the function `get_record_from_PubmedID` to retrieve a record based on a Pubmed ID.
-Following our TDD approach, we first develop two simple tests: one to ensure that it returns a non-empty dictionary for a valid Pubmed ID, and one to ensure that it raises an exception for an invalid Pubmed ID.
+For our example, let's move forward and develop the function `parse_year_from_PubMed_record` to extract the year from PubMed records, which can differ in their structure.
+We first need to develop the function `get_record_from_PubMedID` to retrieve a record based on a PubMed ID.
+Following our TDD approach, we first develop two simple tests: one to ensure that it returns a non-empty dictionary for a valid PubMed ID, and one to ensure that it raises an exception for an invalid PubMed ID.
 We also need to create empty functions so that they can be imported to run the (failing) tests:
 
 ```python
-def get_record_from_PubmedID(pmid: str) -> dict:
+def get_record_from_PubMedID(pmid: str) -> dict:
     pass
 
-def parse_year_from_Pubmed_record(pubmed_record: dict) -> int:
+def parse_year_from_PubMed_record(pubmed_record: dict) -> int:
     pass
 ```
 
-Here are the initial tests; note that writing these tests requires a bit of knowledge about the expected structure of a Pubmed record.
+Here are the initial tests; note that writing these tests requires a bit of knowledge about the expected structure of a PubMed record.
 We will generate a fixture so that the valid record and PubMed ID can be reused in a later test.
 
 ```python
@@ -978,25 +980,25 @@ def valid_pmid():
 
 @pytest.fixture(scope="session")
 def pmid_record(valid_pmid):
-    record = get_record_from_PubmedID(valid_pmid)
+    record = get_record_from_PubMedID(valid_pmid)
     return record
 
-def test_get_record_from_valid_PubmedID(pmid_record, valid_pmid):
+def test_get_record_from_valid_PubMedID(pmid_record, valid_pmid):
     assert pmid_record is not None
     assert isinstance(pmid_record, dict)
     assert pmid_record['uid'] == valid_pmid
 
-def test_get_record_from_invalid_PubmedID():
+def test_get_record_from_invalid_PubMedID():
     pmid = "10000000000"
     with pytest.raises(ValueError):
-        record = get_record_from_PubmedID(pmid)
+        record = get_record_from_PubMedID(pmid)
 
 ```
 
-Armed with these tests, we now work with Copilot to develop the code for `get_record_from_PubmedID`:
+Armed with these tests, we can then develop the code for `get_record_from_PubMedID`:
 
 ```python
-def get_record_from_PubmedID(pmid: str, esummary_url: str = None) -> dict:
+def get_record_from_PubMedID(pmid: str, esummary_url: str = None) -> dict:
 
     if esummary_url is None:
         esummary_url = f"{BASE_URL}/esummary.fcgi?db=pubmed&id={pmid}&retmode=json"
@@ -1016,35 +1018,35 @@ def get_record_from_PubmedID(pmid: str, esummary_url: str = None) -> dict:
     return result_json["result"][pmid]
 ```
 
-This passes the tests, so we can now move to writing some initial tests for `parse_year_from_Pubmed_record`:
+This passes the tests, so we can now move to writing some initial tests for `parse_year_from_PubMed_record`:
 
 ```python
-def test_parse_year_from_Pubmed_record():
+def test_parse_year_from_PubMed_record():
     record = {
         "pubdate": "2021 Jan 1"
     }
-    year = parse_year_from_Pubmed_record(record)
+    year = parse_year_from_PubMed_record(record)
     assert year == 2021
 
 
-def test_parse_year_from_Pubmed_record_empty():
+def test_parse_year_from_PubMed_record_empty():
     record = {
         "pubdate": ""
     }
-    year = parse_year_from_Pubmed_record(record)
+    year = parse_year_from_PubMed_record(record)
     assert year is None
 ```
 
-And then we use our AI tool to develop the implementation:
+And then we develop the implementation:
 
 ```python
-def parse_year_from_Pubmed_record(pubmed_record: dict) -> int:
+def parse_year_from_PubMed_record(pubmed_record: dict) -> int:
     pubdate = pubmed_record.get("pubdate") 
     return int(pubdate.split()[0]) if pubdate else None
 ```
 
-Now let's say that you had a specific set of Pubmed IDs that you wanted to test the code against; for example, you might select IDs from papers published in various years across various journals.
-To do this, we first create a list of tuples that include the information that we will need for the test; in this case it's the Pubmed ID and the true year of publication.
+Now let's say that one had a specific set of PubMed IDs that they wanted to test the code against; for example, they might select IDs from papers published in various years across various journals.
+To do this, we first create a list of tuples that include the information that we will need for the test; in this case it's the PubMed ID and the true year of publication.
 
 ```python
 testdata = [
@@ -1058,14 +1060,14 @@ testdata = [
 ]
 ```
 
-We then feed this into our test using the `@pytest.mark.parametrize` decorator on the test, which will feed in each of the values into the test:
+We then pass this into our test using the `@pytest.mark.parametrize` decorator on the test, which will feed in each of the values into the test successively:
 
 ```python
 @pytest.mark.parametrize("pmid, year_true", testdata)
 def test_parse_year_from_pmid_parametric(pmid, year_true):
     time.sleep(0.5) # delay to avoid hitting the PubMed API too quickly
-    record = get_record_from_PubmedID(pmid)
-    year_result = parse_year_from_Pubmed_record(record)
+    record = get_record_from_PubMedID(pmid)
+    year_result = parse_year_from_PubMed_record(record)
     assert year_result == year_true
 ```
 
@@ -1084,15 +1086,15 @@ tests/test_textmining.py::test_parse_year_from_pmid_parametric[15050513-2004] PA
 ```
 
 This test requires a live API, so it would fail in cases where one didn't have a proper network connection or if the API was down, and it would also be slow for a large number of tests.
-It would be more efficient to mock the `get_record_from_PubmedID` function to avoid dependency on the live API, but for our simple purposes it's fine to use the live API.
+It would be more efficient to mock the `get_record_from_PubMedID` function to avoid dependency on the live API, but for our simple purposes it's fine to use the live API.
 
 ## Property-based testing
 
 Parameterized testing can be useful when we have specific values that we want to test, but sometimes we wish to test a large range of possible values drawn from some sort of distribution.
 One approach to doing this is known as *property-based testing*, and basically involves generating random values that match some specification and testing the code against those.
 
-Property-based testing can be particularly useful for testing mathematical code, so we will develop another simple example to show how to use the `hypothesis` module in Python to perform property-based testing.
-Let's say that we have developed a [function](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/my_linear_regression.py) to perform linear regression, taking in two vectors (X and y variables) and return a vector of length 2 (parameter estimates for slope and intercept).
+Property-based testing can be particularly useful for testing mathematical code, so we will develop another simple example to show how to use the *hypothesis* module in Python to perform property-based testing.
+Let's say that we have developed a [function](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/my_linear_regression.py) to perform linear regression, taking in two vectors (X and y variables) and returning a vector of length 2 (parameter estimates for slope and intercept).
 Copilot generates some very terse code for us:
 
 ```python
@@ -1172,7 +1174,7 @@ We will turn off the validation in order to see what happens if the linear regre
 Running this test, we see that the test fails, with the following output:
 
 ```bash
-❯ pytest tests/property_based_testing/test_propertybased_smoke.py
+$ pytest tests/property_based_testing/test_propertybased_smoke.py
 =========================== test session starts ===========================
 tests/property_based_testing/test_propertybased_smoke.py F          [100%]
 
@@ -1218,9 +1220,9 @@ FAILED tests/property_based_testing/test_propertybased_smoke.py::test_linear_reg
 ```
 
 The test has identified a specific input that will cause the code to fail - namely, when the X variable is all zeros, which leads to an error when trying to invert the singular matrix.
-We could get the test to pass by causing the function to return `None` when the matrix is no invertible, but this is not a great practice; we should announce problems loudly by raising an exception, rather than burying them quietly by returning `None`.
+We could get the test to pass by causing the function to return `None` when the matrix is not invertible, but this is not a great practice; we should announce problems loudly by raising an exception, rather than burying them quietly by returning `None`.
 
-Now that we have seen how `hypothesis` can identify errors, let's develop some [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/property_based_testing/test_propertybased.py) for the code that we can use to make sure that it works properly.
+Now that we have seen how *hypothesis* can identify errors, let's develop some [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/property_based_testing/test_propertybased.py) for the code that we can use to make sure that it works properly.
 We will first separately test the validator function, making sure that it can detect any of the potential problems that it should be able to detect:
 
 ```python
@@ -1245,10 +1247,10 @@ def test_validate_input(X, y):
         pass # Explicitly show that catching the error is the goal.
 ```
 
-Note that this doesn't actually whether our code actually gives the right answer, only that it runs without error and catches the appropriate problem cases, ensuring that any data passing the validator can run without error on the linear regression function.
+Note that this doesn't actually test whether our code actually gives the right answer, only that it runs without error and catches the appropriate problem cases, ensuring that any data passing the validator can run without error on the linear regression function.
 When a reference implementation exists for a function (as it does in the case of linear regression), then we can compare our results to the results from the reference.
-Here we will compare to the outputs from the from the linear regression function from the `scipy` module.
-Using this, we can check the randomly generated input to see whether it should raise an exception, and otherwise compare the results of our function to the scipy function:
+Here we will compare to the outputs from the from the linear regression function from the *scipy* module.
+Using this, we can check the randomly generated input to see whether it should raise an exception, and otherwise compare the results of our function to the *scipy* function:
 
 ```python
 # Test 2: Test the algorithm's correctness, assuming valid input
@@ -1283,9 +1285,8 @@ We decided to restrict the test values to a range that is within the usual range
 ## Automated testing and continuous integration
 
 Once we have a set of tests for a project, it's important to integrate them into our workflow so that we ensure that new changes to the code don't break the existing code (known as a *regression*).
-
 One useful way to ensure that the tests are run regularly is to run them automatically every time changes are pushed to version control.
-This is known as "continuous integration" (CI for short), referring to the fact that it allows changes to be continuously integrated into the main code branch once they are confirmed to pass all of the tests.
+This is known as "continuous integration" (*CI* for short), referring to the fact that it allows changes to be continuously integrated into the main code branch once they are confirmed to pass all of the tests.
 There are a number of different platforms one can use for CI; we will focus on *Github Actions* since it is the most tightly integrated into the Github version control system.
 Testing using CI also has a useful side effect: Since the CI system uses a virtual machine to run the tests, the use of CI for testing ensures that the code can run on a separate machine from the one where it was developed.
 Because setting up the CI system also requires understanding all of the dependencies that are required for the code to run, the CI setup provides a recipe to run the code on any other system.
@@ -1300,8 +1301,8 @@ When setting up an automated action using GitHub Actions, there are two primary 
 - What is the workflow that I want to run?
 - What are the events that I want to trigger the workflow?
 
-As an example, we will implement a workflow running to execute tests for a simple python package that was generated for this book project, called [mdnewline](https://github.com/poldrack/mdnewline/).
-We start by going to the GitHub Actions tab in the repository, and selecting the "Python Package" option, which creates a workflow that builds and tests a Python package.
+As an example, I will implement a workflow running to execute tests for a simple python package that was generated for this book project, called [*mdnewline*](https://github.com/poldrack/mdnewline/).
+I start by going to the GitHub Actions tab in the repository, and selecting the "Python Package" option, which creates a workflow that builds and tests a Python package.
 Generating the workflow results in a file that contains a description of the workflow, located at `.github/workflows/python-package.yml`.
 Looking more closely at the workflow file, we can see how it works.
 The first section specifies the name of the workflow, and defines the events that will trigger the workflow:
@@ -1347,7 +1348,7 @@ Since this project uses `uv` to manage packages, we will use the recommended set
           python-version: ${{ matrix.python-version }}
 ```
 
-This installs uv with the appropriate python version.
+This installs uv with the appropriate Python version.
 We can then install the project using `uv sync`, pip install the package within the `uv` environment, and run the tests:
 
 ```yaml
@@ -1358,12 +1359,12 @@ We can then install the project using `uv sync`, pip install the package within 
         run: uv pip install .
 
       - name: Run tests
-        # For example, using `pytest`
+        # For example, using *pytest*
         run: uv run pytest tests
 ```
 
 When we commit and push this workflow file, it is automatically run by Github Actions.
-If we got to the Actions tab in the repository, we will see that the tests failed, and by looking at the logs we can see that the `uv` installation process failed:
+If we go to the Actions tab in the repository, we will see that the tests failed, and by looking at the logs we can see that the `uv` installation process failed:
 
 ![Github actions failure](images/github_actions_failure.png)
 
@@ -1388,11 +1389,11 @@ There are a number of strategies to optimize one's testing workflows.
 ### Cherry-picking specific tests
 
 When developing a new function, it's usually sufficient to run only the tests that directly address that function rather than running the entire test suite.
-If all of the tests for a specific function are located within a single test file, then one can simply call `pytest` with that file.
+If all of the tests for a specific function are located within a single test file, then one can simply call *pytest* with that file.
 It's also possible to run a specific test within a file by referring to a specific class or function using a double-colon marker:
 
 ```bash
-❯ pytest tests/textmining/test_textmining.py::test_parse_year_from_Pubmed_record
+$ pytest tests/textmining/test_textmining.py::test_parse_year_from_PubMed_record
 
 ============================= test session starts ==============================
 collected 1 item
@@ -1406,12 +1407,12 @@ This allows one to focus on the tests that are immediately relevant to a specifi
 ### Controlling test execution order
 
 Several of the strategies described below require the ability to execute tests in specific orders.
-There are several strategies one can use to do this.
+There are several ways one can use to do this.
 
-One strategy that *will not* work reliably is to place the tests in a specific order in the test file.
+One approach that *will not* work reliably is to place the tests in a specific order in the test file.
 While tests are often executed in the order that the functions appear in the file, this not guaranteed.
 
-For precise ordering of particular tests, one can use the [pytest-order](https://pypi.org/project/pytest-order/) plugin, which allows the use of marks to specify test order[^2].
+For precise ordering of particular tests, one can use the [*pytest-order*](https://pypi.org/project/pytest-order/) plugin, which allows the use of marks to specify test order[^2].
 We start with two [tests](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/ordering/test_order.py) that are out of order in the test code:
 
 ```python
@@ -1429,7 +1430,7 @@ def test_first():
 Running this, we see that these are run in the order they are defined in the test code:
 
 ```bash
-❯ pytest -vv tests/ordering/test_order.py
+$ pytest -vv tests/ordering/test_order.py
 =========================== test session starts ============================
 collected 2 items
 
@@ -1457,7 +1458,7 @@ def test_first():
 Running this, we see that these are run in the order they are defined in the test code:
 
 ```bash
-❯ pytest -vv tests/ordering/test_order.py
+$ pytest -vv tests/ordering/test_order.py
 =========================== test session starts ============================
 collected 2 items
 
@@ -1480,7 +1481,7 @@ It's important to realize that if one introduces a condition that would cause a 
 A related command, `pytest --ff` (for `--failed-first`) will run the most recent failed tests before running the rest of the tasks.
 This command is probably better for general use than the `--lf` flag, since it ensures that all tests are run, but prioritizes the running of the failing tests first.
 This might be an option that one would consider using by default, which can be achieved by adding the option to one of the relevant configuration files.
-In our case, this would be `pyproject.toml`, where we could add:
+In this case the relevant file is `pyproject.toml`, where we could add:
 
 ```toml
 [tool.pytest.ini_options]
@@ -1493,7 +1494,7 @@ If we are writing short functions (which we are, right?), then our unit tests sh
 One thing we can do is to run only unit tests while we are developing, while having the integration tests run less frequently.
 For example, we could have the unit tests run any time we commit our code (for example, by running them as pre-commit items), while having the integration tests run automatically on our CI system when the code is actually pushed to the GitHub repository.
 
-One way to accomplish this is to use pytest markers (as we saw earlier) to mark groups of tests.
+One way to accomplish this is to use *pytest* markers (as we saw earlier) to mark groups of tests.
 We first need to define our own custom markers in our `pyproject.toml` file:
 
 ```toml
@@ -1528,7 +1529,7 @@ def test_integration():
 Running these using the standard pytest command, both tests are executed:
 
 ```bash
-❯ pytest -vv tests/markers/test_markers.py
+$ pytest -vv tests/markers/test_markers.py
 =========================== test session starts ============================
 collected 3 items
 
@@ -1541,7 +1542,7 @@ tests/markers/test_markers.py::test_integration PASSED               [100%]
 However, we can also specify that only the unit tests should be executed, using the `-m` flag to deselect all other flags:
 
 ```bash
-❯ pytest -vv -m unit tests/markers/test_markers.py
+$ pytest -vv -m unit tests/markers/test_markers.py
 =========================== test session starts ============================
 collected 3 items / 1 deselected / 2 selected
 
@@ -1554,7 +1555,7 @@ tests/markers/test_markers.py::test_unit2 PASSED                     [100%]
 We could also run all tests that to not match a particular marker:
 
 ```bash
-❯ pytest -vv -m "not unit" tests/markers/test_markers.py
+$ pytest -vv -m "not unit" tests/markers/test_markers.py
 =========================== test session starts ============================
 collected 3 items / 2 deselected / 1 selected
 
@@ -1591,7 +1592,7 @@ def test_duration_1():
 We can call pytest with `--durations=0` which will return the duration for all of the tests:
 
 ```bash
-❯ pytest --durations=0 tests/ordering/test_duration.py
+$ pytest --durations=0 tests/ordering/test_duration.py
 ============================= test session starts ==============================
 collected 3 items
 
@@ -1606,8 +1607,8 @@ tests/ordering/test_duration.py ...                                      [100%]
 
 Using the results of this, we could impose ordering on test execution so that the slowest ones are executed last, or add a `slow` marker that we could exclude from our regular testing.
 
-There are plugins for `pytest` that can measure the duration of each test and order tests accordingly, but they don't seem to be very well maintained so I am avoiding them.
-However, with agentic AI coding tools we can have our AI system make the appropriate call to pytest to obtain the durations and then add the appropriate ordering markers.
+There are plugins for *pytest* that can measure the duration of each test and order tests accordingly, but they don't seem to be very well maintained so I am avoiding them.
+However, with agentic AI coding tools we can have our AI system make the appropriate call to *pytest* to obtain the durations and then add the appropriate ordering markers.
 I tried this using the agentic chat window in VSCode (with Claude Sonnet 4).
 On the first pass, Claude immediately noticed that it could infer the completion times directly from the `sleep()` commands in the code.
 I asked it not to do this, and instead to use the outputs from `pytest --durations` but it had trouble waiting for the tests to finish, and ended up continuing to try to things that didn't work.
@@ -1685,21 +1686,21 @@ This is a great example of how we can increasingly rely upon AI coding models to
 
 For code that performs data processing operations, the processing of full size datasets can often take a very long time.
 One strategy in these cases is to generate minimal mock datasets that can exercise the functions without taking the full amount of time that a real dataset would.
-In the tests for `fMRIPrep`, we use fMRI datasets that have been reduced in length, and structural MRI datasets that have been downsampled to reduce their spatial resolution.
+In the tests for *fMRIPrep*, we use fMRI datasets that have been reduced in length, and structural MRI datasets that have been downsampled to reduce their spatial resolution.
 The specific way to reduce the dataset will depend on the particular processes being run.
-For example, downsampling the data too much for MRI preprocessing would likely cause some operations to fail, so one needs to have a good intuition for the data requirements for the relevant code.
+For example, downsampling the data too much for MRI preprocessing would likely cause some operations to fail, so one needs to have a good intuition for the data requirements of the relevant code.
 
 ### Adding minimal processing modes for integration tests
 
 When the goal is to the test the integration of components rather than the function of each component, one way to minimize testing time is to provide configuration features that minimize execution time for the component.
-For example, in `fMRIPrep` there are a number of steps that involve optimization processes that take time to converge.
+For example, in *fMRIPrep* there are a number of steps that involve optimization processes that take time to converge.
 However, there the package has a "sloppy mode" configuration flag that one can turn on for testing, which provides a more lenient threshold for convergence of those operations, allowing them to finish faster.
 Again, knowing where one can cut corners requires a good understanding of the specific requirements of the processing operations.
 
 ### Parallelizing testing
 
 If we have written good tests, they should be able to run independently, and thus their execution should be parallelizable, assuming that we are using a system with multiple CPU cores.
-If we are using `pytest` as our testing framework, then we can use the `pytest-xdist` extension to enable the parallel execution of tests in pytest.
+If we are using *pytest* as our testing framework, then we can use the *pytest-xdist* extension to enable the parallel execution of tests in pytest.
 For example, let's set up a parameterized [test](https://github.com/BetterCodeBetterScience/bettercode/blob/main/tests/parallel/tests_parallel.py) that includes a `time.sleep()` command so that execution will take a significant amount of time.
 
 ```python
@@ -1714,23 +1715,22 @@ def test_parallel(x):
 If we run this using the standard `pytest` command, we should see that it takes about ten seconds, given that there are ten tests:
 
 ```bash
-❯ pytest tests/parallel/tests_parallel.py
-============================= test session starts ==============================
+$ pytest tests/parallel/tests_parallel.py
+======================== test session starts =========================
 collected 10 items
 
-tests/parallel/tests_parallel.py ..........                              [100%]
-
-============================= 10 passed in 10.18s ==============================
+tests/parallel/tests_parallel.py ..........                     [100%]
+======================== 10 passed in 10.18s =========================
 ```
 
 If we have installed `pytest-xdist` then we can add the `-n auto` flag which will automatically detect how manu CPU cores we have available and run the tests in parallel across those cores:
 
 ```bash
-❯ pytest tests/parallel/tests_parallel.py -n auto
-============================= test session starts ==============================
+$ pytest tests/parallel/tests_parallel.py -n auto
+========================= test session starts ==========================
 16 workers [10 items]
-..........                                                               [100%]
-============================== 10 passed in 1.97s ==============================
+..........                                                        [100%]
+========================== 10 passed in 1.97s ==========================
 ```
 
 You can see that it detected the 16 cores in my laptop and ran the 10 tests in parallel, greatly reducing the testing time.
@@ -1738,5 +1738,5 @@ You can see that it detected the 16 cores in my laptop and ran the 10 tests in p
 [^1]: This is slightly inaccurate, because a true positive control would contain the actual virus.
 It would be more precise to call it a “procedural control” but these seem to be also referred to as “positive controls” so I am sticking with the more understandable terminology here.
 [^2]: As discussed in the earlier section on technical debt, I don't think it's generally a good policy to rely upon packages that one randomly finds on Pypi or GitHub.
-Before recommending `python-order` as a possible solution, I looked at its [GitHub page](https://github.com/pytest-dev/pytest-order), where I saw that it appears to be a well-maintained and currently active package, with recent commits and solid handling of issues.
+Before recommending *python-order* as a possible solution, I looked at its [GitHub page](https://github.com/pytest-dev/pytest-order), where I saw that it appears to be a well-maintained and currently active package, with recent commits and solid handling of issues.
 Conversely, during the course of writing I came across a number of other packages that had been recommended on Stack Overflow to solve various problems, some of which had not seen commits in several years or had longstanding unaddressed issues.

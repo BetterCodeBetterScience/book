@@ -6,7 +6,7 @@ build-html: clean
 	npx serve _build/html
 
 build-pdf:
-	myst build --pdf
+	uv run myst build --pdf
 
 check-links:
 	check-links	

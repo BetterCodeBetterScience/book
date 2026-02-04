@@ -1,7 +1,7 @@
 # Project structure and management
 
 
-One of the keys to efficient software development is good project organization.  Above all else, using a consistent organizational scheme makes development easier because it allows one to rely upon defaults rather than making decisions, and to rely upon assumptions rather than asking questions. In this chapter we will talk about various aspects of project organization and management. We will discuss the use of computational notebooks and ways to make them more amenable to a reproducible computational workflow, as well as when and how to move beyond notebooks.  We will then discuss file and folder organization within a project.  But we start with a broad overview of the goals of a scientific project, to motivate the rest of the discussion.
+One of the keys to efficient software development is good project organization.  Above all else, using a consistent organizational scheme makes development easier because it allows one to rely upon defaults rather than making decisions, and to rely upon shared assumptions rather than asking questions. In this chapter I will talk about various aspects of project organization and management. I will discuss the use of computational notebooks and ways to make them more amenable to a reproducible computational workflow, as well as when and how to move beyond notebooks.  I will then discuss file and folder organization within a project.  But I start with a broad overview of the goals of a scientific project, to motivate the rest of the discussion.
 
 ## The goals of a scientific software project
 
@@ -14,7 +14,7 @@ This might seem like an obvious point: In order for a software project to be use
 Once it runs, our main goal is to make sure that our scientific code solves the intended problem correctly.  There are many ways in which errors can creep into scientific code:
 
 - *The wrong algorithm may be chosen to solve the problem.* For example, you might be analyzing count data that have a high prevalence of zeros, but use a statistical model like linear regression that assumes normality of the model errors.  The data thus violate the assumptions of the selected algorithm.
-- *The right algorithm may be implemented incorrectly.*  For example, you might implement the hurdle regression model for zero-inflated count data, but use an incorrect implementation (like the one that is often recommended by AI coding tools, as discussed in an earlier chapter).  Or there may be an typographic error in the code that results in incorrect results.
+- *The right algorithm may be implemented incorrectly.*  For example, you might implement the hurdle regression model for zero-inflated count data, but use an incorrect implementation (like the one that is often recommended by AI coding tools, as discussed in the previous chapter).  Or there may be an typographic error in the code that results in incorrect results.
 - *The algorithm may not perform properly.* For example, one might use a linear mixed effects model that is estimated using a maximum likelihood method, but the estimation procedure doesn't converge for the particular dataset and model specification, leading to potentially invalid parameter estimates.  Similarly, an optimization procedure may return parameter estimates that are located at the boundaries of the procedure, suggesting that these estimates are not valid.  
 - *The assumptions about the data structure may be incorrect.*  For example, a variable label in the data may suggest that the variable means one thing, when in fact it means different things for different observations depending on their experimental condition.  
 
@@ -22,7 +22,7 @@ These are just a few examples of how code that runs may return answers that are 
 
 ### It needs to be understandable
 
-As we discussed in our earlier sections on clean coding, one of the most important features of good code is *readability*.  If the code is not readable, then it will be difficult for you or someone else to understand it in the future.  Language models also benefit greatly from readable code, making it much easier for them to infer the original intent and goals of the code (even if they can often do this successfully even with unreadable code).  
+As I discussed in the section in Chapter 3 on clean coding, one of the most important features of good code is *readability*.  If the code is not readable, then it will be difficult for you or someone else to understand it in the future.  Language models also benefit greatly from readable code, making it much easier for them to infer the original intent and goals of the code (even if they can often do this successfully even with unreadable code).  
 
 ### It needs to be portable
 
@@ -35,13 +35,13 @@ Having a consistent project organization scheme is key to making projects as eas
 
 ### Should code and data live alongside one another?
 
-One important initial question is whether code and data should live within the same directory.  This will often ride on the size of the data: If the data are small enough that they don't cause space problems on the filesystem where the code lives, then it might make sense to include the data in a subdirectory within the project directory. We will discuss in a later chapter on Data Sharing whether one should share one's data via Github; for this chapter we focus on local organization.
+One important initial question is whether code and data should live within the same directory.  This will often ride on the size of the data: If the data are small enough that they don't cause space problems on the filesystem where the code lives, then it might make sense to include the data in a subdirectory within the project directory. I will discuss in a later chapter on Data Sharing whether one should share one's data via Github; for this chapter I'll focus on local organization.
 
 For my projects with datasets larger than a few gigabytes, I tend to keep data separate from code for the following reasons. 
 
 - For the projects that use our local high-performance computing system, we have a dedicated location on the file system where data are stored in a read-only way to prevent them from being changed inadvertently, and where they can be accessed by any user with permissions to access that particular dataset.  Individual users keep their code in separate project directories and pull data from those shared directories.
-- In some cases it's useful to remotely mount a filesystem (such as mounting the storage system on the local cluster via sshfs) to allow reading of data without actually downloading the entire dataset.
-- For projects that I run on my laptop, I keep my code folders inside my Dropbox folder, so that they are continually backed up.  I highly recommend this, as it allows one to go back in time and restore deleted files (assuming one's Dropbox account supports this feature), and also allows one to keep a hot spare system that has a current version of all of one's code (e.g., in case one spills a latte on their laptop and fries it).  For larger datasets I often don't want to put them into Dropbox due to the size that they take up.
+- In some cases it's useful to remotely mount a filesystem (such as mounting the storage system on the local cluster via *sshfs*) to allow reading of data without actually downloading the entire dataset.
+- For projects that I run on my laptop, I keep my code folders inside my *Dropbox* folder, so that they are continually backed up.  I highly recommend this, as it allows one to go back in time and restore deleted files (assuming one's *Dropbox* account supports this feature), and also allows one to keep a hot spare system that has a current version of all of one's code (e.g., in case one spills a latte on their laptop and fries it).  For larger datasets I often don't want to put them into *Dropbox* due to the size that they take up.
 
 In general, for portability it's also nice to have the data location parameterized in the code (e.g., via a .env file or local config file) rather than hardcoded through the use of a local directory name.  Thus, even if you decide to put the data within the code directory, it's good to write the code in a way that can allow the data to live in an arbitrary location.
 
@@ -50,9 +50,9 @@ In general, for portability it's also nice to have the data location parameteriz
 A consistent and rational folder structure is key to good project organization.  For a simple Python project, I recommend starting using the package organization provided by `uv`.  
 
 ```bash
-➤  uv init --package myproject
+$  uv init --package myproject
 Initialized project `myproject` at `/Users/poldrack/Downloads/myproject`
-➤  tree myproject
+$  tree myproject
 myproject
 ├── pyproject.toml
 ├── README.md
@@ -67,7 +67,7 @@ Using this structure will make it easy to generate a Python module from your cod
 - `notebooks`: for interactive notebooks, which I prefer to keep separate from module code
 - `results`: for output from code
 - `scripts`: for executable scripts (e.g., bash scripts). Note: For Python scripts I prefer to use the [`project.scripts` functionality](https://docs.astral.sh/uv/guides/scripts/) in `uv`, which allows one to point to a particular function within a code file as the entrypoint for an executable script.
-- `tests`: for software tests. While one can put tests alongside code within the `src/<projectname>` directory, it is standard to put them in a separate `tests` directory within the main project directory.  This keeps test code separate from project code, and makes it easy to find all of the tests.
+- `tests`: for software tests. While one can put tests alongside code within the `src/<projectname>` directory, it is most customary to put them in a separate `tests` directory within the main project directory.  This keeps test code separate from project code, and makes it easy to find all of the tests.
 
 I would suggest setting these all up when you create the project, so there won't be any temptation to cut corners down the road.  There are tools known as *cookiecutters* that can help automate the creation of standard directory structures. While I've not personally found them to be necessary or particularly useful, they can be helpful for larger groups to ensure the generation of standardized directory structures.
 
@@ -126,7 +126,7 @@ results
 
 It's important to first note that some distinctions that seem like they should be obvious, like "raw" versus "preprocessed" data, can often hide much more complexity than meets the eye. In fact, I once spent several hours at a workshop in a discussion of what exactly counts as "raw" data in a particular field of neuroimaging. What's most important is that you come up with a definition and stick with it, so that it will be clear what goes where.  It's also probably worth noting in a README file if there are any such definitions that are important to understanding what goes where; for example, "Here 'raw' refers to data that have been downloaded directly from the measurement device, with no additional processing applied."  
 
-You will likely want to have some additional folder structure within each of these directories, and it's important to use a smart naming scheme.  Any time there is more than one parameter that varies across the subfolders, we generally prefer a naming scheme that using key-value pairs separated by underscores, which derives from the [Brain Imaging Data Structure (BIDS)](https://bids.neuroimaging.io/) standard that we were involved in developing. For example, let's say that we have several different types of decoding models that will be fit and stored under the modeling subdirectory, which vary by the fitting method ("svm" versus "logreg") and the regularization type ("L1", "L2", or "elasticnet").  We could generate directories for each of these using the following scheme:
+You will likely want to have some additional folder structure within each of these directories, and it's important to use a smart naming scheme.  Any time there is more than one parameter that varies across the subfolders, I generally prefer a naming scheme that using key-value pairs separated by underscores, which derives from the [Brain Imaging Data Structure (BIDS)](https://bids.neuroimaging.io/) standard that we were involved in developing. For example, let's say that we have several different types of decoding models that will be fit and stored under the modeling subdirectory, which vary by the fitting method ("svm" versus "logreg") and the regularization type ("L1", "L2", or "elasticnet").  We could generate directories for each of these using the following scheme:
 
 ```bash
 modeling
@@ -138,14 +138,14 @@ modeling
 └── method-svm_reg-L2
 ```
 
-One substantial benefit of this scheme is that it can easily be parsed in an automatic way.  It is important to be very careful not to include additional dashes or underscores within the values, since this will defeat the ability to reliably parse the folder names.
+One substantial benefit of this scheme is that it can easily be parsed in an automated way.  It is important to be very careful not to include additional dashes or underscores within the values, since this will defeat the ability to reliably parse the folder names.
 
 ### Folder numbering
 
-There are some cases where it makes sense to number folders, as when there are discrete steps in a workflow that one wants to keep in order.  One good habit for numbering in file names is to use zero-padded numbers, with enough padding to cover all possible values.  For example, let's say that one wants to number folders for individual figures.  If you are certain that there will not be more than 9 figures, then it's ok to number them with single digits, but in general I would err on the side of including zero-padding. Otherwise, figures will not easily sort by number if there end up being more than 9 figures:
+There are some cases where it makes sense to number folders, as when there are discrete steps in a workflow that one wants to keep in order.  One good habit for numbering in file names is to use zero-padded numbers, with enough padding to cover all possible values.  For example, let's say that one wants to number folders for individual figures.  If you are certain that there will not be more than 9 figures, then it's ok to number them with single digits, but in general I would err on the side of including at least one level of zero-padding. Otherwise, figures will not easily sort by number if there end up being more than 9 figures:
 
 ```bash
-➤  ls -1
+$  ls -1
 figure-1
 figure-10
 figure-11
@@ -162,7 +162,7 @@ figure-9
 Whereas it sorts properly with zero-padding:
 
 ```bash
-➤  ls -1
+$  ls -1
 figure-01
 figure-02
 figure-03
@@ -182,15 +182,15 @@ figure-12
 
 ## Computational notebooks
 
-The advent of the Jupyter notebook has fundamentally changed the way that many scientists do their computational work.  By allowing the mixing together of code, text, and graphics, Project Jupyter has taken Donald Knuth's vision of "literate programming"[@Knuth:1992aa] and made it available in a powerful way to users of [many supported languages](https://github.com/jupyter/jupyter/wiki/Jupyter-kernels), including Python, R, Julia, and more.  Many scientists now do the majority of their computing within these notebooks or similar literate programming frameworks (such as RMarkdown or Quarto notebooks). Given its popularity and flexibility we will focus on Jupyter, but some of the points raised below extend to other frameworks as well.
+The advent of the Jupyter notebook has fundamentally changed the way that many scientists do their computational work.  By allowing the mixing together of code, text, and graphics, Project Jupyter has taken Donald Knuth's vision of "literate programming"[@Knuth:1992aa] and made it available in a powerful way to users of [many supported languages](https://github.com/jupyter/jupyter/wiki/Jupyter-kernels), including Python, R, Julia, and more.  Many scientists now do the majority of their computing within these notebooks or similar literate programming frameworks (such as RMarkdown or Quarto notebooks). Given its popularity and flexibility I will focus on Jupyter, but some of the points raised below extend to other frameworks as well.
 
-The exploding prevalence of Jupyter notebooks is unsurprising, given their many useful features. They match the way that many scientists interactively work to explore and process their data, and provide a way to visualize results next to the code and text that generates them. They also provide an easy way to share results with other researchers. At the same time, they come with some particular software development challenges, which we discuss further below.
+The exploding prevalence of Jupyter notebooks is unsurprising, given their many useful features. They match the way that many scientists interactively work to explore and process their data, and provide a way to visualize results next to the code and text that generates them. They also provide an easy way to share results with other researchers. At the same time, they come with some particular software development challenges, which I discuss further below.
 
 ### What is a Jupyter notebook?
 
-Put simply, a Jupyter notebook is a structured document that allows the mixing together of code and text, stored as a JSON (JavaScript Object Notation) file.  It is structured as a set of *cells*, each of which can be individually executed.  Each cell can contain text or code, supporting a number of different languages.  The user interacts with the notebook through a web browser or other interface, while the commands are executed by a *kernel* that runs in the background.  We won't provide an introduction to using Jupyter notebooks here; there are many of them online. Instead, we will focus on the specific aspects of Jupyter notebook usage that are relevant to reproducibility.
+Put simply, a Jupyter notebook is a structured document that allows the mixing together of code and text, stored as a JSON (JavaScript Object Notation) file.  It is structured as a set of *cells*, each of which can be individually executed.  Each cell can contain text or code, supporting a number of different languages.  The user interacts with the notebook through a web browser or other interface, while the commands are executed by a *kernel* that runs in the background.  I won't provide an introduction to using Jupyter notebooks here; there are many of them online. Instead, I will focus on the specific aspects of Jupyter notebook usage that are relevant to reproducibility.
 
-Many users of Jupyter notebooks work with them via the default Jupyter Lab interface within  a web browser, and there are often good reasons to use this interface. However, other IDEs (including VSCode and PyCharm) provide support for the editing and execution of Jupyter notebooks.  The main reason that I generally use a standalone editor rather than the Jupyter Lab interface is that these editors allow seamless integration of AI coding assistants.  While there are tools that attempt to integrate AI assistants within the native Jupyter interface, they are at present nowhere near the level of the commercial IDEs like VSCode.  In addition, these IDEs provide easy access to many other essential coding features, such as code formatting and automated linting. 
+Many users of Jupyter notebooks work with them via the default Jupyter Lab interface within  a web browser, and there are often good reasons to use this interface. However, other IDEs (including VSCode and PyCharm) provide support for the editing and execution of Jupyter notebooks.  The main reason that I generally use a standalone editor rather than the Jupyter Lab interface is that these editors allow seamless integration of AI coding assistants.  While support for AI assistants within the native Jupyter interface is emerging, at present it is nowhere near the level of the commercial IDEs like VSCode.  In addition, these IDEs provide easy access to many other essential coding features, such as code formatting and automated linting. 
 
 ### Patterns for Jupyter notebook development
 
@@ -198,21 +198,21 @@ There are a number of different ways that one can work Jupyter notebooks into th
 
 #### All interactive notebooks, all the time
 
-Some researchers do all of their coding interactively within notebooks.  This is the simplest pattern, since it only requires a single interface, and allows full interactive access to all of the code.  However, in my opinion there are often good reasons not to use this approach.  Several of these are drawn from Joel Grus' famous 2018 JupyterCon talk titled ["I don't like notebooks"]](https://docs.google.com/presentation/d/1n2RlMdmv1p25Xy5thJUhkKGvjtV-dkAIsUXP-AL4ffI/preview?slide=id.g362da58057_0_1), but they all derive from my experience as a user of Jupyter notebooks for more than a decade.
+Some researchers do all of their coding interactively within notebooks.  This is the simplest pattern, since it only requires a single interface, and allows full interactive access to all of the code.  However, in my opinion there are often good reasons not to use this approach.  Several of these are drawn from Joel Grus' famous 2018 JupyterCon talk titled ["I don't like notebooks"](https://docs.google.com/presentation/d/1n2RlMdmv1p25Xy5thJUhkKGvjtV-dkAIsUXP-AL4ffI/preview?slide=id.g362da58057_0_1), but they all derive from my experience as a user of Jupyter notebooks for more than a decade.
 
-##### Dependence on execution order
+**Dependence on execution order**
 
-The cells in a Jupyter notebook can be executed in any order by the user, which means that the current value of all of the variables in the workspace depends on the exact order in which the previous cells were executed.  While this can sometimes be evident from the execution numbers that are presented alongside each cell, for a complex notebook it can become very difficult to identify exactly what has happened. This is why most Jupyter power-users learn to reflexively restart the kernel and run all of the cells in the notebook, as this is the only way to guarantee ordered execution. This is also an issue that is commonly confusing for new users; I once taught a statistics course using Jupyter notebooks within Google Colab, and I found that very often student confusions were resolved by restarting the kernel and rerunning the notebook, reflecting their basis in out-of-order execution.  Out-of-order execution is exceedingly common; an analysis of 1.4 million notebooks from Github by [@Pimentel:2019aa] found that for notebooks in which the execution order to unambiguous, 36.4% of the notebooks had cells that were executed out of order.   
+The cells in a Jupyter notebook can be executed in any order by the user, which means that the current value of all of the variables in the workspace depends on the exact order in which the previous cells were executed.  While this can sometimes be evident from the execution numbers that are presented alongside each cell, for a complex notebook it can become very difficult to identify exactly what has happened. This is why most Jupyter power-users learn to reflexively restart the kernel and run all of the cells in the notebook, as this is the only way to guarantee ordered execution. This is also an issue that is commonly confusing for new users; I once taught a statistics course using Jupyter notebooks within Google Colab, and I found that very often student confusions were resolved by restarting the kernel and rerunning the notebook, reflecting their basis in out-of-order execution.  Out-of-order execution is exceedingly common; an analysis of 1.4 million notebooks from Github by [@Pimentel:2019aa] found that for notebooks in which the execution order was unambiguous, 36.4% of the notebooks had cells that were executed out of order.   
 
-##### Global workspace
+**Global workspace**
 
-As we discussed earlier in the book, global variables have a bad reputation for making debugging difficult, since changes to a global variable can have wide-ranging effects on the code that can be difficult to identify.  For this reason, we generally try to encapsulate variables so that their scope is only as wide as necessary.  However, all variables are global in a notebook, unless they are contained within a function or class defined within the notebook.  However, the global scope of variables in the notebook means that if there is a variable used within a function with the same name as a variable in the global namespace, that variable can be accessed within the function.  I have on more than one occasion seen tricky bugs occur when the user creates a function to encapsulate some code, but then forgets to define a variable within the function that exists in the global state.  This leads to the operation of the function changing depending on the value of the global variable, in a way that can be incredibly confusing.  It is for this reason that I always suggest moving functions out of a notebook into a module as soon as possible, to prevent these kinds of bugs from occurring (among other reasons); I describe this in more detail below.
+As I discussed earlier in the book, global variables have a bad reputation for making debugging difficult, since changes to a global variable can have wide-ranging effects on the code that can be difficult to identify.  For this reason, it's generally a best practice to encapsulate variables so that their scope is only as wide as necessary.  However, all variables are global in a notebook, unless they are contained within a function or class defined within the notebook.  However, the global scope of variables in the notebook means that if there is a variable used within a function with the same name as a variable in the global namespace, that variable can be accessed within the function.  I have on more than one occasion seen tricky bugs occur when the user creates a function to encapsulate some code, but then forgets to define a variable within the function that exists in the global state.  This leads to the operation of the function changing depending on the value of the global variable, in a way that can be incredibly confusing.  It is for this reason that I always suggest moving functions out of a notebook into a module as soon as possible, to prevent these kinds of bugs from occurring (among other reasons); I describe this in more detail below.
 
-##### Notebooks play badly with version control
+**Notebooks play badly with version control**
 
 Because Jupyter notebooks store execution order in the file, the file contents will change whenever a cell is executed.  This means that version control systems will register non-functional changes in the file as a change, since they are simply looking for any modification of the file.  I discuss this in much more detail below.
 
-##### Notebooks discourage testing
+**Notebooks discourage testing**
 
 Although frameworks exist for code testing within Jupyter notebooks, it is much more straightforward to develop tests for separate functions defined outside of a notebook using standard testing approaches, as outlined in Chapter 4.  This a strong motivator for extracting important functions into modules, as discussed further below.
 
@@ -230,14 +230,14 @@ Notebooks shine as tools for data visualization, and one common pattern is to pe
 
 #### Notebooks as literate programs
 
-A final way that one might use notebooks is as a way to create standalone programs with rich annotation via the markdown support provided by notebooks.  In this pattern, one would use a notebook editor to generate code, but then run the code as if it were a standard script, using `jupyter nbconvert --execute` to execute the notebook and generate a rendered version.  While this is plausible, I don't think it's an optimal solution.  Instead, I think that one should consider generating pure Python code using embedded notations such as the `py:percent` notation supported by `jupytext`, which we will describe in more detail below.
+A final way that one might use notebooks is as a way to create standalone programs with rich annotation via the markdown support provided by notebooks.  In this pattern, one would use a notebook editor to generate code, but then run the code as if it were a standard script, using `jupyter nbconvert --execute` to execute the notebook and generate a rendered version.  While this is plausible, I don't think it's an optimal solution.  Instead, I think that one should consider generating pure Python code using embedded notations such as the `py:percent` notation supported by *jupytext*, which I will describe in more detail below.
 
 
 #### Notebooks as a tool to mix languages
 
-It's very common for researchers to use different coding languages to solve different problems.  A common use case is the Python user who wishes to take advantage of the much wider range of statistical methods that are implemented in R.  There is a package called `rpy2` that allows this within pure Python code, but it can be cumbersome to work with, particularly due to the need to convert complex data types.  Fortunately, Jupyter notebooks provide a convenient solution to this problem, via [*magic* commands](https://scipy-ipython.readthedocs.io/en/latest/interactive/magics.html).  These are commands that start with either a `%` (for line commands) or `%%` for cell commands, which enable additional functionality.    
+It's very common for researchers to use different coding languages to solve different problems.  A common use case is the Python user who wishes to take advantage of the much wider range of statistical methods that are implemented in R.  There is a package called *rpy2* that allows this within pure Python code, but it can be cumbersome to work with, particularly due to the need to convert complex data types.  Fortunately, Jupyter notebooks provide a convenient solution to this problem, via [*magic* commands](https://scipy-ipython.readthedocs.io/en/latest/interactive/magics.html).  These are commands that start with either a `%` (for line commands) or `%%` for cell commands, which enable additional functionality.    
 
-An example of this can be seen in the [mixing_languages.ipynb](https://github.com/BetterCodeBetterScience/bettercode/blob/main/notebooks/mixing_languages.ipynb) notebook, in which we load and preprocess some data using Python and then use R magic commands to analyze the data using a package only available within R.  In this example, we will work with data from a study published by our laboratory (Eisenberg et al., 2019), in which 522 people completed a large battery of psychological tests and surveys.  We will focus here on the responses to a survey known as the "Barratt Impulsiveness Scale" which includes 30 questions related to different aspects of the psychological construct of "impulsiveness"; for example, "I say things without thinking" or "I plan tasks carefully".  Each participant rated each of these statements on a four-point scale from 'Rarely/Never' to 'Almost Always/Always'; the scores were coded so that the number 1 always represented the most impulsive choice and 4 represented the most self-controlled choice.  
+An example of this can be seen in the [mixing_languages.ipynb](https://github.com/BetterCodeBetterScience/bettercode/blob/main/notebooks/mixing_languages.ipynb) notebook, in which we load and preprocess some data using Python and then use R magic commands to analyze the data using a package only available within R.  In this example, we will work with data from a study published by my laboratory (Eisenberg et al., 2019), in which 522 people completed a large battery of psychological tests and surveys.  I will focus here on the responses to a survey known as the "Barratt Impulsiveness Scale" which includes 30 questions related to different aspects of the psychological construct of "impulsiveness"; for example, "I say things without thinking" or "I plan tasks carefully".  Each participant rated each of these statements on a four-point scale from 'Rarely/Never' to 'Almost Always/Always'; the scores were coded so that the number 1 always represented the most impulsive choice and 4 represented the most self-controlled choice.  
 
 In order to enable the R magic commands, we first need to load the rpy2 extension for Jupyter:
 
@@ -246,7 +246,7 @@ import pandas as pd
 %load_ext rpy2.ipython
 ```
 
-In the notebook, we first load the data from Github and preprocess it in order to format into into the required format, which is a data frame with one column for each item in the survey (not shown here). Once we have that data frame (called `data_df_spread` here), we can create a notebook cell that takes in the data frame and performs `mirt`, searching for the optimal number of factors according to the Bayesian Information Criterion (BIC):
+In the notebook, we first load the data from Github and preprocess it in order to convert into into the required format, which is a data frame with one column for each item in the survey (not shown here). Once we have that data frame (called `data_df_spread` here), we can create a notebook cell that takes in the data frame and performs multidimensional item response theory analysis using the *mirt* R package, searching for the optimal number of factors according to the Bayesian Information Criterion (BIC):
 
 ```R
 %%R -i data_df_spread -o bic_values
@@ -299,7 +299,7 @@ Most Jupyter users learn over time to restart their kernel and run the entire no
 
 #### Keep notebooks short
 
-One of the graduate students in my lab recently created a notebook that was so long that I began referring to it as their "big beautiful notebook."  A monster notebook will generally become unwieldy, because it often has dependencies that span across many different parts of the notebook. In addition, a large notebook will often take a very long time to run, making it more difficult to practice the "restart and run all" practice recommended above.  Instead of having a single large notebook, it's better to develop shorter notebooks that are targeted at specific functions.  This will also help better encapsulate the data, since they will need to be shared explicitly across the different notebooks.
+One of the graduate students in my lab recently created a notebook that was so long that I began referring to it as their "big beautiful notebook" (a sarcastic reference to Donald Trump's 2025 "Big Beautiful Bill").  A monster notebook will generally become unwieldy, because it often has dependencies that span across many different parts of the notebook. In addition, a large notebook will often take a very long time to run, making it more difficult to practice the "restart and run all" practice recommended above.  Instead of having a single large notebook, it's better to develop shorter notebooks that are targeted at specific functions.  This will also help better encapsulate the data, since they will need to be shared explicitly across the different notebooks.
 
 #### Parameterize the notebook
 
@@ -307,7 +307,7 @@ Because notebooks are often generated in a quick and dirty way, it't not uncommo
 
 #### Extract functions into modules
 
-It's common for users of Jupyter notebooks to define functions within their notebook in order to modularize their code. This is of course a good practice, but suggest that these functions be moved to a Python module outside of the Jupyter notebook and imported, rather than being defined within the Jupyter notebook. The reason has to do with the fact that the variables defined in all of the cells within a Jupyter notebook have a global scope.  As we discussed in Chapter Three, global variables are generally frowned upon because they can make it very difficult to debug problems.  In the case of Jupyter notebooks, we have on more than one occasion been flummoxed by a difficult debugging problem, only to realize that it was due to our use of a global variable within a function.  If a function is defined within the notebook then variables within the global scope are accessible within the function, whereas if a function is imported from another module those global variables are not accessible within the function. Another advantage of using a defined function is that having a explicit interface makes the dependencies of the function clearer.
+It's common for users of Jupyter notebooks to define functions within their notebook in order to modularize their code. This is of course a good practice, but I generally suggest that these functions should be moved to a Python module outside of the Jupyter notebook and imported, rather than being defined within the Jupyter notebook. The reason has to do with the fact that the variables defined in all of the cells within a Jupyter notebook have a global scope.  As I discussed in Chapter Three, global variables are generally frowned upon because they can make it very difficult to debug problems.  In the case of Jupyter notebooks, I have on more than one occasion been flummoxed by a difficult debugging problem, only to realize that it was due to the use of a global variable within a function.  If a function is defined within the notebook then variables within the global scope are accessible within the function, whereas if a function is imported from another module those global variables are not accessible within the function. Another advantage of using a defined function is that having a explicit interface makes the dependencies of the function clearer.
 
 As an example, if we execute the following code within a Jupyter notebook cell:
 
@@ -359,7 +359,7 @@ When using functions imported from a module, any changes made to the module need
 
 #### Use an environment manager to manage dependencies
 
-The reproducibility of the computations within a notebook depend on the reproducibilty of the environment and dependencies, so it's important to use an environment manager.  As noted in Chapter 2, we prefer `uv`, but one can also use any of the other Python package managers.  
+The reproducibility of the computations within a notebook depend on the reproducibilty of the environment and dependencies, so it's important to use an environment manager.  As noted in Chapter 2, I prefer `uv`, but one can also use any of the other Python package managers.  
 
 ### Version control with Jupyter notebooks
 
@@ -390,11 +390,11 @@ This is one of the reasons why we say that notebook files don't work well with v
 
 Another challenge with using Jupyter notebooks alongside version control occurs when the notebook includes images, such as output from plotting commands.  Images in Jupyter notebooks are stored in a serialized text-based format; you can see this by perusing the text of a notebook that includes images, where you will see large sections of seemingly random text, which represent the content of the image converted into text.  If the images change then the `git diff` will be littered with huge sections of this gibberish text.  One could filter these out when viewing the diffs (e.g., using `grep`) but another challenge is that very large images can cause the version control system to become slow and bloated if there are many notebooks with images that change over time.
 
-There are tools that one can use to address this, such as `nbstripout` to remove cell outputs before committing a file, or `nbdime` to provide "rich diffs" that make it easier to see the differences in the current state versus the last commit. There is also a library called nbdev that provides [git hooks](https://nbdev.fast.ai/tutorials/git_friendly_jupyter.html#what-are-nbdev-hooks) to help with the git workflow.  However, converting notebooks to pure Python code prior to committing is a straight forward way to work around these issues.
+There are tools that one can use to address this, such as *nbstripout* to remove cell outputs before committing a file, or *nbdime* to provide "rich diffs" that make it easier to see the differences in the current state versus the last commit. There is also a library called *nbdev* that provides [git hooks](https://nbdev.fast.ai/tutorials/git_friendly_jupyter.html#what-are-nbdev-hooks) to help with the git workflow.  However, converting notebooks to pure Python code prior to committing is a straightforward way to work around these issues.
 
 ### Converting notebooks to pure Python
 
-The `jupytext` tool supports several formats that can encode the metadata from a notebook into comments within a python file, allowing direct conversion in both directions between a Jupyter notebook and a pure Python file. We like the `py:percent` format, which places a specific marker (`# %%`) above each cell:
+The *jupytext* tool supports several formats that can encode the metadata from a notebook into comments within a python file, allowing direct conversion in both directions between a Jupyter notebook and a pure Python file. I like the `py:percent` format, which places a specific marker (`# %%`) above each cell:
 
 ```
 # %% [markdown]
@@ -421,7 +421,7 @@ This creates a new Python file that is linked to the notebook, such that edits c
 
 #### Using jupytext as a pre-commit hook
 
-If one wants to edit code using Jupyter notebooks while still maintaining the advantages of the pure Python format for version control (assuming one is using Git), one option is to apply Jupytext as part of a `pre-commit hook`, which is a git feature that allows commands to be executed automatically prior to the execution of a commit. To use this function, you must have the `pre-commit` Python module installed.   Automatic syncing of python and notebook files can be enabled within a git repository by creating a file called `.pre-commit-config.yaml` within the main repository directory, with the [following contents](https://github.com/mwouts/jupytext/blob/v1.9.1/docs/using-pre-commit.md):
+If one wants to edit code using Jupyter notebooks while still maintaining the advantages of the pure Python format for version control (assuming one is using *git*), one option is to apply *jupytext* as part of a *pre-commit hook, which is a git feature that allows commands to be executed automatically prior to the execution of a commit. To use this function, you must have the *pre-commit* Python module installed.   Automatic syncing of python and notebook files can be enabled within a git repository by creating a file called `.pre-commit-config.yaml` within the main repository directory, with the [following contents](https://github.com/mwouts/jupytext/blob/v1.9.1/docs/using-pre-commit.md):
 
 ```
 repos:
@@ -449,13 +449,13 @@ The first section will automatically run jupytext and generate a pure Python ver
 > An article about computational science in a scientific publication is not the
 scholarship itself, it is merely advertising of the scholarship. The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures. [@Buckheit:1995aa]
 
-So far we have discussed the importance of code for reproducibility, and in a later chapter we talk extensively about the sharing of data. However, the foregoing quote from Buckheit and Donoho highlights the additional importance of the computational platform.  When they wrote their paper in 1995 there were no easily accessible solutions for sharing of compute platforms, but a technology known as *containerization* has emerged in the last decade, which provides an easily implemented and widely accessible solution for the sharing of computational platforms.
+So far I have discussed the importance of code for reproducibility, and in a later chapter I will talk extensively about the sharing of data. However, the foregoing quote from Buckheit and Donoho highlights the additional importance of the computational platform and environment.  When they wrote their paper in 1995 there were no easily accessible solutions for sharing of compute platforms, but a technology known as *containerization* has emerged in the last decade, which provides an easily implemented and widely accessible solution for the sharing of computational platforms.
 
-To understand the concept of a container, it's first useful to understand the related idea of the *virtual machine* (or *VM*).  A VM is like a "computer-in-a-computer", in the sense that it behaves like a fully functioning computer, despite the fact that it only exists virtually within its host system. If you have ever used a cloud system like Amazon Web Services Elastic Compute Cloud (EC2), you have run a virtual machine; the virtualization technology is how Amazon can run many virtual computers on a single physical computing node. The virtual machine runs a fully functioning version of the operating system; for example, a Windows virtual machine would run a fully functioning version of Windows, even if it's implemented on an Apple Mac host.  One challenge of this is that sharing the virtual machine with someone else requires sharing the entire operating system along with any installed components, which can often take many gigabytes of space.
+To understand the concept of a container, it's first useful to understand the related idea of the *virtual machine* (or *VM*).  A VM is like a "computer-in-a-computer", in the sense that it behaves like a fully functioning computer, despite the fact that it only exists virtually within its host system. If you have ever used a cloud system like Amazon Web Services Elastic Compute Cloud (EC2), you have run a virtual machine; virtualization is how Amazon can run many virtual computers on a single physical computing node. The virtual machine runs a fully functioning version of the operating system; for example, a Windows virtual machine would run a fully functioning version of Windows, even if it's implemented on an Apple Mac host.  One challenge of this is that sharing the virtual machine with someone else requires sharing the entire operating system along with any installed components, which can often take many gigabytes of space.
 
-A container is a way to share only the components that are required to run the intended applications, rather than sharing the entire operating system. This makes containers generally much smaller and faster to work with compared to a virtual machine.  Containers were made popular by the *Docker* software, which allows the same container to run on a Mac, Windows, or Linux machine, because the Docker software runs a Linux virtual machine that supports these containers.  Another tool known as [Apptainer](https://apptainer.org/) (a fork of the Singularity project) is commonly used to run containerized applications on high-performance computing (HPC) systems, since Docker requires root access that is not available to users on most shared systems.  We will focus on Docker here, given that it is broadly available and that Apptainer can easily convert Docker containers and run them as well.
+A container is a way to share only the components that are required to run the intended applications, rather than sharing the entire operating system. This makes containers generally much smaller and faster to work with compared to a virtual machine.  Containers were made popular by the *Docker* software, which allows the same container to run on a Mac, Windows, or Linux machine, because the Docker software runs a Linux virtual machine that supports these containers.  Another tool known as [Apptainer](https://apptainer.org/) (a fork of the Singularity project) is commonly used to run containerized applications on high-performance computing (HPC) systems, since Docker requires root access that is not available to users on most shared systems.  I will focus on Docker here, given that it is broadly available and that Apptainer can easily convert Docker containers and run them as well, but I will mention Apptainer again in the later chapter on high-performance computing.
 
-A container image is, at present, the most reproducible way to share software, because it ensures that the dependencies will remain fixed.  We use containers to distribute software built by our lab, such as `fMRIPrep`, because it greatly reduces installation hassles for complex applications.  All the user needs to do is install the Docker software, and they are up and running quickly.  Without the containerized version, the user would need to install a large number of dependencies, some of which might not be available for their operating system.  Containers are [far from perfect](https://gael-varoquaux.info/programming/of-software-and-science-reproducible-science-what-why-and-how.html), but they are currently the best solution we have for reproducible software execution.
+A container image is, at present, the most reproducible way to share software, because it ensures that the dependencies will remain fixed.  We use containers to distribute software built by our lab, such as *fMRIPrep*, because it greatly reduces installation hassles for complex applications.  All the user needs to do is install the Docker software, and they are up and running quickly.  Without the containerized version, the user would need to install a large number of dependencies, some of which might not be available for their operating system.  Containers are [far from perfect](https://gael-varoquaux.info/programming/of-software-and-science-reproducible-science-what-why-and-how.html), but they are currently the best solution we have for reproducible software execution.
 
 ### Running a Docker container
 
@@ -465,7 +465,7 @@ We first need to pull the container image from Docker Hub onto our local system,
 
 ```bash
 
-➤  docker pull python:3.13.9
+$  docker pull python:3.13.9
 3.13.9: Pulling from library/python
 2a101b2fcb53: Pull complete
 f510ac7d6fe7: Pull complete
@@ -479,19 +479,19 @@ Status: Downloaded newer image for python:3.13.9
 docker.io/library/python:3.13.9
 ```
 
-Make sure to always specify a valid version of the image and do not use the convenient `latest` tag, which will lead to unreproducible setups, because the version of the image will depend on the download date and can lead to security vulnerabilities.  
+Make sure to always specify a valid version of the image and do not use the convenient `latest` tag, which will lead to unreproducible setups, because the version of the image will depend on the download date.  
 
 Now that the image exists on our machine, we can use it to start a container and run a Python command:
 
 ```bash
-➤  docker run python:3.13.9 python -c "import sys; print(f'Hello World from Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')"
+$  docker run python:3.13.9 python -c "import sys; print(f'Hello World from Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}')"
 Hello World from Python 3.13.9
 ```
 
 We could also log into the container, to see that it's really just like any other Unix system.  We do this by giving the `-it` flag to docker run, which tells it to run in interactive mode and allocate a terminal, which in this case is `bash`:
 
 ```bash
-➤  docker run -it python:3.13.9 bash
+$  docker run -it python:3.13.9 bash
 root@65bb0e71462d:/# pwd
 /
 root@65bb0e71462d:/# whoami
@@ -503,10 +503,10 @@ boot  etc  lib	 mnt	proc  run   srv   tmp  var
 
 ### Mounting local storage within a container
 
-For realistic applications we will often want to be able to access our local storage volumes to be able to process files, run local code, or save outputs. With Docker we can *bind* mount a local storage volume to a location within the container.  Let's say that we want to output contents from an operation within the container to a local directory called `container-output` and that we want this to appear as `/data` within the container.  We can do that using the `-v` flag to `docker run`:
+For realistic applications we will often want to be able to access our local storage volumes to be able to process files, run local code, or save outputs. With Docker we can mount a local storage volume to a location within the container using *bind*.  Let's say that we want to output contents from an operation within the container to a local directory called `container-output` and that we want this to appear as `/data` within the container.  We can do that using the `-v` flag to `docker run`:
 
 ```bash
-➤  docker run -it -v ./container-output:/data python:3.13.9 bash
+$  docker run -it -v ./container-output:/data python:3.13.9 bash
 root@d14247359d45:/# cd /data
 root@d14247359d45:/data# ls
 root@d14247359d45:/data# echo "test output from container" > test_output.txt
@@ -514,16 +514,16 @@ root@d14247359d45:/data# more test_output.txt
 test output from container
 root@d14247359d45:/data# exit
 exit
-➤  ls container-output
+$  ls container-output
 test_output.txt
-➤  more container-output/test_output.txt                                    
+$  more container-output/test_output.txt                                    
 test output from container
 ```
 
 
 ### Configuring a Docker image
 
-To create a reproducible software execution environment, we will often need to create our own new Docker image that contains the necessary dependencies and application code.  AI coding tools are generally quite good at creating the required `Dockerfile` that defines the image. We use the following prompt to Claude Sonnet 4:
+To create a reproducible software execution environment, we will often need to create our own new Docker image that contains the necessary dependencies and application code.  AI coding tools are generally quite good at creating the required `Dockerfile` that defines the image. I used the following prompt to Claude Sonnet 4:
 
 ```
 I would like to generate a Dockerfile to define a Docker image based on the python:3.13.9 image.  The Python package wonderwords should be installed from PyPi. A local Python script should be created that creates a random sentence using wonderwords.RandomSentence() and prints it.  This script should be the entrypoint for the Docker container.  Create this within docker-example inside the current project.  Do not create a new workspace - use the existing workspace for this project.
@@ -550,7 +550,7 @@ ENTRYPOINT ["python", "random_sentence.py"]
 The entry point defines the command that will be run by default when the container is run. We can then build the image:
 
 ```bash
-➤  docker build -t random-sentence-generator .
+$  docker build -t random-sentence-generator .
 [+] Building 0.0s (9/9) FINISHED                              docker:desktop-linux
  => [internal] load build definition from Dockerfile                          0.0s
  => => transferring dockerfile: 339B                                          0.0s
@@ -573,7 +573,7 @@ The entry point defines the command that will be run by default when the contain
 We can now see it in the list of images obtained using `docker images`:
 
 ```bash
-➤  docker images
+$  docker images
 REPOSITORY                  TAG               IMAGE ID       CREATED         SIZE
 random-sentence-generator   latest            02794d11ad78   5 minutes ago   1.13GB
 python                      3.13.9            49bb15d4b6f6   2 weeks ago     1.12GB
@@ -583,7 +583,7 @@ python                      3.13.9            49bb15d4b6f6   2 weeks ago     1.1
 We then run the container to execute the command:
 
 ```bash
-➤  docker run --rm random-sentence-generator
+$  docker run --rm random-sentence-generator
 Random sentence: The tangible fairy informs crazy.
 ```
 
@@ -595,16 +595,128 @@ In addition to allowing the sharing of reproducible environments, containers als
 
 Their documentation also links to an example Dockerfile that makes it easy to implement this once you know how to use Docker.
 
-## Configuration management. 
-
-How to handle config files (YAML, TOML), command-line argument parsing, experiment tracking tools (MLflow, Weights & Biases), and the general problem of separating configuration from code
-
 ## Documentation
 
-docstrings, README conventions, API docs, documentation generators like Sphinx/MkDocs, and the question of how much documentation to write vs. relying on self-documenting code.
+Good documentation is essential to make code easily usable.  It's often left to the end of a project, and to be honest, that's sometimes ok: writing detailed documentation too early in a project can result in lots of wasted time if things change in the course of the project.  Fortunately, if we follow clean coding practices and judicious commenting of the code, then our code will often be largely self-documenting.  In addition, AI coding tools are very good at drafting some aspects of documentation (especially if the code is clean and readable), helping us become more like editors than creators of documentation and reducing the drudgery of writing lots of boilerplate.  Thus, we can document as we code in a lightweight way, and then generate comprehensive documentation once the project is ready for public consumption.
 
-    *   Inline comments vs. Docstrings (and adhering to standards like Google/NumPy style).
-    *   Self-documenting code (naming conventions).
-    *   Automated documentation tools (Sphinx, MkDocs, ReadTheDocs).
-    *   Writing a good `README.md` (the first thing a user sees).
+Here I will outline the important aspects of documentation for scientific coding projects.  It's important to keep in mind that the quality of documentation will determine, at least in part, the degree to which code is reused by others; speaking for myself, if I am interested in trying out a package but see that the documentation is a mess, I view it as a code smell.  Thus, if your goal is to create a package that will be widely reused, then it's worth spending extra effort on polished documentation.  If the code is for a single scientific project and isn't meant as a package for broad reuse, then it's reasonable to focus primarily on ensuring that readers can understand what was done and can rerun the code to test for reproducibility.
 
+
+### Writing self-documenting code
+
+The best code is code that is so clear that it can be used easily and correctly without any additional documentation.  While this is rarely the reality, it highlights the utility of clean coding and clear commenting for users as well as developers.  Some important ways to generate self-documenting code are:
+
+- Use clear and consistent naming conventions for all objects
+- Write functions that can be named in a way that directly expresses their function, such that the user can intuit exactly what their input and output would be based only on the function signature.
+- Avoid magic numbers, which can make it very difficult to understand what code is doing.
+- Use type hints, which document the expected variable types without requiring any extra prose.
+- Write comments that help understand the intent and rationale of the code, and avoid comments that are obvious.
+
+Refer back to the discussion of clean coding in Chapter 3 for much more detail on how to write code that will be maximally self-documenting.
+
+### README files
+
+The first documentation that a user sees is usually the README file for a project, in part because it is what is displayed by default on the project's GitHub page. A good readme should include several things:
+
+- A brief overview of the project goals
+- Licensing information
+- A quick guide to how to install and run the code, with examples
+- Information about any special dependencies or requirements
+
+For projects meant for broader use, the README should also include code health badges denoting build status and test coverage (see [](#badge-fig)).  These can help a potential user quickly see how up-to-date and well-tested the project is.
+
+```{figure} images/sklearn-badges.png
+:label: badge-fig
+:align: center
+:width: 500
+
+A screenshot of the README for the [scikit-learn project](https://github.com/scikit-learn/scikit-learn), showing badges denoting test coverage, python version coverage, code style checking, and other code health features.
+```
+
+In general it's best to leave detailed documentation to a separate page, such as one generated using the tools described below.
+
+### Docstrings
+
+A *docstring* is a form of documentation that is included as a multi-line string at the top of a Python function or class.  There are two commonly used styles of docstrings: [NumPy style](https://numpydoc.readthedocs.io/en/latest/format.html), which is prevalent in scientific Python projects, and [Google style](https://google.github.io/styleguide/pyguide.html#docstrings), which is slightly more compact and more prevalent in general-purpose Python projects.  As an example, let's say we created a function to compute the effect size between two lists of numeric values.  Here is the beginning of the function definition with a *NumPy* style docstring:
+
+```python
+def compute_effect_size(group_a: np.ndarray, group_b: np.ndarray, method: str = "cohen_d") -> float:
+    """
+    Compute effect size between two groups.
+
+    Parameters
+    ----------
+    group_a : np.ndarray
+        Observations from the first group.
+    group_b : np.ndarray
+        Observations from the second group.
+    method : str, optional
+        Effect size measure to use. Options are "cohen_d" or "hedges_g".
+        Default is "cohen_d".
+
+    Returns
+    -------
+    float
+        The computed effect size.
+
+    Raises
+    ------
+    ValueError
+        If an unknown method is specified.
+
+    Examples
+    --------
+    >>> control = np.array([1.2, 1.5, 1.3])
+    >>> treatment = np.array([1.8, 2.1, 1.9])
+    >>> compute_effect_size(control, treatment)
+    2.34
+    """
+```
+
+Here is the same function with a Google-style docstring:
+
+```python
+def compute_effect_size(group_a: np.ndarray, group_b: np.ndarray, method: str = "cohen_d") -> float:
+    """Compute effect size between two groups.
+
+    Args:
+        group_a: Observations from the first group.
+        group_b: Observations from the second group.
+        method: Effect size measure to use. Options are "cohen_d" or "hedges_g".
+            Default is "cohen_d".
+
+    Returns:
+        The computed effect size.
+
+    Raises:
+        ValueError: If an unknown method is specified.
+
+    Examples:
+        >>> control = np.array([1.2, 1.5, 1.3])
+        >>> treatment = np.array([1.8, 2.1, 1.9])
+        >>> compute_effect_size(control, treatment)
+        2.34
+    """
+```
+
+You can see that they contain the same information, but that the Google style is more compact; it uses less vertical space, and it doesn't repeat type hint information if it is present in the function signature. 
+
+A docstring is meant to document the interface of the function, and thus should not include details about the internal operations of the function; the information in the docstring should only need to change if the interface changes, not if the internal implementation changes leaving the interface intact.  A docstring should include the following features:
+
+- A brief description of the function
+- Parameter descriptions
+- Return/yield value descriptions
+- Exceptions that may be raised
+- Optionally, a brief usage example
+
+Docstrings are the most basic form of explicit documentation within Python code.  They are particularly useful for generating API documentation using automated tools like Sphinx and MkDocs (to be discussed further below). When it comes to choosing a docstring style, it's really a matter of personal choice. I personally prefer the Google style, simply because it is more compact. But either can be used successfully with these tools to generate full API documentation for a project. Docstrings are most important for public functions and classes that are likely to be imported elsewhere.  They are less important for internal functions, as long as the role of the code is clear from its signature.
+
+AI tools are quite good at generating docstrings, especially when the code is cleanly written.  My usual workflow is to write a function, and then ask my AI tool to generate a docstring, which I then edit to make sure that the docstring accurately reflects the interface as well as the intent and logic of the code.
+
+### API documentation
+
+For larger public-facing projects, it is important to provide access to full documentation of the package's API, that is, the interfaces for all functions and classes.  There are several tools that can automatically generate these using the docstrings in an existing codebase.  The most popular is [Sphinx](https://www.sphinx-doc.org/en/master/index.html), which is used in many large projects.  Sphinx is built around the *ReStructured Text* (or *rst*) format, though it also now supports Markdown, which has become a more popular format for web-based authoring; it's what I'm writing this book with! Another newer project called [MkDocs](https://www.mkdocs.org/) is a Markdown-centered package for generating documentation.  Each of these can be used to generate attractive sites that provide users with the information that they need about the interfaces in a package, using mostly just the information available in the package's docstrings.  These sites can then be hosted using [ReadTheDocs](https://about.readthedocs.com/), which is an online documentation site that is free for open source and community projects.
+
+### Examples
+
+Providing detailed examples can be very useful for users who wish to see how code is used. An outstanding set of examples can be found on the web site of the [scikit-learn project](https://scikit-learn.org/stable/auto_examples/index.html).  Each example is rendered as a web page (using Sphinx), using pure Python code written in the `py:percent` format, and each page offers a download of either the pure Python source or a Jupyter notebook file. They also provide two ways to run the notebook.  One is [*JupyterLite*](https://jupyterlite.readthedocs.io/en/stable/), which is a version of *JupyterLab* that runs entirely within the web browser. While this doesn't support all Jupyter features, it's an exciting advance that can allow users to easily interact with many Jupyter notebooks via the web, without the need for an additional server. The other option is [*Binder*](http://mybinder.org), which is a separate site that hosts Jupyter notebooks for free.  Since this is a more standard Jupyter installation, it can handle any Jupyter notebook, and is able to run them directly from a GitHub repository.  

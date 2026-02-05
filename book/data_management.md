@@ -1066,7 +1066,7 @@ $ datalad status
 nothing to save, working tree clean
 ```
 
-##### Using `datalad run`
+#### Using `datalad run`
 
 Although the previous example was meant to provide background on how *DataLad* works, in practice there is actually a much easier way to accomplish these steps, which is by using the [`datalad run`](https://docs.datalad.org/en/stable/generated/man/datalad-run.html) command. This command will automatically take care of fetching and unlocking the relevant files, running the command, and then committing the files back in, generating a commit message that tracks the specific command that was used:
 

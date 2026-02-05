@@ -628,7 +628,7 @@ For projects meant for broader use, the README should also include code health b
 ```{figure} images/sklearn-badges.png
 :label: badge-fig
 :align: center
-:width: 500
+:width: 400
 
 A screenshot of the README for the [scikit-learn project](https://github.com/scikit-learn/scikit-learn), showing badges denoting test coverage, python version coverage, code style checking, and other code health features.
 ```

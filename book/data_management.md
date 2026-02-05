@@ -5,7 +5,7 @@ Research data are like the water of science: When they stop flowing and dry up, 
 
 ## Principles of data management
 
-Research data vary in value, and in some cases can be highly valuable.  For example, the Large Hadron Collider at CERN, which was responsible for the data supporting the discovery of the Higgs Boson in 2012, has annual computing costs alone estimated at [about $286 Million](https://en.as.com/latest_news/how-much-money-did-cerns-large-hadron-collider-cost-to-build-and-who-paid-for-it-n/), such that the loss of the resulting data from those computations would have enormous costs. And in some cases where unique events are detected, such as the LIGO gravitational wave detector or telescope images of cosmic events, the data cannot be recreated if they are lost, making them immensely valuable.  For this reason, scientific agencies have long focused on developing frameworks for research data management. In the US, the National Institute of Standards and Technology (NIST) has developed a [Research Data Framework](https://www.nist.gov/programs-projects/research-data-framework-rdaf) that provides researchers with a detailed set of best practices for research data management.  
+Research data vary in value, and in some cases can be highly valuable.  For example, the Large Hadron Collider at CERN, which was responsible for the data supporting the discovery of the Higgs Boson in 2012, has annual computing costs alone estimated at [about $286 Million](https://en.as.com/latest_news/how-much-money-did-cerns-large-hadron-collider-cost-to-build-and-who-paid-for-it-n/), such that the loss of the resulting data from those computations would have enormous costs. And in some cases where unique events are detected, such as the LIGO gravitational wave detector or telescope images of cosmic events, the data cannot be recreated if they are lost, making them immensely valuable.  For this reason, scientific agencies have long focused on developing frameworks for research data management. In the US, the National Institute of Standards and Technology (NIST) has developed a [Research Data Framework](https://www.nist.gov/programs-projects/research-data-framework-rdaf) that provides researchers with a detailed set of best practices for research data management, though these principles are far too bureaucratic for most researchers.
 
 
 ### The FAIR Principles
@@ -14,7 +14,7 @@ The FAIR Principles {cite:p}`Wilkinson:2016aa` are a set of guiding principles f
 
 #### Findable
 
-Data are findable if they could be reasonably found by another researcher, usually via the standard web searches or database queries.  Making data findable involves:
+Data are findable if they could be reasonably found by another researcher, usually via standard web searches or database queries.  Making data findable involves:
 
 - Associating them with a persistent identifier (such as a digital object identifier, or DOI)
 - Placing them in a repository that is searchable
@@ -49,7 +49,7 @@ The FAIR principles are relatively abstract, in the sense that they don't provid
 
 ## The data lifecycle
 
-An important concept in research data management is the *data lifecycle*, which describes the role of data management in each of the different stages of a research project.  [](#lifecycle-fig) shows an example of how the [RDMkit project](https://rdmkit.elixir-europe.org/data_life_cycle) outlines the stages of the data lifecycle. This figure highlights the fact that data management should be part of the discussion at each stage in a project.  In this chapter we will discuss several of the stages in the data lifecycle in detail, though we leave in-depth discussion of data processing and analysis workflows to a later chapter.
+An important concept in research data management is the *data lifecycle*, which describes the role of data management in each of the different stages of a research project.  [](#lifecycle-fig) shows an example of how the [RDMkit project](https://rdmkit.elixir-europe.org/data_life_cycle) outlines the stages of the data lifecycle. This figure highlights the fact that data management should be part of the discussion at each stage in a project.  In this chapter I will discuss several of the stages in the data lifecycle in detail, though I leave in-depth discussion of data processing and analysis workflows to a later chapter.
 
 ```{figure} images/data_lifecycle_rdmkit.png
 :label: lifecycle-fig
@@ -64,7 +64,7 @@ A depiction of the data management lifecycle, from the [RDMkit project by ELIXIR
 
 It is essential to think about data management from the inception of a study, in order to ensure that early decisions don't lead to pain down the road.  Here are some examples of problems that might arise:
 
-- If data quality control measures are not put in place at the beginning of the study, then problems with the data might not be discovered until it's too late.
+- If data quality control measures are not put in place at the beginning of the study, then problems with the data might not be discovered until data collection is complete.
 - If important metadata are not stored, then it might be impossible to properly analyze the data later on.
 - If procedures for data versioning and provenance are not in place from the beginning, one can end up with confusion about which data files are appropriate for analysis and how the different data files were generated.
 - If the data are not properly documented, then it might not be possible to understand the meaning of specific variables in the dataset later on.
@@ -73,7 +73,7 @@ These are just a few of the problems that can arise, making it important to have
 
 ### Data Management Plans
 
-Research funding agencies are increasingly requiring data management plans (DMPs) for grant submissions.  In the US, both the National Science Foundation (NSF) and National Institutes of Health (NIH) require a DMP to accompany grant proposals, and the European Research Council (ERC) requires that funded projects submit a DMP within their first six months.  Creating a data management plan in advance of a project can be very helpful, as it helps encourage the early integration of methods that can help make data management and sharing easier as the project matures.  We will not go into detail regarding these plans, which will vary in their requirements depending on the funding agency. However, there are online tools available to assist with generation of a DMP:
+Research funding agencies are increasingly requiring data management plans (DMPs) for grant submissions.  In the US, both the National Science Foundation (NSF) and National Institutes of Health (NIH) require a DMP to accompany grant proposals, and the European Research Council (ERC) requires that funded projects submit a DMP within their first six months.  Creating a data management plan in advance of a project can be very helpful, as it helps encourage the early integration of methods that can help make data management and sharing easier as the project matures.  I won't go into detail regarding these plans, which will vary in their requirements depending on the funding agency. However, there are online tools available to assist with generation of a DMP:
 
 - [DMPtool](https://dmptool.org/) - for US funding agencies
 - [Data Stewardship Wizard](https://ds-wizard.org/) - for European funding agencies
@@ -95,7 +95,7 @@ Before discussing different options, it is useful to lay out the important consi
 - *Storage capacity*: Is the solution sufficient to store the relevant amount of data for the study?  Is it scalable over time?
 - *Performance*: Is the solution fast enough to enable the required processing and analysis steps?
 - *Accessibility*: Is the storage system accessible to the system where the compute will be performed (e.g., local computer, HPC cluster, cloud system)?
-- *Security*: Does the system meet the security and compliance requirements for the particular dataset? Does it allow appropriate access control?
+- *Security*: Does the system meet the security and compliance requirements for the particular dataset? Does it allow appropriate access control and auditing?
 - *Redundancy*: Is the system robust to disasters, ranging from the failure of one hard drive to a catastrophic flood or fire?  Does it provide the required backup capability?
 - *Cost*: Does the cost of the solution fit within the researcher's budget?  Are there hidden costs that must be taken into account?
 - *Longevity*: Will the data remain available in the long term?  
@@ -108,7 +108,7 @@ It's also important to point out that most projects end up using multiple storag
 A file system is an organized system for naming and locating computer files on a storage system such as a hard disk.  Readers of this book will undoubtedly be familiar with the file systems present on Mac, Windows, or UNIX/Linux systems, which represent a hierarchical *tree* of folders and files. Here is an example of the file tree for the source code folder in the book project:
 
 ```bash
-➤  tree -L 2 src
+$ tree -L 2 src
 src
 └── BetterCodeBetterScience
     ├── __init__.py
@@ -151,11 +151,11 @@ For these reasons, I generally recommend to researchers in my lab that they shou
 
 #### Storage on a network drive
 
-Research data is often stored on network drives.  These can vary from a network-attached storage system dedicated to one or more users within a research group, to large-scale network drives managed by an institutional computing center.  One common feature of network storage is the use of redundant drive systems, such as RAID (Redundant Array of Independent Disks). These systems combine multiple individual hard drives in ways that provide some degree of redundancy, such that the system can withstand the loss of one or more individual disks (depending on the setup) with no data loss.  However, it is critically important to remember that while RAID does provide some degree of fault-tolerance, it *does not* provide the disaster recovery benefits of a true backup.  
+Research data are often stored on network drives.  These can vary from a network-attached storage system dedicated to one or more users within a research group, to large-scale network drives managed by an institutional computing center.  One common feature of network storage is the use of redundant drive systems, such as RAID (Redundant Array of Independent Disks). These systems combine multiple individual hard drives in ways that provide some degree of redundancy, such that the system can withstand the loss of one or more individual disks (depending on the setup) with no data loss.  However, it is critically important to remember that while RAID does provide some degree of fault-tolerance, it *does not* provide the disaster recovery benefits of a true backup.  
 
 Many researchers run and manage their own RAID systems for their group's use, either attached to a single workstation or to a network.  This can be a cost-effective solution for large data storage, especially in situations where institutional data storage resources are not available.  However, I think that the apparent robustness of RAID systems can provide a false sense of security to their users.  Take the most common RAID setup for redundant storage, RAID 5, in which the system is robust to the failure of one of its hard drives.  When a drive fails, the system enters a "degraded" mode, often providing a notice to the user such as a flashing red light or beeping sounds.  If this failure goes unnoticed, or the system administrator puts off fixing it, the failure of a second drive during degraded mode or during the rebuilding of the array after replacing the first failed drive (which can often take many hours) can lead to complete data loss.  Similarly, if the rebuilding of the array fails (for example, due to power loss during the rebuild or an unrecoverable error in reading from the other drives), this can compromise the data. Safe use of RAID arrays requires consistent attention (including email notifications of failure if possible) and a strong backup strategy.
 
-Most research institutions now offer large network-attached storage systems for research data, often connected directly to high-performance computing systems.  We have used systems like these for our research data for more than 15 years, and I personally would never go back to running my group's own RAID system (which we did for years beforehand).  Foremost, the system administration and hardware management resources of an institutional computing center will almost always outstrip those of most research groups.  These large systems will have monitoring and repair procedures in place to ensure against data loss, and in the 15 years that we have used these systems (at Stanford and the University of Texas), we have never experienced data loss due to hardware failure.  However, they are still liable to potential disasters.  These systems are also highly performant, providing parallel access to the data through high-speed interconnections with the compute system.
+Most research institutions now offer large network-attached storage systems for research data, often connected directly to high-performance computing systems.  We have used systems like these for our research data for more than 15 years, and I personally would never go back to running my group's own RAID system (which I did for years beforehand).  Foremost, the system administration and hardware management resources of an institutional computing center will almost always outstrip those of most research groups.  These large systems will have monitoring and repair procedures in place to ensure against data loss, and in the 15 years that we have used these systems (at Stanford and the University of Texas), we have never experienced data loss due to hardware failure.  However, they are still liable to potential disasters.  These systems are also highly performant, providing parallel access to the data through high-speed interconnections with the compute system.
 
 Backing up one's data from a large network drive is a great idea in theory, but in our experience it has often been either impossible or too costly, given the many terabytes of research data that we store on the systems.  Given the relatively low likelihood of failure, we have adopted a more risk-tolerant strategy to big data storage:
 
@@ -197,8 +197,6 @@ I will first briefly outline several of the most common forms of database system
 
 The best known form of database is the *relational database*, which organizes tabular data into a set of tables with well-defined relationships between them.  They also enable queries using a query language, of which Structured Query Language (SQL) is a well-known example.  For me, SQL has always been one of those things that I use just infrequently enough that I never actually learn it.  Fortunately, LLMs are very good at translating natural language into SQL queries, lowering the barrier of entry for researchers who want to try out database storage.
 
-##### ACID
-
 One important feature of a relational databases is that they generally implement features to ensure data integrity and reliability.  These are often referred to as the *ACID* properties:
 
 - *Atomicity*: Transactions are atomic, meaning that they either succeed or they don't: there are no partial transactions.  If a transaction fails then the database remains in the state it was in prior to the failed transaction.
@@ -208,9 +206,9 @@ One important feature of a relational databases is that they generally implement
 
 The adherence of relational database systems to these principles helps ensure the integrity of scientific data, in comparison to the use of flat files which do not necessarily achieve these goals.
 
-##### Analytic databases
+#### Analytic databases
 
-There is a particular kind of relational database known as an *analytic database* that is specialized for operations that work across many rows in the database, rather than the focus on individual records in a standard relational database.  One widely-used analytic database in the Python ecosystem is [DuckDB](https://duckdb.org/), which supports very fast operations on large datasets, and integrates well with Pandas and other tools. Unlike traditional relational database systems, it doesn't require any specialized server setup.
+There is a particular kind of relational database known as an *analytic database* that is specialized for operations that work across many rows in the database, rather than the focus on individual records in a standard relational database.  One widely-used analytic database in the Python ecosystem is [*DuckDB*](https://duckdb.org/), which supports very fast operations on large datasets, and integrates well with Pandas and other tools. Unlike traditional relational database systems, it doesn't require any specialized server setup.  In the later chapter on performance optimization I will show how analytic databases can be used to peform some types of computations very quickly.
 
 #### NoSQL databases
 
@@ -218,18 +216,17 @@ While relational databases were the only game in town for many years, there are 
 
 Here I provide a brief overview of several popular forms of NoSQL databases; see the Appendix to this chapter for a full-stack example that combines several of these.
 
-##### Document stores
+**Document stores**
 
-A *document store* is basically what it sounds like: a system into which one can dump documents and then query them. I think of this as in some ways the opposite of a SQL database.  In the SQL database, most of the work comes in designing the database schema, which will determine up front how the data are represented; after that, querying is fairly straightforward.  In a document store, one can insert documents with varying structure into the database without the need for a predefined schema. The hard work in a document store comes in figuring out how to structure queries and indexes effectively, especially when the structure of the data varies.  For most of the tasks where I have used databases I have chosen document stores over relational databases because of the flexibility that they offer.
+A *document store* is basically what it sounds like: a system into which one can dump documents and then query them. I think of this as in some ways the opposite of a SQL database.  In the SQL database, most of the work comes in designing the database schema, which will determine up front how the data are represented; after that, querying is fairly straightforward.  In a document store, one can insert documents with varying structure into the database without the need for a predefined schema. The hard work in a document store comes in figuring out how to structure queries and indexes effectively, especially when the structure of the data varies.  For most of the tasks where I have used databases I have chosen document stores over relational databases because of the flexibility that they offer. The line between document stores and relational databases has become blurred as some relational databases (such as *PostgreSQL*) can now store JSON objects in a way that looks very similar to an object store.
 
-##### Graph databases
+**Graph databases**
 
-A graph database is built to efficiently store and query graph-structured data.  These are data where the primary features of interest for querying are the relationships between entities, rather than the entities themselves. Scientific examples could include social network relationships, protein-protein interactions, or connections between neurons or brain areas.  Graph databases are particularly good at finding multi-step relationships within the graph, which are much more difficult to find using a relational database or document store.  A commonly used graph database is Neo4j, which has its own query language called *Cypher* that is specifically designed for queries on graph structure.
+A graph database is built to efficiently store and query graph-structured data.  These are data where the primary features of interest for querying are the relationships between entities, rather than the entities themselves. Scientific examples could include social network relationships, protein-protein interactions, or connections between neurons or brain areas.  Graph databases are particularly good at finding multi-step relationships within the graph, which are much more difficult to find using a relational database or document store.  A commonly used graph database is *Neo4j*, which has its own query language called *Cypher* that is specifically designed for queries on graph structure.
 
-##### Vector databases
+**Vector databases**
 
-A relatively recent entry into the database field is the *vector database*, which is optimized for finding similar numerical vectors.  These have become essential in the context of AI, because they can be used to quickly find similar items that are embedded in a vector space, typically using neural networks.  These items can include text documents, images, molecular structures, or any other kind of data that can be embedded in a vector space.  Vector databases differ in that can return ranked similarity ratings in addition to a discrete set of matches, and thus they are best for performing analyses that involve similarity-based search.
-
+A relatively recent entry into the database field is the *vector database*, which is optimized for finding similar numerical vectors.  These have become essential in the context of AI, because they can be used to quickly find similar items that are embedded in a vector space, typically using neural networks.  These items can include text documents, images, molecular structures, or any other kind of data that can be embedded in a vector space.  Vector databases differ in that can return ranked similarity ratings in addition to a discrete set of matches, and thus they are best for performing analyses that involve similarity-based search.  Here too the boundaries have become fuzzy, with extensions to relational databases like PostgreSQL that allow them to be used as vector databases.
 
 ## Managing original data
 
@@ -240,17 +237,17 @@ By *original* data I mean data that were obtained by the researcher from another
 It is important to ensure that the original data are not modified, either accidentally or intentionally.  This can be achieved by setting the permissions on the files as read-only, though it is important to note that a user with superuser privileges could still make changes to the data.  For this reason, it is also important to store information that allows the validation of each file as matching its original.  This can be easily achieved by computing a *checksum* for each file and storing it separately. A checksum is a mathematical function of the file contents, which changes if any of the data in the file are changed and thus can serve as a "fingerprint" for the file contents:
 
 ```text
-➤  echo "file contents" > file1.txt
-➤  echo "file content" > file2.txt
-➤  diff file1.txt file2.txt
+$ echo "file contents" > file1.txt
+$ echo "file content" > file2.txt
+$ diff file1.txt file2.txt
 1c1
 < file contents
 ---
 > file content
 
-➤  md5sum file1.txt
+$ md5sum file1.txt
 081404b3d2ae5bf599add15b7445ac07  file1.txt
-➤  md5sum file2.txt                                                       1 ↵
+$ md5sum file2.txt                                                       1 ↵
 186e4cee4e00635b35be4236193f33fb  file2.txt
 ```
 
@@ -275,7 +272,7 @@ There is a wide range of different data formats and file types used across scien
 
 ### Tabular data
 
-Tabular data are loosely defined as data stored in rows and columns, as in a spreadsheet.   A *data frame* is a particular representation of tabular data, in which each column in the dataset has a label and each row has an *index* value that refers to that row.  The packages supporting data frames (such as `pandas` in Python) generally provide a set of operations that can be performed on the data frame, such as filtering, sorting, merging, or pivoting.
+Tabular data are loosely defined as data stored in rows and columns, as in a spreadsheet.   A *data frame* is a particular representation of tabular data, in which each column in the dataset has a label and each row has an *index* value that refers to that row.  The packages supporting data frames (such as *pandas* in Python) generally provide a set of operations that can be performed on the data frame, such as filtering, sorting, merging, or pivoting.
 
 #### Long, wide, and tidy tabular data
 
@@ -310,7 +307,7 @@ A related concept is the notion of *tidy data*, popularized by Hadley Wickham wh
 
 It's easiest to understand these concepts by looking at some examples of datasets that *are not* tidy, following the examples laid out by {cite:p}`Wickham:2014aa`
 
-##### Column headers are values, not variable names
+**Column headers are values, not variable names**
 
 Sometimes data are spread across columns where each column refers to a different value of the variable.  For example, the following table shows cancer pathology data from three hospitals, with different columns quantifying the number of samples falling into each of four different tumor stages:
 
@@ -321,7 +318,7 @@ Sometimes data are spread across columns where each column refers to a different
 | H3     |       25 |       37 |       33 |       23 |
 
 
-There are really three different variables represented in this table: Site, Stage, and frequency.  What we really want is to have three columns, representing those three variables.  We can achieve this using the `melt` function from `pandas`:
+There are really three different variables represented in this table: Site, Stage, and frequency.  What we really want is to have three columns, representing those three variables.  We can achieve this using the `melt` function from *pandas*:
 
 ```python
 df_tidy = pd.melt(df, id_vars=["site"], 
@@ -347,7 +344,7 @@ print(df_tidy.to_markdown(index=False))
 | H3     |       4 |          23 |
 
 
-##### Multiple variables are stored in one column
+**Multiple variables are stored in one column**
 
 This pattern takes the previous one a step further, by defining columns based on the values of more than one variable.  For example, let's say that there data for both lung and prostate cancer:
 
@@ -402,7 +399,7 @@ print(df_tidy.to_markdown(index=False))
 | H3     |       4 | Prs      |     25 |
 
 
-##### Variables are stored in both rows and columns
+**Variables are stored in both rows and columns**
 
 We could also have some variables denoted by their own column with others split across columns:
 
@@ -455,13 +452,15 @@ print(df_both_tidy.to_markdown(index=False))
 
 
 
-##### Single type of observational unit spread across multiple tables
+**Single type of observational unit spread across multiple tables**
 
 Sometimes we might have different data frames for each observation unit, such as a different data frame for each hospital in our example. To fix this we can simple merge the data frames by concatenating them:
 
 ```python
 df_merged = pd.concat([df1, df2, df3], ignore_index=True)
 ```
+
+This assumes that there is a variable that defines different groups (in this case `site`); otherwise that would need to be added before concatenation.
 
 #### Tabular file formats
 
@@ -470,7 +469,7 @@ The most common file formats are *comma-separated value* (CSV) or *tab-separated
 Text file formats like CSV and TSV are nice for their ease of interpretability, but they are highly inefficient for large data compared to optimized file formats, such as the *Parquet* format.  To see this in action, I loaded a brain image and saved all of the non-zero data points (857,785 to be exact) to a data frame, which I then saved to CSV and Parquet formats; see [the management notebook](src/bettercode/data_management.ipynb) for details.  Looking at the resulting files, we can see that the Parquet file is only about 20% the size of the CSV file:
 
 ```bash
-➤  du -sk /tmp/brain_tabular.*
+$ du -sk /tmp/brain_tabular.*
 19464	/tmp/brain_tabular.csv
 3804	/tmp/brain_tabular.parquet
 ```
@@ -516,7 +515,7 @@ Spreadsheet software such as Microsoft Excel is commonly used by researchers for
 
 - They encourage manual manipulation of the data, which makes the operations non-reproducible by definition.
 - Spreadsheet tools will often automatically format data, sometimes changing things in important but unwanted ways.  For example, gene names such as "SEPT2" and "MARCH1" are converted to dates by Microsoft Excel, and some accession numbers (e.g., "2310009E13") are converted to floating point numbers.  An analysis of published genomics papers {cite:p}`Ziemann:2016aa` found that roughly twenty percent of supplementary gene lists created using Excel contained errors in gene names due to these conversions.
-- It is very easy to make errors when performing operations on a spreadsheet, and these errors can often go unnoticed.  A well known example occurred in the paper  ["Growth in the time of debt"](https://www.nber.org/papers/w15639) by the prominent economists Carmen Reinhart and Kenneth Rogoff. This paper claimed to have found that high levels of national debt led to decreased economic growth, and was used as a basis for promoting austerity programs after the 2008 financial crisis.  However, [researchers subsequently discovered](https://academic.oup.com/cje/article/38/2/257/1714018) that the authors had made an error in their Excel spreadsheet, excluding data from several countries; when the full data were used, the relationship between growth and debt became much weaker. 
+- It is very easy to make errors when performing operations on a spreadsheet, and these errors can often go unnoticed.  A well known example occurred in the paper  ["Growth in a time of debt"](https://www.nber.org/papers/w15639) by the prominent economists Carmen Reinhart and Kenneth Rogoff [@Reinhart:2010aa]. This paper claimed to have found that high levels of national debt led to decreased economic growth, and was used as a basis for promoting austerity programs after the 2008 financial crisis.  However, [researchers subsequently discovered](https://academic.oup.com/cje/article/38/2/257/1714018) that the authors had made an error in their Excel spreadsheet, excluding data from several countries; when the full data were used, the relationship between growth and debt became much weaker [@Herndon:2013aa]. 
 - Spreadsheet software can sometimes have limitations that can cause problems.  For example, the use of an outdated Microsoft Excel file format (.xls) [caused underreporting of COVID-19 cases](https://www.bbc.com/news/technology-54423988) due to limitations on the number of rows in that file format, and the lack of any warnings when additional rows in the imported data files were ignored.
 - Spreadsheets do not easily lend themselves to version control and change tracking, although some spreadsheet tools (such as Google Sheets) do provide the ability to clearly label versions of the data.
 
@@ -526,28 +525,28 @@ I will occasionally use Microsoft Excel to examine a data file, but I think that
 
 ### Multidimensional array data
 
-Many forms of data are represented as multidimensional arrays.  For example, many forms of microscopy data are represented as either two-dimensional (slice) or three-dimensional (volume) arrays, while dynamic imaging modalities are often represented as three- or four-dimensional data, with the first two or three dimensions representing space and the final dimension reflecting time.  Within Python these are generally processed using `numpy`, which efficiently processes large multidimensional arrays.  As an example, I loaded a four-dimensional brain template, where the first three dimensions are spatial and the final dimension reflects 512 different components that define a probabilistic atlas of the brain.  After loading the data into a `numpy` array, we can see its shape:
+Many forms of data are represented as multidimensional arrays.  For example, many forms of microscopy data are represented as either two-dimensional (slice) or three-dimensional (volume) arrays, while dynamic imaging modalities are often represented as three- or four-dimensional data, with the first two or three dimensions representing space and the final dimension reflecting time.  Within Python these are generally processed using *NumPy*, which efficiently processes large multidimensional arrays.  As an example, I loaded a three-dimensional brain template.  After loading the data into a *NumPy* array, we can see its shape:
 
 ```python
 data.shape
 ```
 ```text
-(91, 109, 91, 512)
+(91, 109, 91)
 ```
 
-In this case, the first three dimensions are spatial (representing the left/right, front/back, and up/down axes of the brain) and the final dimension represents timepoints.  We can also use the `imshow` function from `matplotlib.pyplot` to view a two-dimensional slice of the image at a particular timepoint:
+In this case, the three dimensions are represent the left/right, front/back, and up/down axes of the brain.  We can also use the `imshow` function from `matplotlib.pyplot` to view a two-dimensional slice of the image:
 
 ```python
 import matplotlib.pyplot as plt
-# view z==50 at timepoint 5
-plt.imshow(data[:, :, 50, 5], cmap='gray')
+# view z==40
+plt.imshow(data[:, :, 40], cmap='gray')
 ```
 
 <img src="images/difumo_example.png" alt="2d image example" width="500px">
 
 #### Multidimensional array file formats
 
-A common file format for array data in Python is the native Numpy format, which is known by its extension, `.npy`.  This file format has a number of benefits for Python users:
+A common file format for array data in Python is the native *NumPy* format, which is known by its extension, `.npy`.  This file format has a number of benefits for Python users:
 
 - It is very fast to both read and write files
 - It supports *memory mapping*, which allows portions of the file to be read without loading the entire file
@@ -556,17 +555,18 @@ A common file format for array data in Python is the native Numpy format, which 
 
 However, the `.npy` format also has a number of drawbacks for scientific data:
 
-- It is harder for non-Numpy users to work with, requiring specialized libraries to read in languages other than Python.
+- It is harder for non-*NumPy* users to work with, requiring specialized libraries to read in languages other than Python.
 - It does not compress the data, so files can be much larger than a compressed file format. This can become very important when working with large sparse datasets.
 - It doesn't support storage of metadata alongside the data
 
-There are several other commonly used standard file formats for array data; we will focus on *HDF5* and *Zarr*.  HDF5 is a longstanding format for storage of large datasets, which is supported by nearly all programming languages. It has built-in support for compression, and allows access to specific chunks without loading the entire dataset.  However, many researchers (at least within the Python ecosystem) are moving towards the Zarr format, which stores data in a set of smaller chunk files rather than a single large file as in HDF5.  Zarr has several advantages over HDF5:
+There are several other commonly used standard file formats for array data; we will focus on *HDF5* and *Zarr*.  HDF5 is a longstanding format for storage of large datasets, which is supported by nearly all programming languages. It has built-in support for compression, and allows access to specific chunks without loading the entire dataset.  However, many researchers (at least within the Python ecosystem) are moving towards the *Zarr* format, which stores data in a set of smaller chunk files rather than a single large file as in HDF5.  *Zarr* has several advantages over HDF5:
 
-- Zarr is much more efficient for cloud storage, since only the specific chunk file needs to be accessed
-- Zarr is simpler than HDF5, and has a more Pythonic interface
-- Zarr makes it very easy to add new data to a file, which can be more difficult in HDF5
+- *Zarr* is much more efficient for cloud storage, since only the specific chunk file needs to be accessed
+- *Zarr* is simpler than HDF5, and has a more Pythonic interface
+- *Zarr* makes it very easy to add new data to a file, which can be more difficult in HDF5
 
-Let's use the data from above as an example. This is a dataset that is highly sparse; after thresholding to remove very small values, only about 0.1% of the values are nonzero.  This means that we should be able to get a high degree of compression for this dataset, given the redundancy of the data.  Let's first save the data to a .npy file and look at its (uncompressed) size:
+Let's use some other brain imaging data where the first three dimensions are spatial and the final
+dimension reflects 512 different components that define a probabilistic atlas of the brain, mapping membership of each spatial location in each of the components in the atlas.  This is a dataset that is highly sparse; after thresholding to remove very small values, only about 0.1% of the values are nonzero.  This means that we should be able to get a high degree of compression for this dataset, given the redundancy of the data.  Let's first save the data to a .npy file and look at its (uncompressed) size:
 
 ```python
 np.save('/tmp/difumo.npy', data)
@@ -600,7 +600,7 @@ zarr_data[:] = data
 5	/tmp/difumo.zarr
 ```
 
-This shows that Zarr obtains even more compression than HDF5, each using its default compression method; note that it might be possible to get better compression using custom compression methods for each.  We can also compare the time needed to load each of the files; because of the relatively longer loading time for these files, we only perform 10 repetitions in this example:
+This shows that *Zarr* obtains even more compression than HDF5, each using its default compression method; note that it might be possible to get better compression using custom compression methods for each.  We can also compare the time needed to load each of the files; because of the relatively longer loading time for these files, we only perform 10 repetitions in this example:
 
 ```python
 nreps = 10
@@ -629,9 +629,9 @@ Average loading time for h5: 3.138907 seconds
 Average loading time for zarr: 0.745648 seconds
 ```
 
-This shows that Zarr is slightly slower than the native `numpy` file load, but much faster than HDF5.  
+This shows that *Zarr* is slightly slower than the native *NumPy* file loader, but much faster than HDF5.  
 
-I would suggest that unless you have a strong need for HDF5 compatibility, that you use Zarr files to store large binary data files such as matrices.  
+I would suggest that unless you have a strong need for HDF5 compatibility, that you use *Zarr* files to store large binary data files such as matrices.  
 
 
 #### Symmetrical matrices
@@ -640,7 +640,7 @@ It's not uncommon to work with symmetrical matrices, such as correlation matrice
 
 ### Network/graph data
 
-A graph is a representation that includes a set of nodes along with a set of edges that represent connections between those nodes. In some cases these are unweighted (binary), such as whether two individuals are friends on a social network.  In other cases they are weighted, such as number of common friends that two people have on a social network.  Graphs also vary in being either undirected, such that the relationship is bidirectional between the two nodes, or directional, such as the relationship has a direction.  For example, friendship on a social network is an undirected relationship, whereas following on a social network is a directed relationship, since one person can follow the other, vice versa, or both.  
+A graph is a representation that includes a set of nodes along with a set of edges that represent connections between those nodes. In some cases these are unweighted (binary), such as whether two individuals are friends on a social network.  In other cases they are weighted, such as number of common friends that two people have on a social network.  Graphs also vary in being either undirected, such that the relationship is bidirectional between the two nodes, or directional, such that the relationship has a direction.  For example, friendship on a social network is an undirected relationship, whereas following on a social network is a directed relationship, since one person can follow the other, vice versa, or both.  
 
 One way to represent a graph is through a set of *adjacencies*, or connections.  Here is an example of a small social network, in which we generate a graph within the `networkx` package using a set of adjacencies:
 
@@ -687,9 +687,9 @@ print(adj_df.to_markdown())
 
 #### Graph data file formats
 
-There are a number of different file formats for graph data, used variously across different software packages.  For example, the `networkx` package supports 13 different graph formats!  The decision about which format to use will likely depend on the specific software packages that you plan to use. I have had good luck with both *GraphML* and *Pajek* formats. 
+There are a number of different file formats for graph data, used variously across different software packages.  For example, the *NetworkX* package supports 13 different graph formats!  The decision about which format to use will likely depend on the specific software packages that you plan to use. I have had good luck with both *GraphML* and *Pajek* formats. 
 
-For large networks that are dense (i.e., networks where most connections are nonzero) or weighted (i.e., the edges have continuous weights) it might make more sense to save the network as an adjacency matrix, making sure to also save the associated node labels. This allows taking advantage of the efficiency of formats like Zarr, though it will incur the overhead of having to load the adjacency matrix into the graph engine.
+For large networks that are dense (i.e., networks where most connections are nonzero) or weighted (i.e., the edges have continuous weights) it might make more sense to save the network as an adjacency matrix, making sure to also save the associated node labels. This allows taking advantage of the efficiency of formats like *Zarr*, though it will incur the overhead of having to load the adjacency matrix into the graph engine.
 
 ### Specialized data formats
 
@@ -709,18 +709,18 @@ There is always a tension between using a domain-specific standard versus a gene
 
 It is essential to use a consistent data organization scheme for one's research data. This is obvious when the data are shared with other researchers, but even if the data will never be shared with anyone else, good organization is essential when one looks back at one's own data in the future. Thus, good data organization is a gift to your future self!
 
-In this section we discuss data organization. The most important principle of data organization is that the scheme should be easily understood consistently applied.  If a standard scheme exists in one's field of research, then I would strongly suggest using that scheme, or at least adapting it to one's local requirements. A second important principle is that file and folder names should be machine readable. Increasingly we want to use automated tools to parse large datasets, and a machine-readable organization scheme (as I discuss below) is essential to doing this effectively.
+In this section I discuss data organization. The most important principle of data organization is that the scheme should be easily understood and consistently applied.  If a standard scheme exists in one's field of research, then I would strongly suggest using that scheme, or at least adapting it to one's local requirements. A second important principle is that file and folder names should be machine readable. Increasingly we want to use automated tools to parse large datasets, and a machine-readable organization scheme (as I discuss below) is essential to doing this effectively.
 
 
 ### File granularity
 
 One common decision that we need to make when managing data is to save data in more smaller files versus fewer larger files.  The right answer to this question depends in part on how we will have to access the data.  If we only need to access a small portion of the data and we can easily determine which file to open to obtain those data, then it probably makes sense to save many small files.  However, if we need to combine data across many small files, then it likely makes sense to save the data as one large file.  For example, in the [data management notebook](src/bettercode/data_management.ipynb) there is an example where we create a large (10000 x 100000) matrix of random numbers, and save them either to a single file or to a separate file for each row.  When loading these data, the loading of the single file is about 5 times faster than loading the individual files.
 
-Another consideration about the number of files has to do with storage systems that are commonly used on high-performance computing systems.  On these systems, it is common to have separate quotas for total space used (e.g., in terabytes) as well as for the number of *inodes*, which are structures that store information about files and folders on a UNIX filesystem. Thus, generating many small files (e.g., millions) can sometimes cause problems on these systems. For this reason, we generally err on the side of generating fewer larger files versus more smaller files when working on high-performance computing systems.
+Another consideration about the number of files has to do with storage systems that are commonly used on high-performance computing systems.  On these systems, it is common to have separate quotas for total space used (e.g., in terabytes) as well as for the number of *inodes*, which are structures that store information about files and folders on a UNIX filesystem. Thus, generating many small files (e.g., millions) can sometimes cause problems on these systems. For this reason, we generally err on the side of generating fewer larger files versus more smaller files when working on high-performance computing systems (as I discuss further in the later chapter on high-performance computing).
 
 ### Data file/folder naming conventions
 
-From my standpoint, the most important consideration for naming of files and folders is the ability to automatically parse the file/folder names.  While there are may possible ways to do this, I prefer the approach used in the Brain Imaging Data Structure (BIDS), which our group was involved in developing {cite:p}`Gorgolewski:2016aa`.  This is a standard for organizing a wide range of brain imaging data types, but the strategy behind the standard is applicable to almost any scientific data type.  The basic idea is to embed a set of key-value pairs in the name, along with a suffix that defines the data type along with a file type extension for files.  The schema looks like this:
+From my standpoint, the most important consideration for naming of files and folders is the ability to automatically parse the file/folder names.  While there are many possible ways to do this, I prefer the approach used in the Brain Imaging Data Structure (BIDS), which our group was involved in developing {cite:p}`Gorgolewski:2016aa`.  This is a standard for organizing a wide range of brain imaging data types, but the strategy behind the standard is applicable to almost any scientific data type.  The basic idea is to embed a set of key-value pairs in the name, along with a suffix that defines the data type along with a file type extension for files.  The schema looks like this:
 
 `<key>-<value>_<key>-<value>_suffix.extension`
 
@@ -745,7 +745,7 @@ print(key_values)
 
 This is very useful because it allows one to easily query a large set of files for particular key-value pairs, and also allows one to easily parse the key-value pairs for a particular file.  
 
-It's worth noting that using a naming scheme like this requires strict attention to naming hygiene.  In particular, it's essential to ensure that the delimiter characters ("-" and "_") don't accidentally get used within the values.  For example, if one were using an analysis called "IS-RSA", using this for the description (e.g., "'sub-001_sess-1A_desc-IS-RSA_corr.zarr") would cause file parsing to fail.  
+It's worth noting that using a naming scheme like this requires strict attention to naming hygiene.  In particular, it's essential to ensure that the delimiter characters ("-", "_", and ".") don't accidentally get used within the values.  For example, if one were using an analysis called "IS-RSA", using this for the description (e.g., "'sub-001_sess-1A_desc-IS-RSA_corr.zarr") would cause file parsing to fail.  
 
 ## Metadata
 
@@ -762,7 +762,7 @@ An example of a Gene Ontology graph for the entity "node of Ranvier", which is a
 
 ```
 
-Ontologies are very useful for specifying metadata, because they allow us to know exactly what a particular entry in the metadata means, and thus allow us to establish links between equivalent entities across datasets.  For example, let's say that a researcher wants to query a database for datasets related to insulin signaling in pancreatic beta cells in Type II diabetes, and that there are three relevant datasets in the database.  Without an ontology, each of the teams might use different terms to refer to these cells (such as "pancreatic beta cells", "insulin-producing cells", and "islet beta cells"), making it difficult to link the datasets. However, if each of the datasets were to include metadata linked to a specific ontology (in this case, the identifier `CL:0000169` from the Cell Ontolog, which refers to "type B pancreatic cell"), then it becomes much easier to find and link these datasets.  There are at present a broad range of ontologies available for nearly every scientific domain; the [BioPortal](https://bioportal.bioontology.org/) project provides a tool to search across a wide range of existing ontologies.
+Ontologies are very useful for specifying metadata, because they allow us to know exactly what a particular entry in the metadata means, and thus allow us to establish links between equivalent entities across datasets.  For example, let's say that a researcher wants to query a database for datasets related to insulin signaling in pancreatic beta cells in Type II diabetes, and that there are three relevant datasets in the database.  Without an ontology, each of the teams might use different terms to refer to these cells (such as "pancreatic beta cells", "insulin-producing cells", and "islet beta cells"), making it difficult to link the datasets. However, if each of the datasets were to include metadata linked to a specific ontology (in this case, the identifier `CL:0000169` from the Cell Ontology, which refers to "type B pancreatic cell"), then it becomes much easier to find and link these datasets.  There are at present a broad range of ontologies available for nearly every scientific domain; the [BioPortal](https://bioportal.bioontology.org/) project provides a tool to search across a wide range of existing ontologies.
 
 ### Metadata file formats
 
@@ -800,7 +800,7 @@ While metadata is generally meant to be used by computers, it is also important 
 
 ### Data dictionaries
 
-A *data dictionary* provides information about each of the variables in a dataset. These are meant to be human readable, though it can often be useful to share them in a machine-readable format (such as JSON) so that they can also be used in programmatic ways.  A data dictionary includes information such as:
+A *data dictionary* provides information about each of the variables in a dataset. These are meant to be human readable, though it can often be useful to share them in a machine-readable format (such as JSON) so that they can also be used in programmatic ways (such as presenting them in a nicely formatted way on the web).  A data dictionary includes information such as:
 
 - an understandable description of the variable 
 - the data type (e.g., string, integer, Boolean)
@@ -873,7 +873,7 @@ A depiction of the PROV data model entities and relations.  Copyright © [2013] 
 
 This data model highlights the breadth of information that needs to be represented in order to accurately record provenance.
 
-There are several different ways to track provenance in practice, which vary in their complexity, comprehensiveness, and ease of use.  We will discuss this further in a later chapter on workflows.
+There are several different ways to track provenance in practice, which vary in their complexity, comprehensiveness, and ease of use.  WIe will discuss this further in the later chapter on workflows.
 
 
 ## Handling of sensitive data
@@ -945,24 +945,24 @@ One method that is often used for large datasets is known as *differential priva
 
 In the case of original data we never want to allow any changes, but for derived data we will often end up making changes to our workflows that result in changes in the data.  As an example, let's say that we are analyzing RNA-sequencing data, and we receive a notice that a bug was found in the specific version of STAR that we had used for sequence alignment.  We would like to be able to track these changes, so that we know which data we are working with at any point in time. In many laboratories, this is achieved through file naming, resulting in a menagerie of files with names like "dataset_new_fixed_v2.tsv".  This can make it difficult to determine exactly which data were used in any analysis. In Chapter 2 we discussed the many reasons why we use version control for code, and many of those also apply to data as well. In the case of data, it is particularly important to be able to track the what, when, and why of any changes to the data, which is exactly the purpose of version control systems.
 
-### Using git for data version control
+### Using*git* for data version control
 
-When the relevant data are small (e.g., smaller than a few megabytes) and stored in a text format (such as CSV/TSV), one can simply use git to track changes in the data.  (We will discuss in a later chapter why Github is not an optimal platform for sharing data, at least not on its own.). 
+When the relevant data are small (e.g., smaller than a few megabytes) and stored in a text format (such as CSV/TSV), one can simply use *git* to track changes in the data.  (We will discuss in a later chapter why GitHub is not an optimal platform for sharing data, at least not on its own.). 
 
-However, git does not work well for version control on larger datasets using binary data files.  Git is able to efficiently store version information about code because it tracks the specific differences in the code between versions (known as a *diff*), and only stores the differences.  Thus, if one has a very large code file and changes one line, only that one line difference is stored in the git database.  However, with binary data this strategy is not effective, and git has to store the entire new dataset each time, leading to bloated repositories and very slow performance. 
+However,*git* does not work well for version control on larger datasets using binary data files.  *Git* is able to efficiently store version information about code because it tracks the specific differences in the code between versions (known as a *diff*), and only stores the differences.  Thus, if one has a very large code file and changes one line, only that one line difference is stored in the*git* database.  However, with binary data this strategy is not effective, and*git* has to store the entire new dataset each time, leading to bloated repositories and very slow performance. 
 
-### Using DataLad for version control on larger datasets
+### Using *DataLad* for version control on larger datasets
 
-A solution to this problem is to use a version control tool that is specifically designed for large data.  There are several tools that address this problem; we will focus on [DataLad](https://www.datalad.org/), which is a data management system that functions very similarly to git.  It is based on a tool called [git-annex](https://git-annex.branchable.com/), but provides much greater ease of use for researchers.  (Full disclosure: Our group collaborates with the DataLad group and our grants have supported some of their development work.)
+A solution to this problem is to use a version control tool that is specifically designed for large data.  There are several tools that address this problem; we will focus on [Dat*aLad](https://www.datalad.org/), which is a data management system that functions very similarly to git.  It is based on a tool called [*git-annex*](https://git-annex.branchable.com/), but provides much greater ease of use for researchers.  (Full disclosure: Our group collaborates with the *DataLad* group and our grants have supported some of their development work.)
 
-An important note:  DataLad is quite powerful but has a significant learning curve, and takes a bit of time to get accustomed to.  In particular, its use of symbolic links can sometimes confuse new users. Having said that, let's look at some simple examples.
+An important note: *DataLad* is quite powerful but has a significant learning curve, and takes a bit of time to get accustomed to.  In particular, its use of symbolic links can sometimes confuse new users. Having said that, let's look at some simple examples.
 
-#### Creating a local DataLad dataset
+#### Creating a local *DataLad* dataset
 
-Let's say that we want to create a new dataset on our local computer that will be tracked by DataLad.  We first create a new repository:
+Let's say that we want to create a new dataset on our local computer that will be tracked by *DataLad*.  We first create a new repository:
 
 ```bash
-➤  datalad create -d . my_datalad_repo
+$ datalad create -d . my_datalad_repo
 
 add(ok): my_datalad_repo (dataset)
 add(ok): .gitmodules (file)
@@ -971,10 +971,10 @@ create(ok): my_datalad_repo (dataset)
 
 ```
 
-This creates a new directory, called `my_datalad_repo` and sets it up as a DataLad dataset.  We then go into the directory and create a subdirectory called `data`, and then download some data files from another project.  We do this using the `datalad download-url` function, which will both download the data and save them to the datalad dataset:
+This creates a new directory, called `my_datalad_repo` and sets it up as a *DataLad* dataset.  We then go into the directory and create a subdirectory called `data`, and then download some data files from another project.  We do this using the `datalad download-url` function, which will both download the data and save them to the datalad dataset:
 
 ```bash
-➤  datalad download-url -d . -O my_datalad_repo/data/ https://raw.githubusercontent.com/IanEisenberg/Self_Regulation_Ontology/refs/heads/master/Data/Complete_02-16-2019/demographics.csv
+$ datalad download-url -d . -O my_datalad_repo/data/ https://raw.githubusercontent.com/IanEisenberg/Self_Regulation_Ontology/refs/heads/master/Data/Complete_02-16-2019/demographics.csv
 
 [INFO   ] Downloading 'https://raw.githubusercontent.com/IanEisenberg/Self_Regulation_Ontology/refs/heads/master/Data/Complete_02-16-2019/demographics.csv' into '/Users/poldrack/Dropbox/code/BetterCodeBetterScience/my_datalad_repo/data/'
 download_url(ok): /Users/poldrack/Dropbox/code/BetterCodeBetterScience/my_datalad_repo/data/demographics.csv (file)
@@ -985,7 +985,7 @@ add(ok): .gitmodules (file)
 save(ok): . (dataset)
 
 
-➤  datalad download-url -d . -O my_datalad_repo/data/ https://raw.githubusercontent.com/IanEisenberg/Self_Regulation_Ontology/refs/heads/master/Data/Complete_02-16-2019/meaningful_variables_clean.csv
+$ datalad download-url -d . -O my_datalad_repo/data/ https://raw.githubusercontent.com/IanEisenberg/Self_Regulation_Ontology/refs/heads/master/Data/Complete_02-16-2019/meaningful_variables_clean.csv
 
 [INFO   ] Downloading 'https://raw.githubusercontent.com/IanEisenberg/Self_Regulation_Ontology/refs/heads/master/Data/Complete_02-16-2019/meaningful_variables_clean.csv' into '/Users/poldrack/Dropbox/code/BetterCodeBetterScience/my_datalad_repo/data/'
 download_url(ok): /Users/poldrack/Dropbox/code/BetterCodeBetterScience/my_datalad_repo/data/meaningful_variables_clean.csv (file)
@@ -996,10 +996,10 @@ add(ok): .gitmodules (file)
 save(ok): . (dataset)
 ```
 
-A DataLad dataset is also a `git` repository, which we can see if we use the `git log` command:
+A *DataLad* dataset is also a *git* repository, which we can see if we use the `git log` command:
 
 ```bash
-➤  git log
+$ git log
 
 commit 948cc31262fcddda3bfc56b222687710861c57d1 (HEAD -> text/datamgmt-Nov3)
 Author: Russell Poldrack <poldrack@gmail.com>
@@ -1024,10 +1024,10 @@ Here we see the commit messages that were automatically created by DataLad, firs
 
 #### Modifying files
 
-Now let's say that we want to make a change to one of the files and save the changes to the dataset.  Files tracked by DataLad are read-only ("locked") by default.  If we want to edit them, then we need to use `datalad unlock` to unlock the file:
+Now let's say that we want to make a change to one of the files and save the changes to the dataset.  Files tracked by *DataLad* are read-only ("locked") by default.  If we want to edit them, then we need to use `datalad unlock` to unlock the file:
 
 ```bash
-➤  datalad unlock my_datalad_repo/data/demographics.csv
+$ datalad unlock my_datalad_repo/data/demographics.csv
 
 unlock(ok): my_datalad_repo/data/demographics.csv (file)
 ```
@@ -1035,21 +1035,21 @@ unlock(ok): my_datalad_repo/data/demographics.csv (file)
 We then use a Python script to make the change, which in this case is removing some columns from the dataset:
 
 ```bash
-➤  python src/bettercode/modify_data.py my_datalad_repo/data/demographics.csv
+$ python src/bettercode/modify_data.py my_datalad_repo/data/demographics.csv
 
 ```
 
 We can now use `datalad status` to see that the file has been modified:
 
 ```bash
-➤  datalad status
+$ datalad status
 
  modified: my_datalad_repo (dataset)
  ```
 
 And we can then save it using `datalad save`:
 ```bash
-➤  datalad save -d . -m "Modified demographics.csv" my_datalad_repo/data/demographics.csv
+$ datalad save -d . -m "Modified demographics.csv" my_datalad_repo/data/demographics.csv
 
 add(ok): data/demographics.csv (file)
 save(ok): my_datalad_repo (dataset)
@@ -1058,20 +1058,20 @@ add(ok): .gitmodules (file)
 save(ok): . (dataset)
 ```
 
-DataLad doesn't have a staging area like `git` does, so there is no need to first add and then commit the file; `datalad save` is equivalent to adding and then committing the changes. If we then check the status we see that there are no changes waiting to be saved:
+DataLad doesn't have a staging area like *git* does, so there is no need to first add and then commit the file; `datalad save` is equivalent to adding and then committing the changes. If we then check the status we see that there are no changes waiting to be saved:
 
 ```bash
-➤  datalad status
+$ datalad status
 
 nothing to save, working tree clean
 ```
 
 ##### Using `datalad run`
 
-Although the previous example was meant to provide background on how DataLad works, in practice there is actually a much easier way to accomplish these steps, which is by using the [`datalad run`](https://docs.datalad.org/en/stable/generated/man/datalad-run.html) command. This command will automatically take care of fetching and unlocking the relevant files, running the command, and then committing the files back in, generating a commit message that tracks the specific command that was used:
+Although the previous example was meant to provide background on how *DataLad* works, in practice there is actually a much easier way to accomplish these steps, which is by using the [`datalad run`](https://docs.datalad.org/en/stable/generated/man/datalad-run.html) command. This command will automatically take care of fetching and unlocking the relevant files, running the command, and then committing the files back in, generating a commit message that tracks the specific command that was used:
 
 ```bash
-➤  datalad run -i my_datalad_repo/data/demographics.csv -o my_datalad_repo/data/demographics.csv -- uv run src/bettercode/modify_data.py my_datalad_repo/data/demographics.csv
+$ datalad run -i my_datalad_repo/data/demographics.csv -o my_datalad_repo/data/demographics.csv -- uv run src/bettercode/modify_data.py my_datalad_repo/data/demographics.csv
 [INFO   ] Making sure inputs are available (this may take some time)
 unlock(ok): my_datalad_repo/data/demographics.csv (file)
 [INFO   ] == Command start (output follows) =====
@@ -1087,7 +1087,7 @@ add(ok): .gitmodules (file)
 save(ok): . (dataset)
 
 # show the most recent commit
-➤  git log -1
+$ git log -1
 commit 3ef3b94a0abffec6a8db7570a97339f48ee728ed (HEAD -> text/datamgmt-Nov3)
 Author: Russell Poldrack <poldrack@gmail.com>
 Date:   Mon Dec 15 13:28:06 2025 -0800
@@ -1112,17 +1112,17 @@ Date:   Mon Dec 15 13:28:06 2025 -0800
 
 ```
 
-If one uses DataLad for data versioning then the `datalad run` command can be very helpful for running commands on those data.
+If one uses *DataLad* for data versioning then the `datalad run` command can be very helpful for running commands on those data.
 
 
 #### Pushing data to a remote repository
 
 DataLad is a particularly powerful tool for sharing data across systems.  It allows one to push or pull data from a number of different remote storage systems; in this example we will use the [Open Science Framework (OSF)](https://osf.io/) as our storage location, because it is particularly easy to use with DataLad.
 
-We first need to install and set up the `datalad-osf` Python package, per [the DataLad documentation](https://docs.datalad.org/projects/osf/en/latest/settingup.html).  We also need to create an account on the OSF site, and obtain a Personal Access Token for login.  We can then use DataLad to authenticate with OSF:
+We first need to install and set up the *datalad-osf* Python package, per [the *DataLad* documentation](https://docs.datalad.org/projects/osf/en/latest/settingup.html).  We also need to create an account on the OSF site, and obtain a Personal Access Token for login.  We can then use *DataLad* to authenticate with OSF:
 
 ```bash
-➤  datalad osf-credentials                                                1 ↵
+$ datalad osf-credentials                                                1 ↵
 You need to authenticate with 'https://osf.io' credentials. https://osf.io/settings/tokens provides information on how to gain access
 token:
 osf_credentials(ok): [authenticated as Russell Poldrack <poldrack@stanford.edu>]
@@ -1131,7 +1131,7 @@ osf_credentials(ok): [authenticated as Russell Poldrack <poldrack@stanford.edu>]
 Having authenticated with OSF, we can now create a new OSF project using DataLad:
 
 ```bash
-➤  datalad create-sibling-osf --title datalad-test-project -s osf
+$ datalad create-sibling-osf --title datalad-test-project -s osf
 create-sibling-osf(ok): https://osf.io/htprk/
 [INFO   ] Configure additional publication dependency on "osf-storage"
 configure-sibling(ok): . (sibling)
@@ -1140,7 +1140,7 @@ configure-sibling(ok): . (sibling)
 Once the project is created, we can push the contents of our dataset to our OSF project:
 
 ```bash
-➤  datalad push --to osf
+$ datalad push --to osf
 copy(ok): data/demographics.csv (file) [to osf-storage...]
 copy(ok): data/meaningful_variables_clean.csv (file) [to osf-storage...]
 publish(ok): . (dataset) [refs/heads/main->osf:refs/heads/main [new branch]]
@@ -1153,11 +1153,11 @@ action summary:
 These data now exist on OSF, and can be cloned to our local machine using `datalad clone`:
 
 ```bash
-➤  datalad clone osf://htprk/
+$ datalad clone osf://htprk/
 [INFO   ] Remote origin uses a protocol not supported by git-annex; setting annex-ignore
 install(ok): /Users/poldrack/Downloads/htprk (dataset)
 
-➤  tree htprk
+$ tree htprk
 htprk
 └── data
     ├── demographics.csv -> ../.git/annex/objects/f7/Mm/MD5E-s58237--dc5b157fb9937eae2166d73ee943c766.csv/MD5E-s58237--dc5b157fb9937eae2166d73ee943c766.csv
@@ -1168,24 +1168,24 @@ htprk
 Notice that the files in the cloned dataset directory are actually symbolic links; the actual file contents are not downloaded when the dataset is cloned. We can see this if we try to look at the size of the datafile:
 
 ```bash
-➤  wc data/demographics.csv
+$ wc data/demographics.csv
 wc: data/demographics.csv: open: No such file or directory
 ```
 
 To actually download the file contents, we can use `datalad get`, after which we will see that the file contents are available:
 
 ```bash
-➤  datalad get .                                                          1 ↵
+$ datalad get .                                                          1 ↵
 get(ok): data/demographics.csv (file) [from web...]
 get(ok): data/meaningful_variables_clean.csv (file) [from web...]
 action summary:
   get (ok: 2)
 
-➤  wc data/demographics.csv
+$ wc data/demographics.csv
      523    1276   58237 data/demographics.csv
 ```
 
-One can also push data using DataLad to a range of other remote hosts; see the [DataLad documentation](https://handbook.datalad.org/en/latest/basics/101-138-sharethirdparty.html) for more on this.
+One can also push data using *DataLad* to a range of other remote hosts; see the [DataLad documentation](https://handbook.datalad.org/en/latest/basics/101-138-sharethirdparty.html) for more on this.
 
 
 
@@ -1201,18 +1201,18 @@ Archiving of research data can take several forms:
 
 As we will discuss in more detail in our later chapter on sharing of research objects, it is generally preferably to archive data in a location that has a long-term preservation policy and verifiability.  This can include institutional repositories (usually run by librarians, who have deep expertise in archiving), general purpose repositories (like OSF or Zenodo), or domain-specific repositories. 
 
-[^1]: Note that the term "license" is often used to describe these data usage agreements, but this terminology is technically inappropriate in jurisdictions such as the U.S. where most data are treated as "facts" and thus are not subject to intellectual property laws (such as copyright laws). 
+[^1]: Note that the term "license" is often used to describe these data usage agreements, but this terminology is technically imprecise in jurisdictions such as the U.S. where raw data are treated as "facts" and thus are not subject to intellectual property laws (such as copyright laws).  The protection of larger datasets or databases varies by jurisdiction; in the U.S. databases are protected if they involve creative selection or arrangement, while the EU provides proection for substantial investment in database creation.
 
 ## Appendix: An example of database usage
 
 Here I will work through an example of a real scientific question using several database systems. I will focus on NoSQL databases, for two reasons:
 
-1: They are less well known amongst scientists compared to relational databases
-2: I personally prefer the NoSQL approach in most cases
+1. They are less well known amongst scientists compared to relational databases
+2. I personally prefer the NoSQL approach in most cases due to their flexibility
 
 Note that while many researchers may never use all the different databases used here, I am intentionally presenting a full-stack example to show how they can be combined.
 
-The question that I will ask is as follows: How well can the biological similarity between traits (including diseases as well as other phenotypes) be estimated from the semantic similarity of publications that refer to the trait?  We will use two primary datasets to assess this:
+The question that I will ask is as follows: How well can the biological similarity between traits (including diseases as well as other phenotypes) be estimated from the semantic similarity of publications that refer to the trait?  I will use two primary datasets to assess this:
 
 - A dataset of genome-wise association study (GWAS) results for specific traits obtained from [here](https://www.ebi.ac.uk/gwas/docs/file-downloads).
 - Abstracts that refer to each of the traits identified in the GWAS result, obtained from the [PubMed](https://pubmed.ncbi.nlm.nih.gov/) database.  
@@ -1221,19 +1221,19 @@ I will not present all of the code for each step, which can be found [here](http
 
 ### Adding GWAS data to a document store
 
-We start by uploading the GWAS data and adding them to a document store, using *MongoDB*, which I installed on my local machine.   We start by reading the CSV file containing the data.  Looking at those data, we see that they are not properly *normalized*. Normalization is a concept that is essential for relational databases but can also be very helpful for document stores.  We won't go into the details of normalization here (for more, see [here](https://learn.microsoft.com/en-us/troubleshoot/microsoft-365-apps/access/database-normalization-description)); rather, we will simply outline the primary requirements of the *first normal form*, which is the most basic form of normalization.  This requires that:
+We start by uploading the GWAS data and adding them to a document store, using *MongoDB*, which I installed on my local machine.   Upon reading the CSV file containing the data and examining their structure, we see that they are not properly *normalized*. Normalization is a concept that is essential for relational databases but can also be very helpful for document stores.  We won't go into the details of normalization here (for more, see [here](https://learn.microsoft.com/en-us/troubleshoot/microsoft-365-apps/access/database-normalization-description)); rather, we will simply outline the primary requirements of the *first normal form*, which is the most basic form of normalization.  This requires that:
 
 1) There are no duplicate records
 2) The columns contain scalar values (and thus do not contain composite values such as sets of values)
 3) There are not multiple columns that contain the same kind of data
 
-In this case, looking at the data we see that several columns contain multiple values for genes, due to the fact that some single nucleotide polymorphisms (SNPs) are located in intergenic space and thu can be mapped to multiple genes.  These values separated by commas (e.g., "FADS2, FADS1").  To normalize this, we can *explode* the data frame, which involves separating out these values into separate rows, which have otherwise identical contents.  
+In this case, looking at the data we see that several columns contain multiple values for genes, due to the fact that some single nucleotide polymorphisms (SNPs) are located in intergenic space and thus can be mapped to multiple genes.  These values separated by commas (e.g., "FADS2, FADS1").  To normalize this, we can *explode* the data frame, which involves separating out these values into separate rows, which have otherwise identical contents.  
 
 ```python
 gwas_data = get_exploded_gwas_data()
 ```
 
-We can now import the data from this data frame into a MongoDB collection, mapping each unique trait to the genes that are reported as being associated with it.  First I generated a separate function that sets up a MongoDB collection (see `setup_mongo_collection` [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/database.py)).  We can then use that function to set up our gene set collection:
+We can now import the data from this data frame into a MongoDB collection, mapping each unique trait to the genes that are reported as being associated with it.  First I generated a separate function that sets up a MongoDB collection (see `setup_mongo_collection()` [here](https://github.com/BetterCodeBetterScience/bettercode/blob/main/src/bettercode/database.py)).  We can then use that function to set up our gene set collection:
 
 
 ```python
@@ -1286,13 +1286,13 @@ def import_genesets_by_trait(
 import_genesets_by_trait(gwas_data)
 ```
 
-Note that this function uses an *upsert* operation, which is a combination of insertion (if the document with this key doesn't already exist) or updating (if the document with this key already exists).  This results in a collection with 3,047 records, each of which is indexed by the trait identifier and includes a list of all of the genes associated with the trait across the GWAS studies.  We also include the trait names to make the records human-readable, but we rely upon the unique identifiers (which in this case are defined as URLs, such as "http://www.ebi.ac.uk/efo/EFO_0004309" which maps to the trait of "platelet count". 
+Note that this function uses an *upsert* operation, which is a combination of insertion (if the document with this key doesn't already exist) or updating (if the document with this key already exists).  This results in a collection with 3,047 records, each of which is indexed by the trait identifier and includes a list of all of the genes associated with the trait across the GWAS studies.  We also include the trait names to make the records human-readable, but we rely upon the unique identifiers which in this case are defined as URLs, such as "http://www.ebi.ac.uk/efo/EFO_0004309" which maps to the trait of "platelet count". 
 
 ### Annotating gene sets
 
-Remember that our goal in this analysis is to identify the biological overlap between traits. We could do this by assessing the degree to which they are associated with the same genes, but this would miss out on the fact that genes work together in networks that are often associated with the function of specific biological pathways.  Given a particular set of genes, we can use bioinformatics tools to identify the biological processes that are associated with that set of genes. In this case I used the  [g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) tool from ELIXIR, which comes with a handy [Python package](https://pypi.org/project/gprofiler-official/).   This tool returns a set of pathways that are statistically enriched for each gene set, each of which is defined by a unique identifier that refers to a particular ontology such as the Gene Ontology.   For example, the 877 genes associated with the "platelet count" trait are involved in a range of biological processes and pathways, which range from the very general (e.g., GO:0005515, referring to "protein binding") to the very specific (e.g., GO:0007599, referring to "hemostasis", which is the stopping of bleeding).  
+Remember that our goal in this analysis is to identify the biological overlap between traits. We could do this by assessing the degree to which they are associated with the same genes, but this would miss out on the fact that genes work together in networks that are often associated with the function of specific biological pathways.  Given a particular set of genes, we can use bioinformatics tools to identify the biological processes that are associated with that set of genes. In this case I used the  [*g:Profiler*](https://biit.cs.ut.ee/gprofiler/gost) tool from ELIXIR, which comes with a handy [Python package](https://pypi.org/project/gprofiler-official/).   This tool returns a set of pathways that are statistically enriched for each gene set, each of which is defined by a unique identifier that refers to a particular ontology such as the Gene Ontology.   For example, the 877 genes associated with the "platelet count" trait are involved in a range of biological processes and pathways, which range from the very general (e.g., GO:0005515, referring to "protein binding") to the very specific (e.g., GO:0007599, referring to "hemostasis", which is the stopping of bleeding).  
 
-We can use `g:Profiler` to obtain the annotation for the gene set associated with each trait:
+We can use *g:Profiler* to obtain the annotation for the gene set associated with each trait:
 
 ```python
 
@@ -1359,7 +1359,7 @@ Having now annotated the gene sets with information about their biological funct
 
 ### Mapping pathway information to traits
 
-The previous analysis added a `functional annotation` element to each trait, which includes information about the associated pathways. While we could use this collection to obtain the mappings from traits to pathways, the deeply embedded nature of the annotation data would make the queries somewhat complicated.  Next we will use that information to generate a collection including all unique pathways, which we will then use to compute biological similarity between traits:
+The previous analysis added a `functional annotation` element to each trait, which includes information about the associated pathways. While we could use this collection to obtain the mappings from traits to pathways, the deeply embedded nature of the annotation data would make the queries somewhat complicated.  Instead we will use that information to generate a collection including all unique pathways, which we will then use to compute biological similarity between traits:
 
 ```python
 COLLECTION_PATHWAYS = 'pathways'
@@ -1495,7 +1495,7 @@ Loading phenotypes and relationships...
 Graph build complete.
 ```
 
-Having populated the database, we can then use the [gds.nodeSimilarity function](https://neo4j.com/docs/graph-data-science/current/algorithms/node-similarity/) from the Neo4j Graph Data Science library to compute the similarity of each trait in terms of their pathway overlap.  This function takes a *bipartite graph* (which is a graph that contains two sets of nodes - in our case, pathways and traits) and returns the Jaccard similarity coefficient, in which in this case reflects the ratio of common pathways to the total number of pathways for each pair of nodes. We filter out nodes that have fewer than two pathways associated with them to make the estimate more stable. (Note that here we use the term "phenotype" interchangeably with "trait".)
+Having populated the database, we can then use the `gds.nodeSimilarity` function from the Neo4j Graph Data Science library to compute the similarity of each trait in terms of their pathway overlap.  This function takes a *bipartite graph* (which is a graph that contains two sets of nodes - in our case, pathways and traits) and returns the Jaccard similarity coefficient, which in this case reflects the ratio of common pathways to the total number of pathways for each pair of nodes. We filter out nodes that have fewer than two pathways associated with them to make the estimate more stable. (Note that here I use the term "phenotype" interchangeably with "trait".)
 
 ```python
 
@@ -1624,7 +1624,7 @@ Number of documents in pathways: 0
 100%|██████████| 1845/1845 [00:18<00:00, 98.22it/s] 
 ```
 
-We then use the `Biopython.Entrez` module to search PubMed for each of the traits, along with any synonyms, obtaining a maximum of 100 abstracts for each query:
+We then use the *Biopython.Entrez* module to search PubMed for each of the traits, along with any synonyms, obtaining a maximum of 100 abstracts for each query:
 
 ```python
 COLLECTION_PMID_BY_TRAIT = 'pmids_by_trait'
@@ -1681,7 +1681,7 @@ Number of documents in trait_info_by_trait: 1590
 Searching PubMed: 100%|██████████| 1590/1590 [13:58<00:00,  1.90it/s]
 ```
 
-We then identify all of the unique Pubmed IDs (PMIDs) across these queries and fetch the full Pubmed record (including the title and abstract, which we will use in our semantic analysis) for each of them, placing them in a new collection:
+We then identify all of the unique PubMed IDs (PMIDs) across these queries and fetch the full PubMed record (including the title and abstract, which we will use in our semantic analysis) for each of them, placing them in a new collection:
 
 ```python
 COLLECTION_PUBMED = 'pubmed_abstracts'
@@ -1737,7 +1737,7 @@ Fetching 106387 PMIDs...
 
 ### Add documents to vector database
 
-We want to use the documents downloaded from Pubmed for each trait to compute the semantic similarity between traits.  This is a good application for a *vector database*, which can ingest documents, embed them into a vector space, which we can then use to perform similarity computations between documents based on their vector embeddings.  We will use ChromaDB which is a popular open-source vector database.  By default ChromaDB uses the *all-MiniLM-L6-v2* embedding model from the [Sentence Transformers](https://www.sbert.net/) package, but we will instead use the more powerful `text-embedding-3-large` via the OpenAI API.
+We want to use the documents downloaded from PubMed for each trait to compute the semantic similarity between traits.  This is a good application for a *vector database*, which can ingest documents, embed them into a vector space, which we can then use to perform similarity computations between documents based on their vector embeddings.  We will use *ChromaDB* which is a popular open-source vector database.  By default *ChromaDB* uses the *all-MiniLM-L6-v2* embedding model from the [*Sentence Transformers*](https://www.sbert.net/) package, but we will instead use the more powerful *text-embedding-3-large* via the OpenAI API.
 
 ```python
 def get_chromadb_collection(collection_name='pubmed_docs', 
@@ -1833,10 +1833,10 @@ plt.title(
 :align: center
 :width: 500px
 
-A scatterplot of biological similarity (estimated as overlap in pathways) versus semantic similarity (estimated as embedding distance of Pubmed abstracts) on the GWAS dataset.
+A scatterplot of biological similarity (estimated as overlap in pathways) versus semantic similarity (estimated as embedding distance of PubMed abstracts) on the GWAS dataset.
 ```
 
-There is a small but robust correlation between these two similarity measures. In order to more accurately estimate this association we need to take into account the fact that different documents vary in their overall similarity by including a *random effect* of document within a mixed effects model.  We use the `lmer()` function from the R `lme4` package, via the R magic within Jupyter:
+There is a small but robust correlation between these two similarity measures. In order to more accurately estimate this association we need to take into account the fact that different phenotypes vary in their overall similarity by including a *random effect* of phenotype within a mixed effects model.  We use the `lmer()` function from the R `lme4` package, via the R magic within Jupyter:
 
 ```python
 %%R -i text_similarity_df
@@ -1902,4 +1902,4 @@ r.squaredGLMM(model)
 [1,] 0.01068788 0.8775626
 ```
 
-For a mixed effect model there are two R-squared values: The *conditional* R-squared (R2c), which refers to the total variance accounted for by both fixed and random effects, and the *marginal* R-squared (R2m) that refers to the variance accounted for by the fixed effects, which is the figure of interest here.  This shows that while the association is strongly statistically significant, semantic similarity only accounts for about 1% of the variability in biological similarity, and thus is not a particularly strong predictor in practice.  The high conditional R-squared demonstrates that the variability in the data is dominated by document-level differences in similarity, such that documents vary in the degree to which they are more generally similar to others on average.
+For a mixed effect model there are two R-squared values: The *conditional* R-squared (R2c), which refers to the total variance accounted for by both fixed and random effects, and the *marginal* R-squared (R2m) that refers to the variance accounted for by the fixed effects, which is the measure of interest here.  This shows that while the association is strongly statistically significant, semantic similarity only accounts for about 1% of the variability in biological similarity, and thus is not a particularly strong predictor in practice.  The high conditional R-squared demonstrates that the variability in the data is dominated by trait-level differences in similarity, such that traits vary in the degree to which they are more generally similar to others on average.

@@ -1,6 +1,6 @@
 # Optimizing performance
 
-The computing power available to scientists has increased in a shockingly consistent way since the first microprocessors were manufactured in the 1970's.  The left panel in [](@mooreslaw-fig) shows that the number of transistors on commercial CPU chips has doubled about every two years since the 1970s, very close to the two years predicted by Gordon Moore in 1965 [@Moore:1965] The number of transistors relates only indirectly to the computing power of the machine, and the right panel in [](@mooreslaw-fig) shows that the computer power of the world's top supercomputer (measured in the number of floating point operations per second) has increased even faster, doubling roughly every 1.2 years. 
+The computing power available to scientists has increased in a shockingly consistent way since the first microprocessors were manufactured in the 1970's.  The left panel in [](#mooreslaw-fig) shows that the number of transistors on commercial CPU chips has doubled about every two years since the 1970s, very close to the two years predicted by Gordon Moore in 1965 [@Moore:1965] The number of transistors relates only indirectly to the computing power of the machine, and the right panel in [](@mooreslaw-fig) shows that the computer power of the world's top supercomputer (measured in the number of floating point operations per second) has increased even faster, doubling roughly every 1.2 years. 
 
 ```{figure} images/moores_law_comparison.png
 :label: mooreslaw-fig
@@ -35,7 +35,7 @@ That is, there is a tradeoff between accuracy, clarity, and speed that one must 
 
 ## A brief introduction to computational complexity
 
-Computational complexity refers to how the time needed by a particular algorithm to solve a particular problem increases with the size of its input. We usually describe complexity in terms of what is known as "big-O" notation, describing how the time needed to solve the problem scales with the size of the input.  More precisely, it provides an upper bound on the time scaling, ignoring constant and lower-order factors.  For example, an $O(N)$ problem scales linearly in time with the input, an $O(N^2)$ problem scales quadratically, and an $O(2^N)$ scales exponentially. In general we would consider problems with exponential scaling to be practically uncomputable for anything but the smallest datasets. It's important to keep in mind that these not meant to reflect actual performance, but rather meant to classify problems in terms of their worst-case difficulty as the input grows.  The fact that constant and lower-order factors are ignored also means that complexity differences may not become evident in real performance until inputs get very large.
+Computational complexity refers to how the resources needed by a particular algorithm to solve a particular problem increases with the size of its input. We usually describe complexity in terms of what is known as "big-O" notation, describing how the resources (such as time or memory) needed to solve the problem scales with the size of the input.  More precisely, it provides an upper bound on the scaling, ignoring constant and lower-order factors.  For example, an $O(N)$ problem scales linearly with the size of the input, an $O(N^2)$ problem scales quadratically, and an $O(2^N)$ scales exponentially. In general we would consider problems with exponential scaling to be practically uncomputable for anything but the smallest datasets. It's important to keep in mind that these not meant to reflect actual performance, but rather meant to classify problems in terms of their worst-case difficulty as the input grows.  The fact that constant and lower-order factors are ignored also means that complexity differences may not become evident in real performance until inputs get very large.
 
 There are two aspects of complexity that are important to understand.  First, any particular problem has a lower bound on its complexity, such that no algorithm can perform better than this bound.  For example, finding the minimum of a list of numbers is $O(N)$, since finding the minimum requires looking at all of the numbers. Comparison-based sorting of a list, on the other hand, is $O(N log N)$, because it takes about $log_2 N$ splits of a list to get to the individual elements.  Second, while the problem defines the lower bound, different algorithms may scale differently with input size for the same problem.  For example, merge sort (which recursively splits lists into half and then interleaves them) achieves the lower bound of $O(N log N)$ since an $O(N)$ operation is required for each merge.  On the other hand, bubble sort, which repeatedly scans the list and swaps elements that are out of order, is $O(N^2)$ since each scan is $O(N)$ and it can take up to N scans, and thus fails to achieve optimal performance.
 
@@ -102,7 +102,7 @@ def find_duplicates_efficient(data):
 
 ```
 
-These functions look remarkably similar, so it wouldn't be obvious that one is much slower than the other unless we know the details of Python data structures.  We can use the `cProfile` package to profile these two functions (with some additional printing statements removed):
+These functions look remarkably similar, so it wouldn't be obvious that one is much slower than the other unless we know the details of Python data structures.  We can use the *cProfile* package to profile these two functions (with some additional printing statements removed):
 
 ```python
 import cProfile
@@ -145,7 +145,7 @@ Profiling duplicate finding with list (data_size=10000):
    Ordered by: cumulative time
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        1    0.308    0.308    0.310    0.310 /Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/profiling_example.py:72(find_duplicates_inefficient)
+        1    0.308    0.308    0.310    0.310 profiling_example.py:72(find_duplicates_inefficient)
     15000    0.001    0.000    0.001    0.000 {method 'append' of 'list' objects}
         1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
 
@@ -158,7 +158,7 @@ Profiling duplicate finding with set (data_size=10000):
    Ordered by: cumulative time
 
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
-        1    0.001    0.001    0.002    0.002 /Users/poldrack/Dropbox/code/BetterCodeBetterScience/bettercode/src/bettercode/profiling_example.py:92(find_duplicates_efficient)
+        1    0.001    0.001    0.002    0.002 profiling_example.py:92(find_duplicates_efficient)
     15000    0.001    0.000    0.001    0.000 {method 'add' of 'set' objects}
         1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
 ```
@@ -227,7 +227,7 @@ The results above also highlight the overhead that occurs with line profiling; w
 
 ### Memory profiling
 
-Memory usage is another potential issue that we can investigate using profiling.  This becomes a particularly important issue when we start thinking about implementation of many jobs on a high-performance computing system, as we will discuss in the next chapter; these systems often require that one specifies not only how many CPU cores one requires for the job, but also how much memory.  
+Memory usage is another potential issue that we can investigate using profiling.  This becomes a particularly important issue when we start thinking about implementation of many jobs at once on a high-performance computing system, as I will discuss in the next chapter; these systems often require that one specifies not only how many CPU cores one requires for the job, but also how much memory.  
 
 As an example we can look at the use of the `.copy()` method in NumPy.  It's generally good practice to copy a variable before making changes to it, since otherwise the changes may affect the original copied variable (since assignment will refer to the same memory location rather than creating a new object).  Here let's see the memory implications of overusage of the `.copy()` operation.  We will compare two functions, each of which computes the sum of squares for an array of random numbers; we use the `@profile` decorator from the `memory_profiler` package to perform memory profiling:
 
@@ -312,18 +312,25 @@ You can see that each creation of a copy resulted in a substantial growth in mem
 
 There is a caveat to this kind of memory profiling, which is that it is less exact than compute profiling due to its interaction with the Python memory management system, and due to the fact that it samples memory usage at specific points.  Python has a *garbage collector* that removes objects from memory, and sometimes it will do so in the middle of execution, leading to seemingly strange results.  For example, on line 29 of the "bad" version above, you can see that a copy was created but there was zero increment, which could reflect the fact that Python performed a garbage collection operation just before creation, or that the operation occurred so quickly that the memory profiler's sample missed it.
 
-#### Memory profiling in Pandas
+#### Memory profiling in *pandas*
 
-Pandas data frames can exhibit some surprising memory usage features, and memory profiling can often be useful to optimize pandas workflows.  `pandas` has a built-in memory profiling function for data frames, called `.memory_usage()`.  Here we will use this to see an example of a surprising memory usage feature.  We first create functions to generate a data frame with a number of string variables, and to analyze the memory footprint of the data frame. Note that it's important to use `deep=True` when using the memory analyzer, since otherwise it will only report the size of the pointers in memory and not the size of the actual data that are being pointed to:
+*pandas* data frames can exhibit some surprising memory usage features, and memory profiling can often be useful to optimize *pandas* workflows.  `pandas` has a built-in memory profiling function for data frames, called `.memory_usage()`.  Here we will use this to see an example of a surprising memory usage feature.  We first create functions to generate a data frame with a number of string variables, and to analyze the memory footprint of the data frame. Note that it's important to use `deep=True` when using the memory analyzer, since otherwise it will only report the size of the pointers in memory and not the size of the actual data that are being pointed to:
 
 ```python
 def create_sample_data(n_rows=100000):
     data = {
         'subject_id': range(n_rows),
-        'condition': np.random.choice(['Control', 'Treatment_A', 'Treatment_B'], n_rows),
-        'gender': np.random.choice(['Male', 'Female'], n_rows),
-        'site': np.random.choice(['Site_Boston', 'Site_London', 'Site_Tokyo', 'Site_Sydney'], n_rows),
-        'diagnosis': np.random.choice(['Healthy', 'Patient'], n_rows)
+        'condition': np.random.choice(
+            ['Control', 'Treatment_A', 'Treatment_B'],
+            n_rows),
+        'gender': np.random.choice(
+            ['Male', 'Female'], n_rows),
+        'site': np.random.choice(
+            ['Site_Boston', 'Site_London', 
+            'Site_Tokyo', 'Site_Sydney'],
+            n_rows),
+        'diagnosis': np.random.choice(
+            ['Healthy', 'Patient'], n_rows)
     }
     
     return pd.DataFrame(data)
@@ -381,7 +388,7 @@ Memory usage per column:
 Total memory usage: 1.15 MB
 ```
 
-This simple change led to almost 95% in reduction in the memory footprint of the data frame, due to the fact that pandas uses a compact representation for categorical data types.  This provides an example of how memory profiling, combined with knowledge of how the relevant packages work with the data, can lead to massive improvements in memory footprint.  
+This simple change led to almost 95% in reduction in the memory footprint of the data frame, due to the fact that *pandas* uses a compact representation for categorical data types.  This provides an example of how memory profiling, combined with knowledge of how the relevant packages work with the data, can lead to massive improvements in memory footprint.  
 
 
 ## Common sources of slow code execution
@@ -390,7 +397,7 @@ Now we turn to the various causes of slow code execution and how to address them
 
 ### Slow algorithm
 
-A common source of slow execution is use of an inefficient algorithm.  Let's reuse our earlier example of finding duplicate elements within a list.  A simple way to implement this could be perform nested loops to compare each item to each other.  This has computational complexity of $O(N^2)$.  In this example we will use the `%timeit` function with the Jupyter notebook, which repeats the function multiple times in order to get a more precise estimate of execution time:
+A common source of slow execution is use of an inefficient algorithm.  Let's reuse our earlier example of finding duplicate elements within a list.  A simple way to implement this could be perform nested loops to compare each item to each other.  This has computational complexity of $O(N^2)$.  In this example we will use the `%timeit` function with the *Jupyter* notebook, which repeats the function multiple times in order to get a more precise estimate of execution time:
 
 ```python
 import random
@@ -450,12 +457,12 @@ def find_duplicates_counter(lst):
 That's about a 36% speedup, which is much less than we got moving from our poor algorithm to the better one, but it could be significant if working with big data, and it also makes for cleaner code.  In general, built-in functions will be faster than hand-written ones as well as being better-tested, so it's always a good idea to use an existing solution if it exists.  Fortunately AI assistants are quite good at recommending optimized versions of code, but should always be verified, since I have seen cases where supposedly "optimized" code turned out to be even slower than the original.
 
 
-### Slow operations in Pandas
+### Slow operations in *pandas*
 
-Many researchers use Pandas because of its powerful data manipulation methods, but some of its operations are notoriously slow.  Here we show an example of how incrementally inserting data into an existing data frame can be remarkably slower than using standard python objects and then converting them to a Pandas data frame in a single step:
+Many researchers use *pandas* because of its powerful data manipulation methods, but some of its operations are notoriously slow.  Here we show an example of how incrementally inserting data into an existing data frame can be remarkably slower than using standard python objects and then converting them to a *pandas* data frame in a single step:
 
 ```python
-import pandas as pd 
+import *pandas* as pd 
 import numpy as np
 import timeit
 
@@ -492,9 +499,9 @@ def fill_df_fast(random_data):
 255 μs ± 885 ns per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
 ```
 
-Again notice the difference in units between the two measurements.  This method gives us an almost 500X speedup!  The fundamental reason for this is that pandas data frames are not meant to serve as dynamic objects.  Every time `.loc[i]` is called on a index value that doesn't exist, pandas may reallocate the entire data frame in memory to accommodate the new row. Since that allocation process scales with the input size, this turns an $O(N)$ operation into a potentially $O(N^2)$ operation.  
+Again notice the difference in units between the two measurements.  This method gives us an almost 500X speedup!  The fundamental reason for this is that *pandas* data frames are not meant to serve as dynamic objects.  Every time `.loc[i]` is called on a index value that doesn't exist, *pandas* may reallocate the entire data frame in memory to accommodate the new row. Since that allocation process scales with the input size, this turns an $O(N)$ operation into a potentially $O(N^2)$ operation.  
 
-We can make it even faster by directly passing the NumPy array into pandas:
+We can make it even faster by directly passing the *NumPy* array into pandas:
 
 ```python
 def fill_df_superfast(random_data):
@@ -508,24 +515,24 @@ def fill_df_superfast(random_data):
 18.7 μs ± 279 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
 ```
 
-This gives more than 10X speedup compared to the previous solution, and thus a staggering 6000X speedup over the original slow solution. In general, one should avoid any operations with data frames that involve looping, and instead use the built-in vectorized operations in pandas and NumPy.  It's also important to avoid building data frames incrementally, preferring instead to generate a list of Python dicts and then convert it into a data frame in one step. 
+This gives more than 10X speedup compared to the previous solution, and thus a staggering 6000X speedup over the original slow solution. In general, one should avoid any operations with data frames that involve looping, and instead use the built-in vectorized operations in *pandas* and NumPy.  It's also important to avoid building data frames incrementally, preferring instead to generate a list of Python dicts and then convert it into a data frame in one step. 
 
 ### Use of suboptimal object types
 
-Different types of objects in Python may perform better or worse for different types of operation, as we saw in the examples above.  As a further example of how data types can affect performance we can look at searching for an item within a list of items. We can compare five different ways of doing this, using the `in` operator with a Python list, a Python set, Pandas Series, or a NumPy array.  Here are the average execution times (in microseconds) for each of these searching over 1,000,000 values computed using `timeit`:
+Different types of objects in Python may perform better or worse for different types of operation, as we saw in the examples above.  As a further example of how data types can affect performance we can look at searching for an item within a list of items. We can compare five different ways of doing this, using the `in` operator with a Python list, a Python set, *pandas* Series, or a *NumPy* array.  Here are the average execution times (in microseconds) for each of these searching over 1,000,000 values computed using `timeit`:
 
 | Object types |      Integer |        String |
 |:-------------|-------------:|--------------:|
-| NumPy        |    97.6865   | 1336.09       |
-| Pandas       |    90.6406   | 5043.93       |
+| *NumPy*        |    97.6865   | 1336.09       |
+| *pandas*       |    90.6406   | 5043.93       |
 | List         |  2975.12     | 3531.51       |
 | Set          |     0.007625 |    0.00999999 |
 
-Here we see that there are major differences between data types.  Sets are by far the fastest, which is due to the fact that they use a hash table algorithm that has $O(1)$ complexity; the 7 nanoseconds for the set operation is basically the minimum time needed for Python to perform a single operation, requiring about 25 clock cycles on my 4 GHz CPU. Second, we see that NumPy/pandas are roughly 30 times faster than Python lists for integers; this likely reflects the fact that NumPy can load the entire dataset into contiguous memory, whereas the list requires a lookup and retrieval of the value from an unpredictable location in memory for each item.  Third, we see that strings are generally slower than integers, which reflects both the fact that the representation of strings is larger than the representation of integers and that comparing a string requires more operations than comparing integers. When timing matters, it's usually useful to do some prototype testing across different types of objects to find the most performant.  The million-fold difference between the performance of sets and other data types on this problem is a great example of how algorithmic complexity is the single most important factor we should consider when optimizing code.
+Here we see that there are major differences between data types.  Sets are by far the fastest, which is due to the fact that they use a hash table algorithm that has $O(1)$ complexity; the 7 nanoseconds for the set operation is basically the minimum time needed for Python to perform a single operation, requiring about 25 clock cycles on my 4 GHz CPU. Second, we see that *NumPy*/*pandas* are roughly 30 times faster than Python lists for integers; this likely reflects the fact that *NumPy* can load the entire dataset into contiguous memory, whereas the list requires a lookup and retrieval of the value from an unpredictable location in memory for each item.  Third, we see that strings are generally slower than integers, which reflects both the fact that the representation of strings is larger than the representation of integers and that comparing a string requires more operations than comparing integers. When timing matters, it's usually useful to do some prototype testing across different types of objects to find the most performant.  The million-fold difference between the performance of sets and other data types on this problem is a great example of how algorithmic complexity is the single most important factor we should consider when optimizing code.
 
 ### Unnecessary looping
 
-Any time one is working with NumPy or Pandas objects, the presence of a loop in the code should count as a bad smell.  These packages have highly optimized vectorized operations, so the use of loops will almost always be orders of magnitude slower.  For example, we can compute the dot product of two arrays using a list comprehension (which is effectively a loop):
+Any time one is working with *NumPy* or *pandas* objects, the presence of a loop in the code should count as a bad smell.  These packages have highly optimized vectorized operations, so the use of loops will almost always be orders of magnitude slower.  For example, we can compute the dot product of two arrays using a list comprehension (which is effectively a loop):
 
 ```python
 def dotprod_by_hand(a, b):
@@ -548,14 +555,14 @@ Compare this to the result using the built-in dot product operator in NumPy, whi
 609 ns ± 2.17 ns per loop (mean ± std. dev. of 7 runs, 1,000,000 loops each)
 ```
 
-The practice of replacing loops with functions that act on entire arrays at once is known as *vectorization*. NumPy achieves this speedup by handing the entire operation to a lower-level library, which in this case would be the BLAS (Basic Linear Algebra Subprograms) library.  This library uses highly-optimized code that can take advantage of CPU features like SIMD (Single Instruction, Multiple Data), which allows the CPU to apply a single operation (such as multiplication) to multiple data points simultaneously in a single clock cycle.  
+The practice of replacing loops with functions that act on entire arrays at once is known as *vectorization*. *NumPy* achieves this speedup by handing the entire operation to a lower-level library, which in this case would be the BLAS (Basic Linear Algebra Subprograms) library.  This library uses highly-optimized code that can take advantage of CPU features like SIMD (Single Instruction, Multiple Data), which allows the CPU to apply a single operation (such as multiplication) to multiple data points simultaneously in a single clock cycle.  
 
 In addition to optimizing performance, vectorized calls often also make the code more readable, as loops can often make for unwieldy code that is difficult to read.
 
 
 ### Suboptimal API usage
 
-When using a web API to obtain data, the proper use of the API is important to avoid suboptimal performance.  As an example we will use the `Bio.Entrez` module from the `Biopython` package, which enables the programmatic searching and downloading of abstracts from the PubMed database.  We first use the API to obtain the PubMed IDs for the 100 most recent publications for a particular search term (see [REF] for the full example):
+When using a web API to obtain data, the proper use of the API is important to avoid suboptimal performance.  As an example we will use the `Bio.Entrez` module from the `Biopython` package, which enables the programmatic searching and downloading of abstracts from the PubMed database.  We first use the API to obtain the PubMed IDs for the 100 most recent publications for a particular search term (see [here] for the full example):
 
 ```python
 import time
@@ -588,7 +595,7 @@ This gives us a list of 100 pubmed IDs that we want to retrieve.  An obvious way
         time.sleep(0.1)
 ```
 
-Note that we need to put a `time.sleep()` command to insert a small delay in between API calls; this is generally good practice whenever one repeatedly accesses an API, as many of them have rate-limiting features that can result in refused requests if the traffic is too heavy.  We could alternatively request the abstracts using the batch feature of the `Entrez.efetch` function:
+Note that we need to put a `time.sleep()` command to insert a small delay in between API calls; this is generally good practice whenever one repeatedly accesses an API, as many of them have rate-limiting features that can result in refused requests if the traffic is too heavy.  We could alternatively request the abstracts using the batch feature of the `Entrez.efetch` function by passing the entire list of PubMed IDs:
 
 ```python
     # Fetch all records at once
@@ -631,27 +638,27 @@ Input/output speed can sometimes vary greatly depending on how the files are sav
 - Small chunks (1 x 64 x 64)
 - Tiny chunks (1 x 32 x 32)
 
-[#hdfchunking-fig] shows the loading times with each of these strategies for two different data access patterns. In one (framewise), we access a single one of the 1000 frames, whereas in the other (spatial access) pattern we extract data from a small region of interest across all frames.  This shows clearly how these two factors interact; the framewise chunking strategy that is the fastest for framewise access becomes the slowest for spatial access.  In some cases (like the spatial access pattern) performance with chunked data may not be much better than unchunked, but leaving the data in a *contiguous* (unchunked) state has the drawback for HDF5 files that they cannot be compressed, so it's often common to use smaller chunks in order to obtain the advantage of compression.
+[](#hdfchunking-fig) shows the loading times with each of these strategies for two different data access patterns. In one (framewise), we access a single one of the 1000 frames, whereas in the other (spatial access) pattern we extract data from a small region of interest across all frames.  This shows clearly how these two factors interact; the framewise chunking strategy that is the fastest for framewise access becomes the slowest for spatial access.  In some cases (like the spatial access pattern) performance with chunked data may not be much better than unchunked, but leaving the data in a *contiguous* (unchunked) state has the drawback for HDF5 files that they cannot be compressed, so it's often common to use smaller chunks in order to obtain the advantage of compression.
 
 ```{figure} images/hdf5_chunking_performance.png
 :label: hdfchunking-fig
 :align: center
-:width: 700px
+:width: 800px
 
 A demonstration of the interaction between HDF5 chunking patterns and data access on performance.  Left panel shows performance of the five chunking strategies on reading a single individual frame, while the right panel show performance on accessing a small region of interest (64 x 64) across all frames.
 ```
 
 ## Dealing with large tabular data
 
-Performance optimization becomes critical when working with large datasets, particularly when the size of the data outstrips the memory capacity of one's computer.  I ran into this in an example that I was developing for this book, based on [data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) from the New York City Taxi and Limousine Commission. Their site shares data regarding individual taxi trips going back to 2009.  I decided to download data for the years 2015 through 2024 in order to generate a directed graph of taxi zones based on the number of trips between them.  These data comprised a total of over 752 million rides, which comprised about 11 GB of downloaded data (in heavily compressed parquet files).  However, when loaded into a pandas data frame, these data would require more than 200GB of RAM, well beyond the 128GB of RAM on my laptop.   
+Performance optimization becomes critical when working with large datasets, particularly when the size of the data outstrips the memory capacity of one's computer.  I ran into this in an example that I was developing for this book, based on [data](https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page) from the New York City Taxi and Limousine Commission. Their site shares data regarding individual taxi trips going back to 2009.  I decided to download data for the years 2015 through 2024 in order to generate a directed graph of taxi zones based on the number of trips between them.  These data comprised a total of over 752 million rides, with about 11 GB of downloaded data (in heavily compressed parquet files).  However, when loaded into a *pandas* data frame, these data would require more than 200GB of RAM, well beyond the 128GB of RAM on my laptop.   
 
-The key to achieving such an analysis is to ensure that the code never tries to load the entire dataset at once.  Here I will demonstrate two strategies, one using DuckDB and one using the Polars package.
+The key to achieving such an analysis is to ensure that the code never tries to load the entire dataset at once.  Here I will demonstrate two strategies, one using *DuckDB* and one using the *Polars* package.
 
-### Large analyses with DuckDB
+### Large analyses with *DuckDB*
 
-[DuckDB](https://duckdb.org/) is a database system that is built for analytic processing on columnar data. Unlike some other databases that require a separate server, DuckDB is an *in-process* database, meaning that it can run within a Python job and does not require any additional server software.  While it's possible to save the contents of the database to a file for repeated use, in this example we will rely solely on DuckDB's in-process analytic abilities.
+[*DuckDB*](https://duckdb.org/) is a database system that is built for analytic processing on columnar data. Unlike some other databases that require a separate server, *DuckDB* is an *in-process* database, meaning that it can run within a Python job and does not require any additional server software.  While it's possible to save the contents of the database to a file for repeated use, in this example we will rely solely on *DuckDB*'s in-process analytic abilities.
 
-DuckDB analyses must be written as SQL queries. In the following code I show the query that I was able to use to extract the number of trips to and from each taxi zone in every month/year contained in my files.  SQL is one of those things that I have never spent the time to get my head around, but fortunately coding agents are very good at generating SQL queries:
+*DuckDB* analyses must be written as SQL queries. In the following code I show the query that I was able to use to extract the number of trips to and from each taxi zone in every month/year contained in my files.  SQL is one of those things that I have never spent the time to get my head around, but fortunately coding agents are very good at generating SQL queries:
 
 ```python
 import duckdb
@@ -677,15 +684,15 @@ ORDER BY year, month, pickup_location_id, dropoff_location_id
 duckdb_results = duckdb.query(query).df()
 end_time = time.time()
 
-print(f"DuckDB analysis completed in {end_time - start_time:.2f} seconds")
+print(f"*DuckDB* analysis completed in {end_time - start_time:.2f} seconds")
 print(f"Total route-month combinations: {len(duckdb_results):,}")
 ```
 ```
-DuckDB analysis completed in 2.31 seconds
+*DuckDB* analysis completed in 2.31 seconds
 Total route-month combinations: 3,339,788
 ```
 
-This call was able to extract data from 120 parquet files and summarize them in just over 2 seconds.  This is blazingly fast; for comparison, loading all of the files individually took over 130 seconds!  DuckDB achieves this performance via several mechanisms:
+This call was able to extract data from 120 parquet files and summarize them in just over 2 seconds.  This is blazingly fast; for comparison, loading all of the files individually took over 130 seconds!  *DuckDB* achieves this performance via several mechanisms:
 
 - It uses *lazy execution* - that only performs operations when they are needed, and it uses the entire query to develop an execution plan that is optimized for the specific problem.
 - It only loads the columns that are needed for the computation (which is a function afforded by Parquet files).
@@ -695,7 +702,7 @@ This call was able to extract data from 120 parquet files and summarize them in 
 
 ### Large analyses with Polars
 
-[Polars](https://pola.rs/) is a Python package that is meant to bring high performance to analyses with data frames. While it's not exactly a plug-in replacement for Pandas, it's similar enough that one can adapt Pandas-based workflows with relatively little effort.  Here is an example of the same analysis as above, implemented in Polars. You can see that the structure of the Polars method chain follows very closely the structure of the SQL query in the DuckDB analysis:
+[*Polars*](https://pola.rs/) is a Python package that is meant to bring high performance to analyses with data frames. While it's not exactly a plug-in replacement for *pandas*, it's similar enough that one can adapt *pandas*-based workflows with relatively little effort.  Here is an example of the same analysis as above, implemented in Polars. You can see that the structure of the *Polars* method chain follows very closely the structure of the SQL query in the *DuckDB* analysis:
 
 ```python
 import polars as pl
@@ -743,9 +750,9 @@ Polars analysis completed in 3.42 seconds
 Total route-month combinations: 3,339,788
 ```
 
-Polar completed in less than four seconds, which is somewhat slower than DuckDB but still well within the range of acceptable performance for analysis of such a huge dataset. Note that the use of `engine="streaming"` for the `collect` step is critical here; without it, Polars would default to an in-memory process that woiuld likely have crashed just like Pandas.  
+Polar completed in less than four seconds, which is somewhat slower than *DuckDB* but still well within the range of acceptable performance for analysis of such a huge dataset. Note that the use of `engine="streaming"` for the `collect` step is critical here; without it, *Polars* would default to an in-memory process that would likely have crashed just like *pandas*.  
 
-Both DuckDB and Polars perform well at analyses of large tabular datasets. One reason to choose one versus the other may come down to one's preference for writing SQL queries versus pure Python method chains.  There are also some specific features where one package outshines the other; for example, Polars has better features for timeseries analysis, whereas DuckDB is better at complex joins between tables.  It's also easy to mix and match them, such as using DuckDB to perform an initial aggregation across files and then using Polars for subsequent transformations.
+Both *DuckDB* and *Polars* perform well at analyses of large tabular datasets. One reason to choose one versus the other may come down to one's preference for writing SQL queries versus pure Python method chains.  There are also some specific features where one package outshines the other; for example, *Polars* has better features for timeseries analysis, whereas *DuckDB* is better at complex joins between tables.  It's also easy to mix and match them, such as using *DuckDB* to perform an initial aggregation across files and then using *Polars* for subsequent transformations.
 
 ## Interpreted versus compiled functions
 
@@ -806,7 +813,7 @@ if __name__ == "__main__":
     main()
 ```
 
-Note that we implemented our own random number generator so that the algorithm would be identical to the one used in the Rust code Running this from the command line, we get the following output:
+Note that we implemented our own random number generator so that the algorithm would be identical to the one used in the Rust code. Running this from the command line, we get the following output:
 
 ```
 Average time (Python): 0.1053 seconds
@@ -879,7 +886,7 @@ which gives the following output:
 Average time (Rust): 0.0010 seconds
 ```
 
-The compiled code has a roughly 95X speedup compared to the pure Python code!  We can make python faster for this problem by using NumPy, which uses compiled code to optimize many of its operations, by replacing the primary function:
+The compiled code has a roughly 95X speedup compared to the pure Python code!  We can make Python faster for this problem by using NumPy, which uses compiled code to optimize many of its operations, by replacing the primary function:
 
 ```python
 def sum_of_squares(n: int, seed: int) -> float:
@@ -895,7 +902,7 @@ Average time (NumPy): 0.0029 seconds
 
 #### Just-in-time compilation
 
-For many Python operations we can take advantage of something called "just-in-time" (JIT) compilation, in which we optimize particular parts of the code so that they are pre-compiled rather than interpreted.  This is particularly helpful when running code that involves lots of repeated operations (such as loops) where the types are consistent and predictable.  It will not help speed up code that is bottlenecked by I/O, that already uses libraries that are vectorized (like NumPy), or that have unpredictable dynamic data types.  
+For many Python operations we can take advantage of something called "just-in-time" (JIT) compilation, in which we optimize particular parts of the code so that they are pre-compiled rather than interpreted.  This is particularly helpful when running code that involves lots of repeated operations (such as loops) where the types are consistent and predictable.  It will not help speed up code that is bottlenecked by I/O, that already uses libraries that are vectorized (like NumPy), or that has unpredictable dynamic data types.  
 
 There are several tools for JIT compilation in Python; here I will focus on the [Numba](https://numba.pydata.org/) package, but the [JAX](https://docs.jax.dev/en/latest/index.html) package is also popular.  With numba, JIT compilation is as simple as adding a `@jit` decorator to the function:
 
@@ -906,7 +913,7 @@ def sum_of_squares_python(n):
         total += i ** 2
     return total
 
-# Numba JIT compiled version
+# *Numba* JIT compiled version
 @jit(nopython=True)
 def sum_of_squares_numba(n):
     total = 0.0  # Use float to match Python version
@@ -914,13 +921,13 @@ def sum_of_squares_numba(n):
         total += i ** 2
     return total
 
-# NumPy vectorized version
+# *NumPy* vectorized version
 def sum_of_squares_numpy(n):
     return np.sum(np.arange(n, dtype=np.float64) ** 2)
 
 ```
 
-Comparing the performance of these two functions with ten million values, we see that the JIT-compiled version is about 60X faster than the pure Python version, while the NumPy version is about 45X faster than the pure Python version; thus, in this case Numba gives a substantially better speedup than NumPy's compiled functions. Note the `nopython=True` setting in the `@jit()` decorator. (which is equivalent to the more idiomatic `@njit()`).  This maximizes the possible performance improvement by completely avoiding use of the Python interpreter for that function.  When it can be used this can provide much better speedup, but there are a number of Python features that cannot be used in this mode, including common data types (lists, dicts, and sets), many string operations, file input/output, and many other standard or custom Python functions.  However, in those cases we can still use `@jit(nopython=False)` to get some degree of speedup.  Here is an example using lists, which don't work with `nopython` mode:
+Comparing the performance of these two functions with ten million values, we see that the JIT-compiled version is about 60X faster than the pure Python version, while the *NumPy* version is about 45X faster than the pure Python version; thus, in this case *Numba* gives a substantially better speedup than NumPy's compiled functions. Note the `nopython=True` setting in the `@jit()` decorator. (which is equivalent to the more idiomatic `@njit()`).  This maximizes the possible performance improvement by completely avoiding use of the Python interpreter for that function.  When it can be used this can provide much better speedup, but there are a number of Python features that cannot be used in this mode, including common data types (lists, dicts, and sets), many string operations, file input/output, and many other standard or custom Python functions.  However, in those cases we can still use `@jit(nopython=False)` to get some degree of speedup.  Here is an example using lists, which don't work with `nopython` mode:
 
 ```python
 # Pure Python version with list
@@ -930,7 +937,7 @@ def sum_of_squares_python_list(n):
         values.append(i ** 2)
     return sum(values)
 
-# Numba object mode with list
+# *Numba* object mode with list
 @jit(nopython=False)
 def sum_of_squares_numba_object(n):
     values = [] 
@@ -940,7 +947,7 @@ def sum_of_squares_numba_object(n):
 
 ```
 
-Comparing these, we see that the numba-optimized version is still more than 12X faster than the non-optimized version, though this kind of speedup doesn't always happen.  Any time one uses a function that is executed repeatedly, it's worth testing out Numba to see if it can improve performance.  It's important to note that JIT compilation is not free, and it can take substantial time the first time the function is executed in order to do the compilation. For this reason, JIT compilation is most useful for functions that are executed many times.  This is why my benchmark code included a "warm-up" call to the function prior to the actual benchmarking, so 
+Comparing these, we see that the numba-optimized version is still more than 12X faster than the non-optimized version, though this kind of speedup doesn't always happen.  Any time one uses a function that is executed repeatedly, it's worth testing out *Numba* to see if it can improve performance.  It's important to note that JIT compilation is not free, and it can take substantial time the first time the function is executed in order to do the compilation. For this reason, JIT compilation is most useful for functions that are executed many times.  This is why my benchmark code included a "warm-up" call to the function prior to the actual benchmarking, so 
 
 
 ## Using Einstein summation notation
@@ -957,7 +964,7 @@ Using einsum notation it is simple to express this:
 C = np.einsum('ij,jk->ik', A, B)
 ```
 
-where $i$, $j$, and $k$ refer to the axes and $A$ and $B$ refer to the two arrays.  This becomes particularly powerful with complex operations over multidimensional arrays (often called *tensors*), which is why einsum has become essential to coding of deep neural networks, which involve exactly these kinds of complex matrix multiplications.  Here is an example of a complex matrix multiplication implemented using standard NumPy operations and einsum notation:
+where $i$, $j$, and $k$ refer to the axes and $A$ and $B$ refer to the two arrays.  This becomes particularly powerful with complex operations over multidimensional arrays (often called *tensors*), which is why einsum has become essential to coding of deep neural networks, which involve exactly these kinds of complex matrix multiplications.  Here is an example of a complex matrix multiplication implemented using standard *NumPy* operations and einsum notation:
 
 ```python
 # Without einsum: confusing chain of operations
@@ -967,7 +974,7 @@ result = np.sum(A[:, :, np.newaxis] * B[np.newaxis, :, :] * C[:, np.newaxis, :],
 result = np.einsum('ij,jk,ik->ik', A, B, C)
 ```
 
-While clarity of the code is an important reason to use einsum, it can also provide significant performance gains in some cases.  For many basic matrix operations such as simple matrix multiplication, einsum may be slower than standard NumPy operations, but in some cases they can speed things massively.  For example, here are implementations of summing the outer product of two matrices using either standard NumPy functions or einsum notation:
+While clarity of the code is an important reason to use einsum, it can also provide significant performance gains in some cases.  For many basic matrix operations such as simple matrix multiplication, einsum may be slower than standard *NumPy* operations, but in some cases they can speed things massively.  For example, here are implementations of summing the outer product of two matrices using either standard *NumPy* functions or einsum notation:
 
 ```python
 a = np.random.rand(1000)
@@ -977,7 +984,7 @@ opsum_numpy = np.outer(a, b).sum()
 opsum_einsum = np.einsum('i,j->', a, b)
 ```
 
-Benchmarking these two functions we see that the einsum implementation is about 15 times faster than the NumPy implementation, because it avoids the intermediate array operations used in the NumPy version. This is a case where the speed with which information can be transferred to/from memory (known as *memory bandwidth*) can become an important determinant of performance.  I would suggest doing some benchmarking with einsum tools whenever one is doing extensive work with matrices.  Always be sure to turn on optimization, either using the `optimize=True` flag in NumPy or using the [opt_einsum](https://optimized-einsum.readthedocs.io/en/stable/) package; these tools will find the optimal order of matrix contraction, which can sometimes have massive performance implications.
+Benchmarking these two functions we see that the einsum implementation is about 15 times faster than the *NumPy* implementation, because it avoids the intermediate array operations used in the *NumPy* version. This is a case where the speed with which information can be transferred to/from memory (known as *memory bandwidth*) can become an important determinant of performance.  I would suggest doing some benchmarking with einsum tools whenever one is doing extensive work with matrices.  Always be sure to turn on optimization, either using the `optimize=True` flag in *NumPy* or using the [opt_einsum](https://optimized-einsum.readthedocs.io/en/stable/) package; these tools will find the optimal order of matrix contraction, which can sometimes have massive performance implications.
 
 ## A brief introduction to parallelism and multithreading
 
@@ -987,11 +994,11 @@ An important distinction must be made between *cores* and *threads*.  A core is 
 
 ### Levels of parallelization
 
-There are different levels of parallelization, which vary in the ease with which they can be implemented and the potential speedup that they offer. The simplest is *implicit parallelization*.  If you have used NumPy you have already probably taken advantage of this.  Packages like NumPy are linked against high-performance math packages (like OpenBLAS, Apple's Accelerate, or Intel's MKL), which allow the execution of certain processes (particularly matrix operations) using multiple threads/cores.  In addition, NumPy takes advantage of the Single Instruction Multiple Data (SIMD) vector processing unit to apply the same operation across multiple data points within a single core.
+There are different levels of parallelization, which vary in the ease with which they can be implemented and the potential speedup that they offer. The simplest is *implicit parallelization*.  If you have used *NumPy* you have already probably taken advantage of this.  Packages like *NumPy* are linked against high-performance math packages (like OpenBLAS, Apple's Accelerate, or Intel's MKL), which allow the execution of certain processes (particularly matrix operations) using multiple threads/cores.  In addition, *NumPy* takes advantage of the Single Instruction Multiple Data (SIMD) vector processing unit to apply the same operation across multiple data points within a single core.
 
-Whereas implicit parallelization requires no changes to one's code, parallel processing generally involves the use of specific libraries that can run processes in parallel.  With regard to parallel processing in Python, there is an elephant in the room, known as the *Global Interpreter Lock* (GIL). This is a language "feature" (or "bug", depending on one's point of view) that prevents execution of Python code by more than one thread/core simultaneously.  This was a design decision made early in the development of Python to simplify memory management (by preventing multiple threads from changing the same locations in memory simultaneously), before multi-core systems had become the norm.  Packages like NumPy are able to release the GIL when calling functions implemented in compiled languages, and the GIL can also be unlocked during I/O, but the GIL prevents concurrent execution of pure Python code across multiple cores.  
+Whereas implicit parallelization requires no changes to one's code, parallel processing generally involves the use of specific libraries that can run processes in parallel.  With regard to parallel processing in Python, there is an elephant in the room, known as the *Global Interpreter Lock* (GIL). This is a language "feature" (or "bug", depending on one's point of view) that prevents execution of Python code by more than one thread/core simultaneously.  This was a design decision made early in the development of Python to simplify memory management (by preventing multiple threads from changing the same locations in memory simultaneously), before multi-core systems had become the norm.  Packages like *NumPy* are able to release the GIL when calling functions implemented in compiled languages, and the GIL can also be unlocked during I/O, but the GIL prevents concurrent execution of pure Python code across multiple cores.  
 
-There have been numerous attempts to overcome the single-thread limitation over time, but [PEP 703](https://peps.python.org/pep-0703/), which was accepted in 2023, reflects a commitment by the Python developers to make the GIL optional, which would greatly enhance the ability to parallelize Python processes.  Since Python 3.13 it has been possible to disable the GIL, and NumPy has experimental support for free-threaded Python as of version 2.1. I am not going to go into details about the GIL here, given that it will likely become a non-issue in coming years.  This will also be an interesting test for AI coding agents, which rely heavily upon older code; it's an open question as to how well and how quickly they will be able to adapt to major changes in Python programming patterns.
+There have been numerous attempts to overcome the single-thread limitation over time, but [PEP 703](https://peps.python.org/pep-0703/), which was accepted in 2023, reflects a commitment by the Python developers to make the GIL optional, which would greatly enhance the ability to parallelize Python processes.  Since Python 3.13 it has been possible to disable the GIL, and *NumPy* has experimental support for free-threaded Python as of version 2.1. I am not going to go into details about the GIL here, given that it will likely become a non-issue in coming years.  This will also be an interesting test for AI coding agents, which rely heavily upon older code; it's an open question as to how well and how quickly they will be able to adapt to major changes in Python programming patterns.
 
 
 ### Parallelization: When is the juice worth the squeeze?
@@ -1130,7 +1137,7 @@ def run_serial(grid_size):
     return result, elapsed_time
 ```
 
-[](#parallel-fig) shows the results for these simulations using a range of image sizes. We see a couple of interesting phenomena here.  First, the effectiveness of parallelization scales with the computational intensity of the problem, which is defined here by the number of pixels to be tested.  With small data, the parallel implementation actually performs *worse* than the serial implementation, due to the overhead related to parallelization as well as possible throttling of the CPU speed due to heat generation.  As the image size increases, the impact of parallelization increases.  Second, we see that adding more cores does not linearly improve performance.  This is clearest from the plot showing the parallel processing efficiency for each number of CPUs, which shows that efficiency (defined as the ratio of actual time to what would be expected if performance improved linearly with the number of cores) reaches almost 100% for 2 cores, but each increase in cores gives diminshing returns, such that 14 cores only gives about 60% improvement, again due to the overhead needed for parallelization.  
+[](#scaling-fig) shows the results for these simulations using a range of image sizes. We see a couple of interesting phenomena here.  First, the effectiveness of parallelization scales with the computational intensity of the problem, which is defined here by the number of pixels to be tested.  With small data, the parallel implementation actually performs *worse* than the serial implementation, due to the overhead related to parallelization as well as possible throttling of the CPU speed due to heat generation.  As the image size increases, the impact of parallelization increases.  Second, we see that adding more cores does not linearly improve performance.  This is clearest from the plot showing the parallel processing efficiency for each number of CPUs, which shows that efficiency (defined as the ratio of actual time to what would be expected if performance improved linearly with the number of cores) reaches almost 100% for 2 cores, but each increase in cores gives diminshing returns, such that 14 cores only gives about 60% improvement, again due to the overhead needed for parallelization.  
 
 ```{figure} images/mandelbrot_scaling_cf10.png
 :label: scaling-fig
@@ -1152,9 +1159,9 @@ A simulation of the effect of data chunking on parallel performance.  The Mandel
 
 ## Parallel workflows using Dask
 
-For workflows built around NumPy/Pandas, the [Dask](https://docs.dask.org/en/stable/index.html) package is an attractive tool for parallelization.  Earlier in the chapter I discussed how we can use DuckDB or Polars to execute workflows on large datasets, but those workflows were limited to ones that could be implemented as an SQL query (for DuckDB) or in the Polars API.  What if we want to run custom Python code in parallel on data that are too large for our RAM?  This is where Dask shines.  Here I will focus on the use of Dask on a single system, but Dask also supports distributed computing across multiple CPUs, which I will discuss further in the later chapter on high-performance computing.
+For workflows built around *NumPy*/*pandas*, the [*Dask*](https://docs.dask.org/en/stable/index.html) package is an attractive tool for parallelization.  Earlier in the chapter I discussed how we can use *DuckDB* or *Polars* to execute workflows on large datasets, but those workflows were limited to ones that could be implemented as an SQL query (for *DuckDB*) or in the *Polars* API.  What if we want to run custom Python code in parallel on data that are too large for our RAM?  This is where *Dask* shines.  Here I will focus on the use of *Dask* on a single system, but *Dask* also supports distributed computing across multiple CPUs, which I will discuss further in the later chapter on high-performance computing.
 
-Here is an example of using Dask to compute the mean trip distance across all pickup locations in the NYC Taxi dataset; this is a simple computation that doesn't need Dask, but it allows for comparison with Polars.  First we need to determine how many threads we can safely use, which I cap at 8 (out of the 16 total on my machine):
+Here is an example of using *Dask* to compute the mean trip distance across all pickup locations in the NYC Taxi dataset; this is a simple computation that doesn't need Dask, but it allows for comparison with Polars.  First we need to determine how many threads we can safely use, which I cap at 8 (out of the 16 total on my machine):
 
 ```python
 import dask
@@ -1205,13 +1212,13 @@ Single-threaded:         16.77 seconds
 Speedup: 4.12x
 ```
 
-I also implemented the same computation using Polars, which completed in 3.98 seconds, basically equivalent to Dask's performance in parallel mode.  Because Dask shines with custom computations, I implemented a more complex computation on the NYC Taxi dataset: computing the bootstrap confidence intervals for the number of daily trips for each of the 262 taxi zones across the entire dataset.  This took quite a bit of effort to get it working (with numerous failed attempts by Claude Code), but it finally [worked](dask_parallel_example.py), completing the bootstrap estimation problem in less than four seconds.  The speed with which one can do this kind of computation on a dataset that wouldn't even fit in memory shows the power of Dask for data science applications.
+I also implemented the same computation using Polars, which completed in 3.98 seconds, basically equivalent to Dask's performance in parallel mode.  Because *Dask* shines with custom computations, I implemented a more complex computation on the NYC Taxi dataset: computing the bootstrap confidence intervals for the number of daily trips for each of the 262 taxi zones across the entire dataset.  This took quite a bit of effort to get it working (with numerous failed attempts by Claude Code), but it finally [worked](dask_parallel_example.py), completing the bootstrap estimation problem in less than four seconds.  The speed with which one can do this kind of computation on a dataset that wouldn't even fit in memory shows the power of *Dask* for data science applications.
 
 ## GPU acceleration
 
-The graphics processing unit (GPU) is a specific component in a computer that was initially designed to perform a particular kind of computation that is involved in computer graphics.  Unlike the CPU, which is optimized to perform a single stream of computations very quickly (i.e. low latency), the GPU is optimized to perform a large number of operations in parallel (i.e. high throughput), since many operations in graphics rendering (such as transformations or shading) involve applying the same operations across many pixels at once.  Researchers in the 2000s began to realize that GPUs could be used for computations beyond graphics, though in the early days one had to disguise the computations as graphical computations in order to run them on the GPU hardware.  This changed with the release of the CUDA platform by NVIDIA (a major manufacturer of GPUs) in 2006, which allowed researchers to more easily perform general-purpose computations directly on the GPU.  GPU computation is one of the main reasons why deep neural networks (particularly large language models) have become so powerful, reflected in the fact that in 2026 NVIDIA had the highest market capitalization of any company in the world.
+The graphics processing unit (GPU) is a specific component in a computer that was initially designed to perform a particular kind of computation that is involved in computer graphics.  Unlike the CPU, which is optimized to perform a single stream of computations very quickly (i.e. low latency), the GPU is optimized to perform a large number of operations in parallel (i.e. high throughput), since many operations in graphics rendering (such as transformations or shading) involve applying the same operations across many pixels at once.  Researchers in the 2000s began to realize that GPUs could be used for computations beyond graphics, though in the early days one had to disguise the computations as graphical computations in order to run them on the GPU hardware.  This changed with the release of the CUDA platform by NVIDIA (a major manufacturer of GPUs) in 2006, which allowed researchers to more easily perform general-purpose computations directly on the GPU.  GPU computation is one of the main reasons why deep neural networks (particularly large language models) have become so powerful, reflected in the fact that in January 2026 NVIDIA had the highest market capitalization of any company in the world.
 
-GPU computation excels on problems where one needs to perform many mathematically-intensive operations in parallel, and feedforward artificial neural networks (ANNs) are a perfect example of such a computation.  Each forward pass of an ANN involves many consecutive matrix multiplications, followed by adjustment of the weights in each layer based on the loss (achieved using automated differentiation).  To see the impact of GPU acceleration let's train a simple neural network model, using the PyTorch package that I introduced in the earlier discussion on automatic differentiation. We first generate a dataset with 500,000 examples from 25 categories each with 784 features, and then train a neural network with four hidden layers to perform this, using either the CPU or GPU; in this case I used a relatively inexpensive NVIDIA graphics card, so we use the CUDA framework for GPU acceleration.  I generated [this code](pytorch_gpu_acceleration.py) using Claude, and upon examining the code noticed that it seemed to be doing something suboptimal, as seen in this snippet from the model training loop:
+GPU computation excels on problems where one needs to perform many mathematically-intensive operations in parallel, and feedforward artificial neural networks (ANNs) are a perfect example of such a computation.  Each forward pass of an ANN involves many consecutive matrix multiplications, followed by adjustment of the weights in each layer based on the loss (achieved using automated differentiation).  To see the impact of GPU acceleration let's train a simple neural network model, using the *PyTorch* package that I introduced in the earlier discussion on automatic differentiation. We first generate a dataset with 500,000 examples from 25 categories each with 784 features, and then train a neural network with four hidden layers to perform this, using either the CPU or GPU; in this case I used a relatively inexpensive NVIDIA graphics card, so we use the CUDA framework for GPU acceleration.  I generated [this code](pytorch_gpu_acceleration.py) using Claude, and upon examining the code noticed that it seemed to be doing something suboptimal, as seen in this snippet from the model training loop:
 
 ```python
 ...

@@ -30,7 +30,7 @@ The high-performance storage on an HPC system is generally referred to as *scrat
 
 #### High-capacity storage
 
-Most HPC systems have a storage system that is meant for longer-term storage of large data, often with many petabytes of capacity.  This is where one would store data that are meant to persist for the duration of a project, which could last months or years. On most systems this storage is not backed up, but as I discussed in the chapter on Data Management, they  generally backed by a system that has redundant storage, making data loss possible but unlikely.  These systems are usually mounted on the compute nodes, so that it is possible to write to them directly from a compute job, but the performance of these systems will usually be lower than the scratch system.  Jobs that need to write large amounts of data should thus usually write to scratch, and then transfer the necessary data to high-capacity storage for safe keeping.
+Most HPC systems have a storage system that is meant for longer-term storage of large data, often with many petabytes of capacity.  This is where one would store data that are meant to persist for the duration of a project, which could last months or years. On most systems this storage is not backed up, but as I discussed in the chapter on Data Management, they  generally stored on a system that has redundant storage, making data loss possible but unlikely.  These systems are usually mounted on the compute nodes, so that it is possible to write to them directly from a compute job, but the performance of these systems will usually be lower than the scratch system.  Jobs that need to write large amounts of data should thus usually write to scratch, and then transfer the necessary data to high-capacity storage for safe keeping.
 
 One important thing to know about both scratch and high-capacity systems is that they generally have limits both on the amount of space that one has available and the number of files (often referred to as "inodes").  In addition, these systems usually have a metadata server that must be accessed for each file that is opened, and opening a large number of small files across many nodes can cause the system to hang for everyone.  It can thus be problematic to generate and work with many small files on these systems.  If your workflows involve many small files, it's worth considering whether they can be refactored to either use storage formats that can combine many files into a single one (like HDF5) or using a database system (such as an SQLite database, which stores information in a local file).  
 
@@ -53,16 +53,16 @@ Job schedulers generally use a *Fairshare* system to allocate resources to users
 
 ```
 $ sshare
-Account                    User  RawShares  NormShares    RawUsage  EffectvUsage  FairShare
--------------------- ---------- ---------- ----------- ----------- ------------- ----------
- russpold              russpold        100    0.033333        6533      0.000065   0.816451
+Account        User  RawShares  NormShares  RawUsage  EffectvUsage  FairShare
+---------- --------- ---------- ----------- --------- ------------- ----------
+ russpold  russpold        100    0.033333      6533      0.000065   0.816451
 ```
 
 The important number here is the "FairShare" value of 0.81. This is a value that ranges from 1 (lowest usage, highest priority) to zero (very high usage, lowest priority), with 0.5 representing having used one's "fair share", with neutral priority.  In order to protect one's FairShare score, it can be useful to spread jobs out over time.  If you end up with a low score, it should improve after a few days with low usage.
 
 ### Anatomy of a batch job
 
-A batch job is defined by a *batch file*, which has a specific format depending on the scheduler; I will focus here on the Slurm format.  Here is the first part of a Slurm file that runs a single python program:
+A batch job is defined by a *batch file*, which has a specific format depending on the scheduler; I will focus here on the Slurm format.  Here is the first part of a Slurm file that runs a single Python program:
 
 ```bash
 #!/bin/bash
@@ -81,7 +81,7 @@ A batch job is defined by a *batch file*, which has a specific format depending 
 #SBATCH -e pyjob-%j.err
 ```
 
-Note the Bash directive at the top of the file; a Slurm script is simplly a Bash script that includes some *directives* (the lines starting with `#SBATCH`) for Slurm to use in creating the job request:
+Note the Bash directive at the top of the file; a Slurm script is simply a Bash script that includes some *directives* (the lines starting with `#SBATCH`) for Slurm to use in creating the job request:
 
 - `--partition=normal`: the partition (or queue) that the job should be run in, in this case using the queue called *normal*
 - `--nnodes=1`: minimum number of nodes requested
@@ -114,7 +114,7 @@ srun --ntasks=1 --nodes=1 --cpus-per-task=1 python3 fibnumber.py -i 1000003 &
 srun --ntasks=1 --nodes=1 --cpus-per-task=1 python3 fibnumber.py -i 1000004 &
 
 # 3. THE "WAIT" COMMAND
-# Without this, the script finishes immediately, and Slurm kills your python jobs.
+# Without this, the script finishes immediately, and Slurm kills your Python jobs.
 wait
 
 ```
@@ -144,7 +144,7 @@ $ squeue | grep russpold
           14653975    normal fibnumbe russpold PD       0:00      1 (None)
 ```
 
-The status `PD` means that the job is pending.  The parenthetical note at the end (`(None)`) specifies the reason that the job hasn't started running it.  It will initially say `None` until the scheduler has actually processed the job and determined its rank in the queue; this status should only last a few seconds.  There are two other reasons that might also be listed:
+The status `PD` means that the job is pending.  The parenthetical note at the end (`(None)`) specifies the reason that the job hasn't started running it.  It will initially say `None` until the scheduler has actually processed the job and determined its rank in the queue; this status should only last a few seconds.  There are several other reasons that might also be listed:
 
 - `Priority`: there are other jobs in the queue that are ahead of yours
 - `Resources`: you have a high enough priority to run but the required resources are not available
@@ -183,7 +183,7 @@ russpold 20915  0.0  0.0 153564  1836 pts/0    R+   10:27   0:00 ps aux
 russpold 20916  0.0  0.0 112828  1000 pts/0    S+   10:27   0:00 grep --color=auto russpold
 ```
 
-This output is a bit odd: for one of the inputs (`-i 1000004`) there are two srun processes along with the actual python process, while for the others there is only a single srun process, and those python processes never actually got run before the time expired. This occurs because Slurm assumes that each srun command has full access to all of the resources that have been requested, and the first of the srun commands to hit the slurm controller (which in this case was the `-i 1000004` one) will run while the others will be stuck in a holding pattern waiting for the required resources.  In order to cause the multiple processes to run at the same time, we need to add the `--exclusive` flag, as well as specifying that the total. memory should be shared between the processes:
+This output is a bit odd: for one of the inputs (`-i 1000004`) there are two srun processes along with the actual Python process, while for the others there is only a single srun process, and those Python processes never actually got run before the time expired. This occurs because Slurm assumes that each srun command has full access to all of the resources that have been requested, and the first of the srun commands to hit the slurm controller (which in this case was the `-i 1000004` one) will run while the others will be stuck in a holding pattern waiting for the required resources.  In order to cause the multiple processes to run at the same time, we need to add the `--exclusive` flag, as well as specifying that the total. memory should be shared between the processes:
 
 ```bash
 srun --ntasks=1 --nodes=1 --cpus-per-task=1 --mem=250M --exclusive python3 $CODEDIR/fibnumber.py -i 1000001 &
@@ -192,7 +192,7 @@ srun --ntasks=1 --nodes=1 --cpus-per-task=1 --mem=250M --exclusive python3 $CODE
 srun --ntasks=1 --nodes=1 --cpus-per-task=1 --mem=250M --exclusive python3 $CODEDIR/fibnumber.py -i 1000004 &
 ```
 
-Logging into the compute node we now see that each python process is running along with two srun processes for each input:
+Logging into the compute node we now see that each Python process is running along with two srun processes for each input:
 
 ```
 russpold 30556  0.0  0.0 113504  1788 ?        S    11:05   0:00 /bin/bash /var/spool/slurmd/job14658999/slurm_script
@@ -210,7 +210,7 @@ russpold 30751 57.1  0.0 150044 13388 ?        S    11:05   0:11 /share/software
 russpold 30754 56.9  0.0 149892 13296 ?        S    11:05   0:11 /share/software/user/open/python/3.12.1/bin/python3 /home/users/russpold/code/bettercode/src/bettercode/slurm/fibnumber.py -i 1000001
 ```
 
-Why are there two srun processes?  It turns out that srun first starts a lead process, whose job it is to communicate with the Slurm controller (in this case that's PID 30614 for the `-i 1000004` job).  This is how the job can be cancelled if the user cancels it (using `scancel`) or when the allotted time expires.  This process then starts a *helper* process (in this case PID 30634), which sets up the environment and actually runs the python script, which is running in PID 30731. These processes are treated as part of a single group, which ensures that if the lead runner gets killed, the helper and actual python script also get killed, preventing zombie processes from persisting on the compute node.
+Why are there two srun processes?  It turns out that srun first starts a lead process, whose job it is to communicate with the Slurm controller (in this case that's PID 30614 for the `-i 1000004` job).  This is how the job can be cancelled if the user cancels it (using `scancel`) or when the allotted time expires.  This process then starts a *helper* process (in this case PID 30634), which sets up the environment and actually runs the Python script, which is running in PID 30731. These processes are treated as part of a single group, which ensures that if the lead runner gets killed, the helper and actual Python script also get killed, preventing zombie processes from persisting on the compute node.
 
 ### Parametric sweeps
 
@@ -218,7 +218,7 @@ A very common use case on HPC systems is a *parametric sweep*, where we want to 
 
 - It only submits a single job to the scheduler, which makes it easier to monitor or cancel the job
 - It allows one to limit the number of jobs run at once
-- It is easy to create an index file that contains the relevant parameters and then read those into the sbatch file
+- It is easy to create an index file that contains the relevant parameters and then read those into the sbatch file or the code directly
 
 First let's implement our previous analysis as a job array; we wouldn't usually use a job array for such a small set, but it's a useful example.  Here is what the sbatch file would look like:
 
@@ -254,7 +254,7 @@ echo "Running task $SLURM_ARRAY_TASK_ID with iteration value $ITER_VALUE"
 srun python3 $CODEDIR/fibnumber.py -i $ITER_VALUE
 ```
 
-First note that this batch file specifies the resources needed for each individual job, rather than the combined job like it did before; this is because jobs in a job array are treated separately.  We create array numbers that are used to index the jobs (from 1 to 4); these will end up in the file names for the error and output files, by including `%a` in the file name specifiers.  This script is then called once for each value of the array index, and the environment variable `$SLURM_ARRAY_TASK_ID` contains the value of the array; we add 100000 to this to get the values that we want to pass along to the python script. Once the job begins, we see this in the Slurm queue:
+First note that this batch file specifies the resources needed for each individual job, rather than the combined job like it did before; this is because jobs in a job array are treated separately.  We create array numbers that are used to index the jobs (from 1 to 4); these will end up in the file names for the error and output files, by including `%a` in the file name specifiers.  This script is then called once for each value of the array index, and the environment variable `$SLURM_ARRAY_TASK_ID` contains the value of the array; we add 100000 to this to get the values that we want to pass along to the Python script. Once the job begins, we see this in the Slurm queue:
 
 ```
 $ squeue | grep russpold
@@ -279,7 +279,7 @@ We could then pass the task ID to our Python script, which would read in the par
 ```bash
 #SBATCH --array=1-100%10  # Run 100 tasks, but only 10 at a time (%)
 
-# The task ID tells the python script which line to use from the parameter file
+# The task ID tells the Python script which line to use from the parameter file
 python3 runmodel.py $SLURM_ARRAY_TASK_ID
 ```
 
@@ -314,11 +314,6 @@ JOB2=$(sbatch --parsable --dependency=afterok:$JOB1 analyze.sbatch)
 sbatch --dependency=afterok:$JOB2 postprocess.sbatch
 ```
 
-
-## GPU computing on HPC systems
-
-- how GPU requests differ from CPU requests
-- code must be written to use GPU (doesn't happen automatically)
 
 ## Resource estimation
 
@@ -428,7 +423,7 @@ We could also set this as a default using `module save`, and the next time we lo
 
 ### Virtual environments
 
-Throughout the book I have talked about the utility of virtual environments, and they are commonly used on HPC systems to can access to packages or package versions that are not available as modules on the system. There is, however, one issue that should be kept in mind when using virtual environments in the HPC context.  When we install a virtual environment, the environment folder contains all of the dependencies that are installed in the environment. For some projects this can end up being quite large, to the degree that one can run into disk quota issues if they are stored in the home directory.For example, the full Anaconda installation is almost 10GB, which would largely fill the 15 GB quota for my home directory on the local HPC system; for this reason, I always recommend using miniconda which is a more minimal installation.  `uv` does a better job of caching but its local cache directory can also get very large over many projects.  For this reason, I we generally install Conda-based environments outside of the home directory, on a filesystem that has a larger quota.  When using `uv`, we generally set the `$UV_CACHE_DIR` environment variable to a location with a larger quota as well.  
+Throughout the book I have talked about the utility of virtual environments, and they are commonly used on HPC systems to can access to packages or package versions that are not available as modules on the system. There is, however, one issue that should be kept in mind when using virtual environments in the HPC context.  When we install a virtual environment, the environment folder contains all of the dependencies that are installed in the environment. For some projects this can end up being quite large, to the degree that one can run into disk quota issues if they are stored in the home directory. For example, the full Anaconda installation is almost 10GB, which would largely fill the 15 GB quota for my home directory on the local HPC system; for this reason, I always recommend using miniconda which is a more minimal installation.  `uv` does a better job of caching but its local cache directory can also get very large over many projects.  For this reason, I we generally install Conda-based environments outside of the home directory, on a filesystem that has a larger quota.  When using `uv`, we generally set the `$UV_CACHE_DIR` environment variable to a location with a larger quota as well.  
 
 ### Containers
 

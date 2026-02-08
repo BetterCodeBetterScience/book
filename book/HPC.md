@@ -301,7 +301,7 @@ For example, if you had a job that you wanted to run only after job 999444 had c
 sbatch --dependency=afterok:999444 part2.sbatch
 ```
 
-You can also retrieve the job ID from an sbatch command more easily by using the `--parseable` flag, which allows easy chaning of jobs:
+You can also retrieve the job ID from an sbatch command more easily by using the `--parseable` flag, which allows easy chaining of jobs:
 
 ```bash
 # Submit first job, capture job ID

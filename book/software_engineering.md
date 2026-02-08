@@ -127,7 +127,7 @@ Second, it's easy to end up writing code that will end up not needing, since you
 Finally, once you start integrating all of the components, you won't have a way to know if you have introduced a bug.
 
 One answer to these problems is to start the process by creating a set of *tests*, which tell us whether the code has solved our intended problems.
-The process of writing tests before writing code to solve the problem is known as *test-driven development* (TDD), wich I think is a very useful framework to use when writing scientific code, especially if one plans to use LLMs for code generation.
+The process of writing tests before writing code to solve the problem is known as *test-driven development* (TDD), which I think is a very useful framework to use when writing scientific code, especially if one plans to use LLMs for code generation.
 Test-driven development is somewhat controversial within the software engineering field, in part because many people take it too far and become obsessive with testing, such that the tests come to be the tail that wags the dog; in particular I would caution against using the amount of test coverage as a metric for success.
 But I think that when it is used in a thoughtful way, TDD can be a powerful way to increase the effectiveness and accuracy of one's code.
 
@@ -1454,7 +1454,7 @@ There are several points at which logging becomes very valuable.
 There are also situations where logging should be avoided:
 
 - **Tight loops**: If you are running a large number of computations in a tight loop, logging can kill performance and fill the logs with useless information
-- **Sensitive data**: Never log any information that might be senstive, since logs might be shared without knowing that they contain sensitive information
+- **Sensitive data**: Never log any information that might be sensitive, since logs might be shared without knowing that they contain sensitive information
 
 ### Saving logs to disk
 
@@ -1519,7 +1519,7 @@ Grace Hopper's note from September 9, 1947, containing the actual moth that is o
 
 Whereas AI coding tools have been a game-changer for code generation, they are more like a revelation when it comes to debugging.  Simply by pasting the error message into a chat window in the IDE (which also has access to the code), it's now generally very easy to debug many problems using AI. Mostly gone are the days of beating one's head against the wall for hours trying to find out why a program is failing. Unfortunately, the AI tools don't always get it right, and sometimes the proposed fix can be worse than the initial problem, so it remains necessary to be able to understand how to debug code.  
 
-There are two main types of bugs.  *Loud bugs* are those that result in a program failure at runtime; in Python this could be an unhandled exception that causes a crash, or a system problem (like an out-of-memory situation) that causes the program to be killed by the operating system, sometimes with no information about the cause.  *Silent bugs* are those that cause the program to perform incorrect computations without any evidence of problems.  Loud bugs are always preferred to silent bugs, since they stop the program in its tracks, whereas code with a silent bug can provide seemingly reasonable but incorrect results that can ultimately make it into scientific publications.  Another axis along which to classify bugs is whether they are *deterministic* (i.e. they occur every time) or *stochastic*, occuring in a seemingly unpredictable manner depending on other factors.  These latter bugs, sometimes referred to as "Heisenbugs" after Heisenberg's uncertainty principle, can be particularly challenging to diagnose, even with AI tools.
+There are two main types of bugs.  *Loud bugs* are those that result in a program failure at runtime; in Python this could be an unhandled exception that causes a crash, or a system problem (like an out-of-memory situation) that causes the program to be killed by the operating system, sometimes with no information about the cause.  *Silent bugs* are those that cause the program to perform incorrect computations without any evidence of problems.  Loud bugs are always preferred to silent bugs, since they stop the program in its tracks, whereas code with a silent bug can provide seemingly reasonable but incorrect results that can ultimately make it into scientific publications.  Another axis along which to classify bugs is whether they are *deterministic* (i.e. they occur every time) or *stochastic*, occurring in a seemingly unpredictable manner depending on other factors.  These latter bugs, sometimes referred to as "Heisenbugs" after Heisenberg's uncertainty principle, can be particularly challenging to diagnose, even with AI tools.
 
 ### Debugging loud bugs
 
@@ -1706,7 +1706,7 @@ There are several strategies that I find very useful when debugging.
 
 ### Using a debugger
 
-Debuggers are tools that allow one to stop the execution of the code and inspect the internal values of variables.  I will admit to a dirty little secret: I basically never use a debugger when writing code.  I'm sure that there are cases where this has impaired my ability to understand and fix a bug, but in general I find that the overhead of using a debugger costs more than the benefits are worth, compared to using debug logging or embedded print statments.  However, a debugger can be particularly useful when it's not clear which variables to look at. Most IDEs also come with graphical debuggers, which can be helpful for those who aren't comfortable with using the interactive command-line *Pdb* tool that I will focus on here.
+Debuggers are tools that allow one to stop the execution of the code and inspect the internal values of variables.  I will admit to a dirty little secret: I basically never use a debugger when writing code.  I'm sure that there are cases where this has impaired my ability to understand and fix a bug, but in general I find that the overhead of using a debugger costs more than the benefits are worth, compared to using debug logging or embedded print statements.  However, a debugger can be particularly useful when it's not clear which variables to look at. Most IDEs also come with graphical debuggers, which can be helpful for those who aren't comfortable with using the interactive command-line *Pdb* tool that I will focus on here.
 
 Here is an example:
 

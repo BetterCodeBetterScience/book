@@ -208,7 +208,7 @@ The adherence of relational database systems to these principles helps ensure th
 
 #### Analytic databases
 
-There is a particular kind of relational database known as an *analytic database* that is specialized for operations that work across many rows in the database, rather than the focus on individual records in a standard relational database.  One widely-used analytic database in the Python ecosystem is [*DuckDB*](https://duckdb.org/), which supports very fast operations on large datasets, and integrates well with Pandas and other tools. Unlike traditional relational database systems, it doesn't require any specialized server setup.  In the later chapter on performance optimization I will show how analytic databases can be used to peform some types of computations very quickly.
+There is a particular kind of relational database known as an *analytic database* that is specialized for operations that work across many rows in the database, rather than the focus on individual records in a standard relational database.  One widely-used analytic database in the Python ecosystem is [*DuckDB*](https://duckdb.org/), which supports very fast operations on large datasets, and integrates well with Pandas and other tools. Unlike traditional relational database systems, it doesn't require any specialized server setup.  In the later chapter on performance optimization I will show how analytic databases can be used to perform some types of computations very quickly.
 
 #### NoSQL databases
 
@@ -1201,7 +1201,7 @@ Archiving of research data can take several forms:
 
 As we will discuss in more detail in our later chapter on sharing of research objects, it is generally preferably to archive data in a location that has a long-term preservation policy and verifiability.  This can include institutional repositories (usually run by librarians, who have deep expertise in archiving), general purpose repositories (like OSF or Zenodo), or domain-specific repositories. 
 
-[^1]: Note that the term "license" is often used to describe these data usage agreements, but this terminology is technically imprecise in jurisdictions such as the U.S. where raw data are treated as "facts" and thus are not subject to intellectual property laws (such as copyright laws).  The protection of larger datasets or databases varies by jurisdiction; in the U.S. databases are protected if they involve creative selection or arrangement, while the EU provides proection for substantial investment in database creation.
+[^1]: Note that the term "license" is often used to describe these data usage agreements, but this terminology is technically imprecise in jurisdictions such as the U.S. where raw data are treated as "facts" and thus are not subject to intellectual property laws (such as copyright laws).  The protection of larger datasets or databases varies by jurisdiction; in the U.S. databases are protected if they involve creative selection or arrangement, while the EU provides protection for substantial investment in database creation.
 
 ## Appendix: An example of database usage
 

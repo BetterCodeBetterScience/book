@@ -2,7 +2,19 @@
 
 - discuss Naur, "Programming as theory building"
 
+
+1.3: 
+**TODO**:
+- Another solution is to modify the data in order to blind the researcher.  TBD
+- Yet another solution is to generate simulated data that are then used to develop the analysis code. TBD
+
+
 ## for essentials
+
+**TODO**: Provide visualizations for git/github concepts?
+
+**TODO**: more detail about use of Conda
+
 
 - discuss databases - e.g., sqlite example
 
@@ -12,6 +24,14 @@
 ## github spec kit
 
 ## More on MCP?
+
+
+## GPU computing on HPC systems
+
+- how GPU requests differ from CPU requests
+- code must be written to use GPU (doesn't happen automatically)
+
+
 
 ## AI-human pair programming
 
@@ -507,11 +527,11 @@ We can build function that takes in a set of parameters and outputs response tim
 performance:
 
 - high-level libraries
-    - joblib for embarassingly parallel loops
+    - joblib for embarrassingly parallel loops
     - dask for parallelizing numpy/pandas
     - numba's prange for C-style multithreading within JIT-compiled functions, bypass the GIL
 
-- mention numba paralleization
+- mention numba parallelization
 
 - keeping batch size small to stay within L1/L2 cache
 

@@ -1,5 +1,11 @@
 # Sharing Research Objects (TBD)
 
+Science at its best is a communal enterprise, and the sociologist of science Robert Merton noted that "Secrecy is the
+antithesis of this norm; full and open communication its enactment" [@Merton:1942aa].  Unfortunately scientists have not always lived up to this norm in practice.  It remains unfortanately common to hear anecdotes of researchers who refuse to share data or materials even after publishing in journals that have (largely unenforced) requirements for sharing.  The metascientific evidence is also consistent with this.  As just one example, when [@Wicherts:2006aa] requested data from authors of papers in a number of top journals in psychology, they were unable to obtain data from 73% of the authors.  
+
+The open sharing of materials has become increasingly prevalent in the 21st century
+
+
 Why share?
 Reproducibility as a scientific standard.
 Funder and Journal mandates (Data Management Plans).
@@ -21,10 +27,14 @@ machine-readable metadata: CITATION.cff (github's "cite this repository"), codem
 persistent IDs (per release) - e.g. zenodo/github 
 
 ### Accessible
+
+
 Standard protocols vs. custom download scripts
 authentication - eg. oauth2
 
 ### Interoperable
+
+
 
 open formats (avoiding proprietary formats that require paid software to open)
 containerization - allows operation on any major platform
@@ -35,7 +45,9 @@ sanitization - scrub secrets. .gitignore, env vars
 provenance
 
 
-## Preparing objects for sharing:
+## Preparing objects for sharing
+
+
 Sanitization: Removing secrets (API keys), hardcoded paths, and PII.
 Documentation: READMEs, Data Dictionaries, and Model Cards.
 File Formats: Choosing open, machine-readable formats (CSV, JSON, HDF5, Parquet).

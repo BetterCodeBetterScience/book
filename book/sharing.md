@@ -18,10 +18,18 @@ Another commonly encountered PID is the *digital object identifier* (*DOI*), whi
 
 ### PID versioning
 
-It's common for a resource to change over its life; as one example, preprints posted to archives like *arXiv* or *bioRxiv* to be updated when a revised manuscript is created. Some PID providers (particularly DOIs) provide *versioned DOIs* that point to specific versions of an object, where others provide *concept DOIs* that instead point to the object in general; in addition, some providers provide both.  For example, the Zenodo archive (discussed in more detail below) allows direct sharing of software releases from a GitHub repository, which we used to share code from the NARPS project that I discussed in an earlier chapter. Zenodo provides a concept DOI ([10.5281/zenodo.3339821](https://doi.org/10.5281/zenodo.3339821)) that points to the resource (dfaulting to the latest version), and also provides version DOIs that allow specific reference to any particular version.
+It's common for a resource to change over its life; as one example, preprints posted to archives like *arXiv* or *bioRxiv* to be updated when a revised manuscript is created. Some PID providers (particularly DOIs) provide *versioned DOIs* that point to specific versions of an object, where others provide *concept DOIs* that instead point to the object in general; in addition, some providers provide both.  For example, the Zenodo archive (discussed in more detail below) allows direct sharing of software releases from a GitHub repository, which we used to share code from the NARPS project that I discussed in an earlier chapter. Zenodo provides a concept DOI ([10.5281/zenodo.3339821](https://doi.org/10.5281/zenodo.3339821)) that points to the resource (dfaulting to the latest version), and also provides version DOIs that allow specific reference to any particular version.  When citing a versioned resource such as code, it's important to cite the specific version that was used in the work.
+
+## Resource accessibility
+
+The *accessible* portion of the FAIR principles states that data should be accessible by a well-specified and standard protocol.  This means that "data available from the authors upon reasonable request* is a decidedly unFAIR way to share data.  Accessible does not, however, mean that the data must be openly available to the world.  There are many cases when data cannot be shared openly, particuarly in the context of human subjects data where the sharing of identifiable information could put the subjects at risk of harm.  It is almost never the case, however, that data cannot be shared at all.  Instead, it is common that sensitive datasets must be shared under a *data usage agreement* (DUA), as I will discuss in more detail in the later section on data sharing.  FAIR sharing of controlled-access data requires that the process for accessing the data is made clear in the metadata.  
+
+Accessibility generally implies that the data are available online, potentially requiring some kind of authentication. In general it's best to share objects via a standard archive, which will ensure that the metadata are findable and the data are broadly accessible.  The use of a standard archive also helps ensure that the data will remain accessible in the long term, which is much less likely if they are shared from a lab server or private web site.
+
 
 ## Accessible data formats
 
+Once the data are findable, it's important that others are able to work with them
 File Formats: Choosing open, machine-readable formats (CSV, JSON, HDF5, Parquet).
 
 

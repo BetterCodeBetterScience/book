@@ -27,12 +27,11 @@ The *accessible* portion of the FAIR principles states that data should be acces
 Accessibility generally implies that the data are available online, potentially requiring some kind of authentication. In general it's best to share objects via a standard archive, which will ensure that the metadata are findable and the data are broadly accessible.  The use of a standard archive also helps ensure that the data will remain accessible in the long term, which is much less likely if they are shared from a lab server or private web site.
 
 
-## Accessible data formats
+## Interoperable data formats
 
-Once the data are findable, it's important that others are able to work with them
-File Formats: Choosing open, machine-readable formats (CSV, JSON, HDF5, Parquet).
+Once the objects are findable and accessible, it's important that others are able to work with them, which is the *interoperable* portion of the FAIR principles.  The most important aspect of interoperability is the use of open, non-proprietary, and machine-readable file formats. I've already discussed a number of these that span many different types of data, including CSV/TSV, JSON, HDF5, Zarr, and Parquet.  Interoperability also requires that the data are documented and annotated in a way that makes them usable by other researchers. For example, a TSV file with no column labels and no data dictionary is not particularly useful to anyone.  
 
-
+I also believe that interoperability requires the use of open-source software platforms such as Python or R.  It is common in the social sciences (particularly economics) for researchers to use the *Stata* software package for statistical analysis.  Sharing Stata code (`.do` files) allows me to read the code and potentially see what was done, but I have no way to actually run the code unless I purchase a Stata license or have access to a site license. It's also very common for researchers in engineering and natural sciences to use the commercial package MATLAB; fortunately there is an open source alternative (*Octave*) that can run some MATLAB programs, but it will fail if the commonly used MATLAB Toolboxes are used. In my opinion, research using these closed-source commercial platforms is not reproducible, which is why I moved from MATLAB to Python as my primary computing platform in 2009.
 
 ## Legal and ethical considerations
 Copyright vs. Licensing: Why you need an explicit license.

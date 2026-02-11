@@ -31,82 +31,172 @@ Accessibility generally implies that the data are available online, potentially 
 
 Once the objects are findable and accessible, it's important that others are able to work with them, which is the *interoperable* portion of the FAIR principles.  The most important aspect of interoperability is the use of open, non-proprietary, and machine-readable file formats. I've already discussed a number of these that span many different types of data, including CSV/TSV, JSON, HDF5, Zarr, and Parquet.  Interoperability also requires that the data are documented and annotated in a way that makes them usable by other researchers. For example, a TSV file with no column labels and no data dictionary is not particularly useful to anyone.  
 
-I also believe that interoperability requires the use of open-source software platforms such as Python or R.  It is common in the social sciences (particularly economics) for researchers to use the *Stata* software package for statistical analysis.  Sharing Stata code (`.do` files) allows me to read the code and potentially see what was done, but I have no way to actually run the code unless I purchase a Stata license or have access to a site license. It's also very common for researchers in engineering and natural sciences to use the commercial package MATLAB; fortunately there is an open source alternative (*Octave*) that can run some MATLAB programs, but it will fail if the commonly used MATLAB Toolboxes are used. In my opinion, research using these closed-source commercial platforms is not reproducible, which is why I moved from MATLAB to Python as my primary computing platform in 2009.
+I also believe that interoperability requires the use of open-source software platforms such as Python or R.  It is common in the social sciences (particularly economics) for researchers to use the *Stata* software package for statistical analysis.  Sharing Stata code (`.do` files) allows me to read the code and potentially see what was done (though Stata's syntax is notoriously unreadable by non-experts), but I have no way to actually run the code unless I purchase a Stata license or have access to a site license. It's also very common for researchers in engineering and natural sciences to use the commercial package MATLAB; fortunately there is an open source alternative (*Octave*) that can run some MATLAB programs, but it will fail if the commonly used MATLAB Toolboxes are used. In my opinion, research using these closed-source commercial platforms is non-reproducible, which is why I moved from MATLAB to Python as my primary computing platform in 2009.
 
-## Legal and ethical considerations
-Copyright vs. Licensing: Why you need an explicit license.
-Software Licenses: Permissive (MIT, Apache) vs. Copyleft (GPL).
-Data Licenses: Creative Commons (CC0 vs. CC-BY).
-Data Use Agreements: Handling sensitive/clinical data.
+## Explicit licensing for reuse
 
+It's quite common for individuals to post material online (such as pushing code to a public GitHub repository) without any information regarding the terms of release and then refer to the material as "open source", but this is a misnomer.  Without an explicit license granting usage rights to users, the creator holds the copyright (assuming that the material is eligible for copyright) and "all rights are reserved", meaning that the downloader has no right to use, modify, or redistribute the material.  This is why one should always include an explicit license or use agreement with shared materials, and one should *never* use materials for research without an explicit license or use agreement. Otherwise there is the potential that the owner might disallow your usage of the materials.  Because the nature of these license/agreements differ between different types of research objects, I will discuss them in detail below in the context of specific types of objects.
 
-
-
-## Sharing specific types of research objects
 
 ## Sharing code
 
-In Chapter 7 I introduced the FAIR principles, which were originally introduced in the context of data but have since been adapted to research software by [@Katz:2021aa].  [](#fairsoftware-fig) shows a schematic of the different components required to make research software FAIR.  Here I will outline the main components of the FAIR research software framework.
+Ten years ago I would have started this section with an explainer about why it's so important to share one's research code, but today there is relatively little opposition to sharing research code; in fact, in many areas of science it has become largely expected that code will be shared (often via GitHub or some other distributed version control platform).  This does not, however, mean that it's shared in a way that is effective in affording reuse and reproducibility. Here I will focus on the most important issues around making shared code useful.
 
-```{figure} images/fair_software.jpg
-:label: fairsoftware-fig
-:align: center
-:width: 800
+### Licensing for shared code
 
-A schematic figure outlining the different components of FAIR software.  Reprinted from [@Katz:2021aa], CC-BY.  
-```
+In the context of software, the owner holds the copyright unless an explicit *license* is provided.  Without a license, someone downloading the code does not have the legal right to use, modify, or redistribute the code.  This is why one should *never* rely upon code that has been shared without a license, as it can put an entire project in legal peril.  You also protect yourself, since licenses generally include conditions that explicitly limit your liability and provide no warranty for the code.
 
+There are many different licenses available for software, but they largely fall into two categories.  *Permissive* licenses are those that place very few restrictions on the reuse, modification, or redistribution of the code; some of these allow commercial reuse and/or closed source redistribution, while others do not.  The least prohibitive license, known as an *Unlicense*, places no conditions at all on use of the code, and only limits liability and warranty. *Copyleft* licenses (best known from the *GNU Public License*, or *GPL*) are more restrictive, requiring full disclosure of any modifications.  They are also sometimes referred to as *viral* licenses, since they also generally require that any modifications be released under the same license as the original.  I tend to strongly favor permissive licenses like the *MIT License*, because they maximize the potential reuse of the code while still maintaining credit for the original authors.
 
-### Persistent identifiers
+When using open source code, it is essential to abide by the conditions of the license of the original code.  In particular, if you are reusing code licensed under the GPL then you are required to release your modifications under the GPL as well. If you don't wish to license your entire codebase as GPL, then you might consider encapsulating the GPL code as a library which you can then call from your own code (licensed however you wish since it doesn't include any GPL code).
 
-Associating software with a *persistent identifier* is essential for making the software findable.  
+### Persistent identifiers for code
 
-extrinsic vs intrinsic identifiers: https://www.softwareheritage.org/software-heritage-faq/#3_Referencing_and_identification
+The most common way for researchers to cite code today is through a link to a github repository.  This is better than not sharing at all, but it fails to acheive a couple of improtant goals.  First, repositories change over time, and a link to a repository does not specify which particular version of the code was used for the research.  This can be addressed by using a link to a specific commit or release, but these are vulnerable to deletion, since any user can delete the repositories that they own at any time.  Second, it makes the assumption that GitHub will always exist and continue to provide unfettered access to all current repositories.  While there is no reason to think that GitHub will go away anytime soon, we can't trust a commercial platform to have our best interests at heart.  For this reason, I believe that research code associated with a publication should be shared using a persistent identifier (such as a DOI) on an archival platform.  
 
-#### DOIs via Zenodo
+At present, the easiest way to achieve this is to use the direct connection from Github to the nonprofit data archive Zenodo, which is operated by the high-energy physics lab CERN in Switzerland. Generating a archival code package with a DOI can be acheived in just a few steps:
 
-#### Hash-based identifiers using SWHID
+- Create an account on [Zenodo.org](https://zenodo.org/), logging in using your GitHub credentials
+- Navigate to the GitHub Repositories page for the new account, and enable the preservation of the relevant repository by clicking the "ON" button next to the repository
+- Go to the repository page on GitHub, and create a release for the software package, which is a frozen version of the current state of the repository.  This should be done immediately after completing the analyses for the project, so that the code in the release exactly matches the code used for the project.
+- Zenodo will then automatically generate a version DOI that can be used to cite the specific version of software in a publication, along with a concept DOI for the package that resolves to the latest version.
 
-https://www.softwareheritage.org/how-to-archive-reference-code/
-https://www.softwareheritage.org/2025/06/13/software-hash-identifier-swhid-tutorial/
-
-
-
+There is another emerging standard PID for code known as the Software Hash Identifier (SWHID), which is being developed by the [Software Heritage](https://www.softwareheritage.org) organization that also runs an archive for software preservation. Unlike most PIDs, which are *extrinsic* in the sense that they have no direct relation to the content of the objects that they refer to, the SWHID is an *intrinsic* identifier that is based on a hash of the content (similar to the hashes that are used for commits in *git*).  This has the benefit that one can directly validate whether code matches the SWHID, and may become more prevalent in the future.  Saving code to the Software Heritage archive is as easy as submitting a [Save Code Now](https://archive.softwareheritage.org/save/) request.
 
 ### Software citation
 
-https://peerj.com/articles/cs-86/
-https://ieeexplore.ieee.org/abstract/document/8946737
+As software resources are increasingly recognized as legitimate scientific contributions, it is increasingly common for them to be cited in research papers and included on *curricula vitae* for academic advancement and hiring.  [@Smith:2016aa] laid out a set of principles for the citation of software:
 
-reference vs citation - https://ieeexplore.ieee.org/abstract/document/8946737, https://ieeexplore.ieee.org/document/8887228
-- citation is about giving intellectual/academic credit to authors for their work
-- reference is about precisely identifying specific software artifacts for the purpose of reuse
+1. *Importance*: Software should be considered an important intellectual product that is worthy of citation.
+2. *Credit and attribution*: Software citation should give proper attribution and credit to its creators and maintainers.
+3. *Unique identification*: Software to be cited should have a unique PID.
+4. *Persistence*: Software to be cited should be available in a persistent manner; if the software is not available then at least the metadata should be persistent.
+5. *Accessibility*: Software citations should make clear how to obtain the software.
+6. *Specificity*: Software citations should refer to the specific version of the software that was used in the research.
 
-citation.cff
-CITATION.cff (github's "cite this repository"), 
+The GitHub-Zenodo and Software Heritage mechanisms described above can help fulfill these principles.  Code citation can be further supported by providing citation metadata via the `CITATION.cff` file.  Here is an example of the `CITATION.cff` file for the [bettercode](https://github.com/BetterCodeBetterScience/bettercode) package associated with this book:
+
+```yaml
+cff-version: 1.2.0
+title: 'Better Code, Better Science'
+message: Code for examples in the book
+type: software
+authors:
+  - given-names: Russell
+    family-names: Poldrack
+    email: russpold@stanford.edu
+    affiliation: Stanford University
+    orcid: 'https://orcid.org/0000-0001-6755-0259'
+repository-code: 'https://github.com/BetterCodeBetterScience/bettercode'
+url: 'https://bettercodebetterscience.github.io/book/'
+abstract: >-
+  This is code used to generate examples for the book Better
+  Code, Better Science.
+keywords:
+  - software engineering
+  - AI
+  - scientific software
+license: MIT
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.18603014
+```
+
+This file is used by both GitHub and Zenodo to populate citation information; see [](#citationcff-fig) for an example of how GitHub displays this information in the "Cite this repository" section. Including this file is a great way to help encourage proper citation of your code, and there are tools (such as [CFFinit](https://citation-file-format.github.io/cff-initializer-javascript/#/)) that can help create a citation file for any project.
+
+```{figure} images/github_citation.jpg
+:label: citationcff-fig
+:align: center
+:width: 500
+
+An example of the citation information generated automatically by GitHub on the basis of the CITATION.cff file.
+```
+
 
 ### Software metadata
 
-machine-readable metadata: codemeta.json (https://codemeta.github.io/user-guide/), pyproject.toml (keywords), package.json
+In addition to citation information there are a number of other metadata that are important in order to make the code FAIR.  A set of guidelines regarding software metadata have been laid in the [RSMD](https://fair-impact.github.io/RSMD-guidelines/)(Research Software MetaData Guidelines for End-Users) project [@Gruenpeter:2024aa].  An emerging standard for the specification of software metadata is the `codemeta.json` file, which provides a standard vocabulary for the specification of software metadata.  This file uses the *JSON-LD* format that I mentioned in a previous chapter, which links the terms in the dictionary to a format vocabulary.  There [codemeta-generator](https://codemeta.github.io/codemeta-generator/) tool provides an easy interface for generating of thsee files.  GitHub itself doesn't do anything special with the `codemeta.json` contents, but if the software is archived in Software Heritage then the project will searchable by the specified metadata. Because this is becoming the standard, generating metadata now will also help ensure that your project remains findable in the future.
 
-### Preparing code for sharing
-
-Missing Topic: "Sanitization". Removing config.py files with passwords, removing absolute file paths (/Users/home/john/data), and using .gitignore.
-Missing Topic: Documentation Standards. A license isn't enough. You need a README and a CONTRIBUTING.md.
+Because many systems (e.g. the *PyPI* package archive) do not use `codemeta.json`, it's also improtant to put relevant information in other files that may be used.  For Python code, the `pyproject.toml` file allows specification of a number of metadata elements; in particular, it's important to specify the name, version, description, license, authors, and keywords under the `[project]` section, and project URLs under the `[project.urls]` section, since these are used by PyPI for searching packages in the index.
 
 ### Software versioning
 
-semantic versioning,
+It is essential to clearly version the software used in a research project to ensure reproducibilty of the results, since it is common for the behavior of software to change between versions.  There are two standards for software versioning.  The approach recommended for most projects is *semantic versioning*, which uses a numeric format with a specific structure: *<MAJOR>.<MINOR>.<PATCH>*.  These different levels are meant to imply different degrees of backwards-compatibility:
+
+- *Major* version changes (e.g. 1.1.3 -> 2.0.0) are meant to imply changes that are likely to break previously working code, such as changes in the API
+- *Minor* version changes (e.g., 1.2.4 -> 1.3.0) are meant to imply the backwards-compatible addition of features
+- *Patch* version changes (e.g. 1.2.4 -> 1.2.5) are meant to imply backwards-compatible bug fixes
+
+Because the line between different kind of changes can be fuzzy, it's always good to be clear about the exact nature of changes in a change log.  Also note that "0.x.x" generally implies that the code is unstable, so things can break between any of the version types; in other cases, researchers will use tags to further delineate versions:
+
+- *alpha* versions (e.g. 1.0.0a1) are meant to imply that the code is too early for general use
+- *beta* versions (e.g. 1.2.1b1) are meant to imply that the software is in beta-testing mode
+- *release candidate* versions (e.g. 1.5.3rc1) are meant imply an early release of the code for final testing by users before the official release
+
+Another approach that is sometimes used in large projects is *calendar versioning*, where the version of based on the year and date (e.g. 25.2 for the second release of 2025).  For most projects the semantic versioning approach is preferred since it more clearly signals the nature of the change, but in some cases users may want to be able to tie the software to specific points in time.  
+
+### Preparing code for sharing
+
+Before sharing code, it's important to make sure that it is ready to share, which involves three important steps: sanitization, portability, and documentation.  It's useful before releasing code to do an audit using an AI coding tool to ensure that each of these has been addressed prior to release.
+
+#### Sanitization
+
+The goal of sanitization is to make sure that no private or sensitive information is shared along with the code.  This includes:
+
+- passwords or other credentials
+- API keys or tokens
+- Protected Health Information (PHI) or Personally Identifiable Information (PII)
+
+The most powerful tool for santization is the `.gitignore` file, which helps prevent files from being checked into a *git* repository by preventing them from appearing in the status or from being added (unless the `-f` flag is used to force an add).  Any files containing private or sensitive information (such as environment files or config files) should be added to the `.gitignore` file as soon as they are created.  If you are sharing a package that requires configuring these files, then it can be useful to include an example version (e.g. `.env.example`) that shows the structure of the file without including any private information.  
+
+#### Ensuring portability
+
+We have already discussed coding portably in Chapter 3, by which I mean ensuring that there are no configuration details in the code that would prevent the code from running on another machine. By far the most common portability issue is the inclusion of absolute file paths, which are unlikely to resolve properly on a different computer.  
+
+#### Documentation
+
+I have already discussed documentation in Chapter 7.  If you didn't generate documentation during the creation of the code, it's definitely important to create at least minimal documentation prior to release.  See the previous section for more details on how to create good documentation.
 
 ### Publishing software packages
 
-Scientists increasingly need to share installable software, not just scripts. Topics like pyproject.toml, publishing to PyPI or conda-forge,  and creating a proper installable package are absent. 
+If your code involves a module that others might want to reuse, then it's worth considering publishing it to a package repository. This makes it easy for anyone to install your software with a single command, rather than requiring a download of the code followed by installation.  The most widely used package index in the Python ecosystem is the [Python Package Index](https://pypi.org/) (known as *PyPI*); if you have ever used the *pip* package installer to install a Python package, then you have used PyPI as it is the default package index for *pip*.  In the *Conda* ecosystem, another popular package index is [*conda-forge*](https://conda-forge.org/), which can be used with the `conda install` command. Both of these systems allow versioning, so that users can install a specific version of the package to facilitate reproducibility.  Here I will focus on PyPI and *uv* as an example.
 
+#### Making a package installable
 
+To make a package installable, the first step is to create a `pyproject.toml` which is now the standard configuration file for Python projects (replacing the older `setup.py` and `setup.cfg`).  One important setting is the choice of *build backend*, which is the system that is used to generate the Python package files. For this example I will use the *uv_build* backend that is now the default for *uv* projects.  There are two types of files generated when the package is built.  One, known as an *sdist* (for "source distribution"), is basically a tar archive containing the code and metadata.  This allows the building of the package across different platforms, and serves as a transparent view of the code in the package.  The other, known as a *wheel*, is a pre-built version of the package; if the package is pure Python then this will be a platform-independent package, whereas if there is any compiled code (such as C code) then this will be specific to the platform where it was compiled.  Using the wheel can save time for large projects where building the package can take significant time.
 
-#### Licenses for code
-Refinement on Licenses: Distinguish between Permissive (MIT/BSD) and Copyleft (GPL). Scientists often pick GPL without realizing it restricts industry collaboration, or MIT without realizing it allows proprietary forking.
+To build the [bettercode](https://github.com/BetterCodeBetterScience/bettercode) package using *uv*, we simply run the build command:
 
+```bash
+$  uv build
+Building source distribution...
+Building wheel from source distribution...
+Successfully built dist/bettercode-0.1.0.tar.gz
+Successfully built dist/bettercode-0.1.0-py3-none-any.whl
+```
+Note that the wheel file has `-none-` in its name, which refers to the fact that it is platform-independent.  Once the package is built it is ready to push to PyPI.
+
+#### Publishing packages to PyPI
+
+Once the package is built, then we can upload it to PyPI for distribution.  We first need to ensure that the version information is correct.  This matters less for the first upload, but once you have uploaded a release to PyPI then you will need update the version for future uploads to work.  *uv* has a useful `version` option that that allows easily *bumping* the version according to the kind of change that is being made. For example, if we wanted to make a minor version change, we could do this:
+
+```bash
+$ uv version
+bettercode 0.1.0
+$ uv version --bump minor
+bettercode 0.1.0 => 0.2.0
+```
+
+This changes the metadata in `pyproject.toml` to match the new version, though we would need to rerun the `uv build` command to create the build files for the new version.  Next we need to create and/or log into our account on [PyPI](https://pypi.org/), and then make sure that the project name (specified as the "name" variable in `pyproject.toml`) is not already in use (by searching the index for that name); if it is then we will have to change the name of the project. Assuming it isn't then we need to set up our PyPI authentication credentials and download a token, which can be provided at the command line with the `publish` command:
+
+```bash
+$  uv publish --token <your token here>
+Publishing 2 files to https://upload.pypi.org/legacy/
+Uploading bettercode-0.2.0.tar.gz (15.7MiB)
+Uploading bettercode-0.2.0-py3-none-any.whl (15.7MiB)
+```
+
+If the publish command is successful, then the project should be visible on PyPI, as this one is at [https://pypi.org/project/bettercode/](https://pypi.org/project/bettercode/).  It's also possible to automate the generation of new PyPI releases using GitHub Actions; see the *uv* documentation for more details.
 
 ### Sharing data
 
@@ -135,11 +225,6 @@ Suggestion: Group this by function.
 Repositories: GitHub/GitLab (living code).
 Archives: Zenodo/Dryad/Figshare (frozen record).
 Registries: PyPI/CRAN/Bioconductor (distribution).
-
-
-### Sharing environment configurations
-
-Configuration files (requirements.txt, environment.yml).
 
 ### Sharing containers
 Containers (Docker vs. Singularity/Apptainer for HPC).

@@ -12,7 +12,7 @@ In this chapter I will focus on how to effectively share research objects in a w
 
 While you may never have heard the phrase "link rot", you have almost certainly encountered a URL embedded in a publication that no longer works.  *Persistent identifiers* (PIDs) are meant to address the issue of *findability* by providing a durable link to the metadata for an object along with a reference to its current location.  The presence of a persistent identifier doesn't ensure that the object will always be available, but it does provide a mechanism to find it if it does exist. 
 
-The need for PIDs is nowhere as clear as it is for people, especially for people with common names (think "Robert Smith" or "Mei Wang").  The need to identify individual researchers was the rationale for the ORCID (Open Researcher and Contributor ID), which provides identifiers for researchers; for example, my ORCID is [0000-0001-6755-0259](https://orcid.org/0000-0001-6755-0259), and if you follow that link you will find a public record that includes information about my education, academic affilations, publications, and more.  My name is quite uncommon, but for people with common names the ability to point to a unique identifier that is not tied to an employer helps ensure that people are findable and that their metadata is accessible.  (If you are a researcher and don't have an ORCID, you should definitely register for one!)
+The need for PIDs is nowhere as clear as it is for people, especially for people with common names (think "Robert Smith" or "Mei Wang").  The need to identify individual researchers was the rationale for the ORCID (Open Researcher and Contributor ID), which provides free identifiers for researchers for life; for example, my ORCID is [0000-0001-6755-0259](https://orcid.org/0000-0001-6755-0259), and if you follow that link you will find a public record that includes information about my education, academic affilations, publications, and more.  My name is quite uncommon, but for people with common names the ability to point to a unique identifier that is not tied to an employer helps ensure that people are findable and that their metadata is accessible. In addition, if a researcher changes their name for any reason, their ORCID stays the same, ensuring that they get credit for publications under both names. (If you are a researcher and don't have an ORCID, you should definitely register for one!)
 
 Another commonly encountered PID is the *digital object identifier* (*DOI*), which has become the most popular PID for publications and is also commonly used for other resources such as data and code.  DOIs are issued by a publisher or archive, and they contain metadata about the object along with a current link to the object.  If the links change (for example, the web site changes their URL structure), the publisher can easily update those links so that the DOI points to the correct link.  The DOI doesn't guarantee that the resource will always exist, but it does ensure that at least the metadata will persist even if the resource disappears. Other PIDs that are commonly encountered are RORs (Research Organization Registry) for research institutions and RRIDs (Research Resource Identifiers) for research resources including antibodies, cell lines, model organisms, software tools, and databases. 
 
@@ -40,11 +40,11 @@ It's quite common for individuals to post material online (such as pushing code 
 
 ## Sharing code
 
-Ten years ago I would have started this section with an explainer about why it's so important to share one's research code, but today there is relatively little opposition to sharing research code; in fact, in many areas of science it has become largely expected that code will be shared (often via GitHub or some other distributed version control platform).  This does not, however, mean that it's shared in a way that is effective in affording reuse and reproducibility. Here I will focus on the most important issues around making shared code useful.
+Ten years ago I would have started this section with an explainer about why it's so important to share one's research code, but today there is relatively little opposition to sharing research code; in fact, in many areas of science it has become largely expected that code will be shared (often via GitHub or some other distributed version control platform).  This does not, however, mean that it's shared in a way that is effective in affording reuse and reproducibility. Here I will focus on the most important issues around making shared code useful, building on the FAIR principles for research software [@Barker:2022aa].
 
 ### Licensing for shared code
 
-In the context of software, the owner holds the copyright unless an explicit *license* is provided.  Without a license, someone downloading the code does not have the legal right to use, modify, or redistribute the code.  This is why one should *never* rely upon code that has been shared without a license, as it can put an entire project in legal peril.  You also protect yourself, since licenses generally include conditions that explicitly limit your liability and provide no warranty for the code.
+In the context of software, "all rights are reserved" by the copyright holder unless an explicit *license* is provided.  This means that without a license, someone downloading the code does not have the legal right to use, modify, or redistribute the code.  This is why one should *never* rely upon code that has been shared without a license, as it can put an entire project in legal peril.  You also protect yourself, since licenses generally include conditions that explicitly limit your liability and provide no warranty for the code.
 
 There are many different licenses available for software, but they largely fall into two categories.  *Permissive* licenses are those that place very few restrictions on the reuse, modification, or redistribution of the code; some of these allow commercial reuse and/or closed source redistribution, while others do not.  The least prohibitive license, known as an *Unlicense*, places no conditions at all on use of the code, and only limits liability and warranty. *Copyleft* licenses (best known from the *GNU Public License*, or *GPL*) are more restrictive, requiring full disclosure of any modifications.  They are also sometimes referred to as *viral* licenses, since they also generally require that any modifications be released under the same license as the original.  I tend to strongly favor permissive licenses like the *MIT License*, because they maximize the potential reuse of the code while still maintaining credit for the original authors.
 
@@ -65,7 +65,7 @@ There is another emerging standard PID for code known as the Software Hash Ident
 
 ### Software citation
 
-As software resources are increasingly recognized as legitimate scientific contributions, it is increasingly common for them to be cited in research papers and included on *curricula vitae* for academic advancement and hiring.  [@Smith:2016aa] laid out a set of principles for the citation of software:
+As software resources are increasingly recognized as legitimate scientific contributions, it is increasingly common for them to be cited in research papers and included on *curricula vitae* for academic advancement and hiring.    [@Smith:2016aa] laid out a set of principles for the citation of software:
 
 1. *Importance*: Software should be considered an important intellectual product that is worthy of citation.
 2. *Credit and attribution*: Software citation should give proper attribution and credit to its creators and maintainers.
@@ -112,6 +112,7 @@ This file is used by both GitHub and Zenodo to populate citation information; se
 An example of the citation information generated automatically by GitHub on the basis of the CITATION.cff file.
 ```
 
+For researchers who use software in their research, it's important to cite the software so that the creators will receive credit. This is best done by citing it in the reference section alongside the cited papers, so that it is picked up by citation indexing systems.
 
 ### Software metadata
 
@@ -200,13 +201,56 @@ If the publish command is successful, then the project should be visible on PyPI
 
 ### Sharing data
 
-Missing Topic: Metadata. Sharing a CSV is useless without a data dictionary or metadata standard (e.g., schema.org or domain-specific standards like DICOM/FITS).
-Missing Topic: File Formats. Engineering advice on choosing non-proprietary, long-term formats (e.g., CSV/Parquet instead of .xlsx, HDF5/NetCDF for binary).
-Metadata standards.
-Large file handling (Git LFS vs. external storage).
+In Chapter 7 I covered many of the essential topics regarding data sharing. In particular, I highlighted the importance of proper metadata and data documentation, and the improtance of using appropriate file formats and data organization standards. Here I will focus specifically on the mechanics of sharing.  
+
+#### Data use agreements and licensing
+
+Just as with code, it is essential that any shared data are accompanied by an explicit *data use agreement* (*DUA*).  These are often referred to as *licenses*, but licenses are legal objects related to copyrighted materials; as I mentioned in Chapter 7, the degree to which data are subject to copyright varies across jurisdictions and depends on the degree of "creative activity" involved in creation and/or curation of the dataset. This is why software licenses are not appropriate for shared data: They assume that the material being shared is copyrighted, and thus would not have legal force if the data were not copyrightable.  They also sometimes have terms that are specific to software, particularly with regard to patent rights.
+
+It's more common to release data under licenses that are meant for a broader class of objects including data and databases.  In particular, the *Creative Commons* licenses have become common for licensing of datasets.  The most permissive of these is the Public Domain Dedication (known as *CC0*), which waives all rights of the owner and places no legal restriction on the user in terms of sharing or licensing of derivative works.  This is generally the preferred option for shared data when possible. Another alternative is the Attribution license (known as *CC-BY*), which legally requires attribution of credit to the creator.  While many researchers feel that this is a more appropriate license given their desire for credit, it's rare that a researcher would actually engage in legal action if the attribution clause was violated, and scientific norms generally ensure that data users will give credit to the owner even if it is not legally required.  
+
+In some cases it is necessary to place additional restrictions on how the data will be used; common cases for this include the sharing of sensitive proprietary information (e.g. internal company data, or PHI/PII. In addition, some jurisdictions require a higher degree of control over the sharing of human subjects data, specifically the European countries covered by the GDPR. In these cases, it is generally necessary to negotiate a DUA between institutions, which can often require substantial time and effort. If this situation arises, it is generally best to start by talking with the relevant legal officials within one's institution to learn more about the process, since it can vary drastically between insititutions and jurisidictions.
+
+There is also a concerning development in the US, in which a legal [rule](https://www.justice.gov/nsd/media/1382521/dl?inline) initiated by the Biden adminstration in 2024 has restricted access of individuals from "countries of concern" (including China) to "bulk sensitive data" (specifically including "human 'omic data") and US Government related data. This ruling will require additional access control (e.g. preventing some foreign researchers in US labs from accessing those data), and in some cases may also result in the need to use systems with a higher security level to work with those datasets.
+
+#### Choosing a data repository
+
+Once one is ready to share their data, they need to choose a repository through which to share it.  It's important to choose a repository that has the following features:
+
+- It has a strong sustainability model.
+- For a repository without institutional funding, it should have plan for data preservation in case the repository were to lose funding.
+- It provides PIDs for deposited data.
+- The data are immutable once shared; new versions can be posted, but the original versions remain available by versioned PIDs.
+- It exposes relevant metadata for search engines or other sites.
+- In cases where access control is necessary, the repository should procide the necessary mechanisms.
+- It should provide clear licensing of datasets.
+- It should provide standard protocols for data transfer, including APIs for machine-readable access.
+
+There are two main classes of repositories. *Generalist* repositories are those that are meant to store any kind of data; examples include the *Open Science Framework*, *Zenodo*, and *Dryad*. *Specialist* repostories are those that specialize in a particular kind of data; there are many such repositories across all domains of science, which are cataloged at [re3data.org](https://www.re3data.org/).  These vary from databases focused on a very specific type of data, to those focused on broad scientific subfields.  Noteable examples include:
+
+- [GenBank](https://www.ncbi.nlm.nih.gov/genbank/?index.html=): a database of openly available DNA sequences, operated by the US National Institutes of Health
+- [Inter-university Consortium for Political and Social Research (ICPSR)](https://www.icpsr.umich.edu/sites/icpsr/home): A data archive for the social sciences, run by the  Institute for Social Research at the University of Michigan.
+- [OpenNeuro](https://openneuro.org/): A database for BIDS-compliant neuroscience data, run by my laboratory at Stanford
+- [PANGAEA](https://www.pangaea.de/): A database of earth and environmental science data, run by researchers at the Helmholtz Center for Polar- and Marine Research and University of Bremen, Germany
+
+There are important tradeoffs when choosing between a generalist versus a specialist repository. Generalist repositories generally are much larger and better funded, and provide strong sustainability features. On the other hand, specialist repositories are more likely to support the particular features of data from their subfield, and data in specialist repositories are more likely to be discovered by researchers in the subfield.  I generally advise researchers to use a specialist repository for their data if one exists and is well-established, but to otherwise consider using a generalist repository.  
+
+#### Sharing human subjects data
+
+For researchers working with human subjects data, it is important to ensure that they are shared ethically.  In the US, data that have been deidentified (as discussed in Chapter 7) are not considered "human subjects data" under US Federal Regulations, and thus can legally be shared openly, without explicit consent of the research participants.  However, there are increasing concerns about the ability to reidentify subjects from data using AI tools even after the data have been "deidentified", and the US National Institutes of Health suggested in its 2023 [Policy for Data Management and Sharing](https://grants.nih.gov/grants/guide/notice-files/NOT-OD-21-013.html) that controlled access should be considered even for data that have been deidentified.  It is important to consider the potential harm that would occur due to reidentification as well as the potential likelihood of reidentification; datasets that include features such as disease diagnoses that, if disclosed, could result in significant harm to the subject should be considered for controlled access even if it is not legally required.
+
+It is also important to ensure that informed consent for research subjects provides information regarding how the data will be shared.  If the data will be shared broadly, then subjects should be informed that that data will be deidentified, but also make clear that the researcher cannot guarantee that reidentification will not be possible in the future.  Subjects can then properly weigh the risks of participation.  A number of model consent forms have been developed to support broad sharing; in my field of neuroimaging, the [Open Brain Consent](https://open-brain-consent.readthedocs.io/en/stable/) [Bannier:2021aa] was developed to support researchers in the US and Europe who wish to be able to openly share their data.
 
 
-#### Data sharing and use agreements
+#### Sharing large datasets
+
+When datasets reach into the terabytes or beyond, it becomes very difficult to share them by standard means like web downloads.  In this case, one has to decide whether to bring the data to the compute, or the compute to the data. If it's necessary to transfer very large datasets, the most common solution is the [Globus](https://www.globus.org/) file transfer system.  Globus provides the ability to quickly and securely transfer very large amounts of data in a fault tolerant way.  It also allows the verification of the data transfer and ecryption of the data, and provides a web dashboard that allows monitoring of large transfers.  Most HPC centers provide a Globus endpoint that allows transfer to and from other systems, and it's also possible to mount cloud file systems using Globus.
+
+Another alternative for working with large shared datasets is to move the computing to a system that is attached to the data, rather than copying the data to one's own computing system.  This is a common workflow on cloud systems, where it's usually straightforward to run compute instances that are in the same data center as the data, making access fast and efficient. Many open datasets (including our OpenNeuro dataset) are available on Amazon's cloud systems via the [AWS Data Exchange](https://aws.amazon.com/marketplace/search/results/?trk=868d8747-614e-4d4d-9fb6-fd5ac02947a8&sc_channel=el&FULFILLMENT_OPTION_TYPE=DATA_EXCHANGE&CONTRACT_TYPE=OPEN_DATA_LICENSES&filters=FULFILLMENT_OPTION_TYPE%2CCONTRACT_TYPE).  Analyzing data in the cloud can get expensive quickly due to the cost of cloud computing, but it may become cost-efficient depending on the cost of local data storage for very large datasets.
+
+#### Data citation
+
+There are two standard ways to cite data. The most common is to use a standard citation that includes the DOI for the dataset that was issued by the archive, preferably a version DOI for the specific version of the data used in the research.  However, it is increasingly common for high-value datasets to be described in a *data descriptor*, which is a standard journal publication that describes the dataset and links directly to the data.  There is an increasing number of journals that publish such data descriptors, with *Scientific Data* being the most prominent as of 2026.  The publication of a data descriptor allows the researcher to obtain credit in the most valuable form for academic progression: journal citations.  For example, we published a paper describing a large neuroimaging dataset [Poldrack:2016aa], which as of early 2026 has been cited more than 450 times according to Google Scholar. Data descriptors are becoming an increasingly popular mechanism for researchers to obtain academic credit for their shared data.
 
 ## Sharing computational models
 https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012702

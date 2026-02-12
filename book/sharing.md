@@ -253,22 +253,28 @@ Another alternative for working with large shared datasets is to move the comput
 There are two standard ways to cite data. The most common is to use a standard citation that includes the DOI for the dataset that was issued by the archive, preferably a version DOI for the specific version of the data used in the research.  However, it is increasingly common for high-value datasets to be described in a *data descriptor*, which is a standard journal publication that describes the dataset and links directly to the data.  There is an increasing number of journals that publish such data descriptors, with *Scientific Data* being the most prominent as of 2026.  The publication of a data descriptor allows the researcher to obtain credit in the most valuable form for academic progression: journal citations.  For example, we published a paper describing a large neuroimaging dataset [Poldrack:2016aa], which as of early 2026 has been cited more than 450 times according to Google Scholar. Data descriptors are becoming an increasingly popular mechanism for researchers to obtain academic credit for their shared data.
 
 ## Sharing computational models
-https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1012702
 
-The PLOS paper you linked is excellent. You should structure this section around the "Model Card" concept.
-Distinguish between sharing the Architecture (code), the Weights (binary), and the Training Data.
+Computational models are a common form of research object. The sharing of these models has become increasingly prominent in the context of deep learning and AI models.  Models actually involve several different types of objects:
 
-Model architectures vs. Trained weights.
-Model Registries (e.g., Hugging Face Hub).
-Model Cards for reporting limitations/bias.
+- The code that defines the model architecture
+- The code used for training and evaluating the model
+- The learned parameters of the model (and possibly checkpoints containing intermediate parameters during training)
+- The training data used to train the model
 
+Here I focus on the sharing of model parameters, since the previous sections have covered sharing of code and data.  It's important to note here that a model should not be considered "open source" unless it shares all of these components.  Many of the AI models that have been openly shared (such as the *Llama* large language models shared by the Meta Corporation) are more appropriated referred to as "open weight" models since they often have not shared all of the training data and code.  
 
-### Sharing platforms
+Model parameters should be shared according to the same principles discussed above for code and data:
 
-Suggestion: Group this by function.
-Repositories: GitHub/GitLab (living code).
-Archives: Zenodo/Dryad/Figshare (frozen record).
-Registries: PyPI/CRAN/Bioconductor (distribution).
+- They should be shared using data formats that are standard within the specific domain (which may vary depending on the class of model)
+- They should be shared with sufficient metadata to allow interpretation and attribution of credit
+- They should be shared with an explicit license that outlines terms of reuse
 
-### Sharing containers
-Containers (Docker vs. Singularity/Apptainer for HPC).
+The [Hugging Face Hub](https://huggingface.co/models) has become a very prominent generalist archive for machine learning models and datasets.  It supports a number of FAIR practices, including the ability to generate DOIs for models or datasets and the ability to associate an open source license with the objects.  It also provides significant tooling for seamlessly downloading models and datasets. Hugging Face also provides access to *model cards*, which are a particular form of documentation developed within the machine learning literature [@Mitchell:2019aa] that describes the model and any potential limitations or biases in a human-readable way.  
+
+There are few specialist repostories for models. One notable example is the [Vascular Model Repository](https://www.vascularmodel.com/) developed by my Stanford colleague Alison Marsden and her colleagues, which shares vascular models generated using the open-source [SimVascular](https://simvascular.github.io/) software for cardiovascular modeling. When such a specialist repository is available it's usually best to share the model parameters via that mechanism.
+
+## Sharing environments and platforms
+
+As we discussed earlier in the section on containers, complete reproducibility requires the sharing of the computational environment in which the computing was performed.  At minimum, one should share a description of the dependencies that went into the computation.  The `pyproject.toml` file for a project will specify the dependencies, but often will use loose version constraints (e.g. `numpy>=1.24`).  While this is good for general usage, it does not ensure reproducibilty since we can't tell what specific version of the package was used in any particular analysis.  Instead it is best to include a *lock file* that lists the exact versions of each dependency; when using *uv*, the `uv.lock` file contains this information.  However, the lock file only contains information about the Python dependencies, and does not contain details about the system level libraries (such as the version of the *glibc* library, which is known to potentially affect numerical computations; [@Glatard:2015aa]). It is for this reason that we generally prefer to share containers, which encapsulate the system environment more broadly.
+
+*Docker* has become the standard tooling for generating compute containers.  As I described in the previous section on containers, the contents of a *Docker* container image are defined by a `Dockerfile`, which provides a recipe for building the container.  It's important to note that while a container image provides a reproducible computing environment, the `Dockerfile` itself does not.  In a large study of Dockerfiles on GitHub, [@Malka:2026aa] found that very few containers could be perfectly reproduced or even functionally reproduced (i.e. including the same package versions). In fact, of a set of 5,298 Dockerfiles that were successfully built in 2023, only 72% of those could be rebuilt just two years later.  This suggests that the sharing and archiving of container images is essential for reproducibility.  Container images are commonly shared through the *Docker Hub* web archive. However, it is important to realize that this archive may delete images that are not accessed for a certain period of time.  Container images should thus be archived using a generalist repository such as *Zenodo* or *OSF* in order to ensure their continued availability.  

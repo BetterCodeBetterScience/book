@@ -1,4 +1,4 @@
-# Sharing Research Objects (TBD)
+# Sharing Research Objects
 
 Science at its best is a communal enterprise, and the sociologist of science Robert Merton noted that "Secrecy is the
 antithesis of this norm; full and open communication its enactment" [@Merton:1942aa].  Unfortunately scientists have not always lived up to this norm in practice.  It remains unfortnately common to hear anecdotes of researchers who refuse to share data or materials even after publishing in journals that have (largely unenforced) requirements for sharing.  The metascientific evidence is also consistent with this.  As just one example, when [@Wicherts:2006aa] requested data from authors of papers in a number of top journals in psychology, they were unable to obtain data from 73% of the authors.  More recent work by [@Tedersoo:2021aa] has shown a similar pattern of unavailability across many scientific fields.  
@@ -104,7 +104,7 @@ identifiers:
 
 This file is used by both GitHub and Zenodo to populate citation information; see [](#citationcff-fig) for an example of how GitHub displays this information in the "Cite this repository" section. Including this file is a great way to help encourage proper citation of your code, and there are tools (such as [CFFinit](https://citation-file-format.github.io/cff-initializer-javascript/#/)) that can help create a citation file for any project.
 
-```{figure} images/github_citation.jpg
+```{figure} images/github_citation.png
 :label: citationcff-fig
 :align: center
 :width: 500
@@ -116,7 +116,7 @@ For researchers who use software in their research, it's important to cite the s
 
 ### Software metadata
 
-In addition to citation information there are a number of other metadata that are important in order to make the code FAIR.  A set of guidelines regarding software metadata have been laid out in the [RSMD](https://fair-impact.github.io/RSMD-guidelines/)(Research Software MetaData Guidelines for End-Users) project [@Gruenpeter:2024aa].  An emerging standard for the specification of software metadata is the `codemeta.json` file, which provides a standard vocabulary for the specification of software metadata.  This file uses the *JSON-LD* format that I mentioned in a previous chapter, which links the terms in the dictionary to a format vocabulary.  The [codemeta-generator](https://codemeta.github.io/codemeta-generator/) tool provides an easy interface for generating of these files.  GitHub itself doesn't do anything special with the `codemeta.json` contents, but if the software is archived in Software Heritage then the project will be searchable by the specified metadata. Because this is becoming the standard, generating metadata now will also help ensure that your project remains findable in the future.
+In addition to citation information there are a number of other metadata that are important in order to make the code FAIR.  A set of guidelines regarding software metadata have been laid out in the [RSMD](https://fair-impact.github.io/RSMD-guidelines/) (Research Software MetaData Guidelines for End-Users) project [@Gruenpeter:2024aa].  An emerging standard for the specification of software metadata is the `codemeta.json` file, which provides a standard vocabulary for the specification of software metadata.  This file uses the *JSON-LD* format that I mentioned in a previous chapter, which links the terms in the dictionary to a format vocabulary.  The [codemeta-generator](https://codemeta.github.io/codemeta-generator/) tool provides an easy interface for generating of these files.  GitHub itself doesn't do anything special with the `codemeta.json` contents, but if the software is archived in Software Heritage then the project will be searchable by the specified metadata. Because this is becoming the standard, generating metadata now will also help ensure that your project remains findable in the future.
 
 Because many systems (e.g. the *PyPI* package archive) do not use `codemeta.json`, it's also important to put relevant information in other files that may be used.  For Python code, the `pyproject.toml` file allows specification of a number of metadata elements; in particular, it's important to specify the name, version, description, license, authors, and keywords under the `[project]` section, and project URLs under the `[project.urls]` section, since these are used by PyPI for searching packages in the index.
 

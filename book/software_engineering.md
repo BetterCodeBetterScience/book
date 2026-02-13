@@ -900,6 +900,8 @@ The examples above showed how scalar variable types like string or integer work,
 
 The *mypy* project has a handy [cheat sheet](https://mypy.readthedocs.io/en/stable/cheat_sheet_py3.html) for type hints.
 
+Note that most of the example code in this book does not include type hints, for the sake of brevity.  However, all of the code in the GitHub repository includes type hints.
+
 ## Code formatting tools
 
 Writing standards-compliant and well-formatted code requires a deep knowledge of the relevant standards, which in the context of Python is primarily contained in the [Style Guide for Python Code](https://peps.python.org/pep-0008/), also known as *PEP8*.

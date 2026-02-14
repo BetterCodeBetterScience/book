@@ -1,5 +1,329 @@
 # Coding with AI
 
+To say that impact of large language models (LLM) on coding has been transformational would be a gross understatement.  Until Github released its Copilot AI assistant in 2021, most coders leaned heavily on Internet searches. At some point there was a meme that computer programming would be officially renamed "Googling Stack Overflow", referring to a popular question-and-answer site for programming questions.  [](#stackoverflow-fig) shows a plot of the number of questions posted per month to this site; although traffic was already declining after a large bump during the COVID-19 pandemic, it absolutely plummeted since the introduction of ChatGPT in late 2022.  Ironically, it was the content of Stack Overflow that likely played a major role in the success of ChatGPT and other early LLMs in coding.  
+
+```{figure} images/stackoverflow_trend.png
+:label: stackoverflow-fig
+:align: center
+:width: 800
+
+A timeline of the monthly number of questions posted to Stack Overflow, once a popular question/answer forum for software development.  Plotted using data obtained from https://data.stackexchange.com/stackoverflow/query/1882532/questions-per-month?ref=blog.pragmaticengineer.com.
+```
+
+After 2022, AI coding tools emerged and strengthened at a pace that can only be described as blistering. There are many ways that one could try to quantify this increase, such as using benchmarks for coding ability.  However, the models quickly came to perform almost perfectly on most of the early benchmarks, making it difficult to quantify continued growth.  One more useful way quantify the growth of these tools is the *task completion time-horizon* [@METR:2025aa], which quantifies the length of tasks on which the models can achieve a particular success rate.  [](#METRhorizon-fig) shows the task completion time horizon for models as of the time of writing (February 2026); note that the y-axis is on a log scale, meaning that the increase is exponential.  Since the beginning of 2024 (starting with GPT-4o), the time horizon at which models are 80% successful is estimated to have doubled about every 100 days.  These data highlight the astounding velocity of change in the ability of these models in the first few years of their emergence.  
+
+```{figure} images/metr_horizon_benchmark.png
+:label: METRhorizon-fig
+:align: center
+:width: 800
+
+A plot of time horizon at 80% success on the METR AI benchmark over time.  Y axis is plotted on log scale.  Replotted using data from https://metr.org/.
+
+```
+
+The rapid growth of the capabilities of AI coding tools also makes clear that anything that I write about the state of the art at the time of writing (February 2026) is guaranteed to be outdated very rapidly.  In fact, a first draft of this chapter that I wrote in mid-2025 was badly outdated by early 2026!  In an attempt to futureproof this chapter to the degree possible, I will focus on outlining some of the principles that we have learned about the use of AI coding tools over the first few years of their existence, rather than focusing on specific tools that are likely to become quickly outdated.
+
+
+## Concerns regarding large language models
+
+LLMs remain controversial for several reasons.
+First, they are known to perpetuate the biases that exist in human language.
+A large body of research has shown that these models tend to demonstrate bias towards gender and racial minorities, and in general to perpetuate stereotypes that are present in human language.
+The models have in some cases been fine-tuned to avoid this, but the biases nonetheless still persist.
+Second, there are ongoing arguments regarding whether some models have misused copyrighted materials, or violated the license terms of open-source software.
+Third, there are legitimate concerns about the substantial resource usage (including energy and water) of the massive data centers that run these models.
+
+Most importantly, there are lingering concerns regarding the tendency of LLMs to generate inaccurate material, which has come to be known as "hallucination".
+I was continually amused at the inability of early versions of ChatGPT to distinguish between myself and my father, Wayne Poldrack, a retired accountant and not a neuroscientist.
+Given the prompt "Who is Wayne Poldrack", GPT-4o responded:
+
+>Wayne Poldrack is a prominent neuroscientist and psychologist known for his work in cognitive neuroscience, neuroinformatics, and open science.
+He has made significant contributions to understanding brain function, particularly in areas like decision-making, learning, and memory, using neuroimaging techniques such as functional MRI (fMRI).
+Poldrack is also an advocate for open science and reproducibility in research, promoting the sharing of data and methods to improve scientific transparency.
+
+> One of his most influential contributions is the development of the OpenNeuro platform, which provides free and open access to brain imaging data, allowing researchers worldwide to share, analyze, and collaborate on neuroimaging studies.
+Poldrack has also been involved in efforts to improve data-sharing standards in the field and has published extensively on topics related to brain function and the methodology of neuroscience research.
+
+> As of recent years, he has been a professor at Stanford University, where he continues to lead research initiatives in cognitive neuroscience, and neuroimaging, and the use of data science techniques in understanding brain processes.
+
+When further prompted "Who is Russell Poldrack?", it continued:
+
+> It seems there might be some confusion here, as Wayne Poldrack is the well-known neuroscientist, and there is no widely recognized individual named “Russell Poldrack” in the fields of neuroscience, psychology, or related disciplines.
+If you’re referring to someone connected to Wayne Poldrack or seeking more specific information, feel free to clarify, and I can look into it further.
+
+On other occasions, ChatGPT instead stated that Russell Poldrack and Wayne Poldrack are the same person, and even the  Google Gemini 2.5 Pro as of mid-2025 provided a detailed description of a several Wayne Poldracks who did not seem to exist.  
+
+While hallucinations have not been completely eliminated, they are much less common in the most recent models as of time of writing.  In part this seems to be due to the fact that the models now tend to use web search when they don't have high-confidence information about a query.  This was evident from the response to Google Gemini 3 Pro in February 2026 to my prompt "Who is Wayne Poldrack?" that it had previously hallucinated to:
+
+> Wayne Poldrack is a retired **Certified Public Accountant (CPA)** based in Rosenberg, Texas, and the father of the prominent Stanford neuroscientist **Russell (Russ) Poldrack**.
+
+> While he is a private citizen, his name has become a topic of interest in the tech community due to a recurring **artificial intelligence "hallucination."** Large Language Models (LLMs), such as ChatGPT, have frequently and incorrectly identified Wayne Poldrack as a famous neuroscientist, confusing him with his son.
+
+> Here is a summary of the distinction:
+*   **Wayne Poldrack:** A retired accountant and former chairman of the Planning Commission in Rosenberg, Texas.
+*   **Russell Poldrack:** His son, a famous researcher at Stanford University known for his work in cognitive neuroscience and neuroinformatics (e.g., the OpenNeuro platform).
+
+> Russell Poldrack has publicly written about this error, using it as a case study to demonstrate how AI models can confidently present false biographical information.
+
+Even if they have become less frequent in newer models, the potential presence of hallucinations means that information generated by LLMs needs to be validated if it is to be used in domains where accuracy matters (like science).  Fortunately, coding is a best case scenario for the use of LLMs, since we can relatively easily write tests that can verify that the solutions generated by the system are correct.
+This is the reason for my heavy focus on testing and test-driven development in this book, as you saw earlier in the book.
+
+## Generative versus agentic AI
+
+LLMs are often referred to as *generative AI* tools, since they generate new information based on prompts from the user.  These models involve *open-loop* interaction, in which the model generates output and then waits for additional input from the human.  In 2025 a new paradigm known as *agentic AI* emerged. Agentic AI allows *closed-loop* operation, in which the LLM is given access to external tools that it can use to perform actions, and then respond to the results of those actions with new actions. A coding agent can generate code, run tests on the code, process the error messages, and revise the code to address the errors, all without any human intervention.  Tool use allows models to become increasingly autonomous, and a growing ecosystem of tools allows the agents to become more powerful even if the underlying LLM doesn't change. These include tools for web search, system file access, running shell commands, installing new packages, running tests, version control, web browser interaction, and much more. In reality the distinction between generative and agentic AI is more of a spectrum than a binary distinction, as agentic features have been integrated into many chatbots and other systems that are used in a generative manner.
+
+The ability of coding agents to access tools was accelerated by the development of a standard protocol for tool calling known as the *Model Context Protocol* (commonly referred to as *MCP*).  
+You can think of as an API for tool use, providing a consistent way for AI agents to interact with tools; or, as the [MCP documentation](https://modelcontextprotocol.io/docs/getting-started/intro) says, "Think of MCP like a USB-C port for AI applications".
+As just one example, one particularly useful tool for web projects is the [Playwright MCP](https://developer.microsoft.com/blog/the-complete-playwright-end-to-end-story-tools-ai-and-real-world-workflows), which allows the agent to interactively test the web application using a browser autonomously.
+This can greatly speed up development for these kinds of projects because it allows the agent to do things that would previously have required human intervention.
+
+While agentic coding tools greatly increase the power of AI coding assistants, they also change the kind of failure modes that can occur.  In the generative mode, the researcher generates code and has a chance to look at it before running it.  In the agentic model, the agent can generate a large amount of code and make changes across many files in the codebase without any human oversight.  In some cases this code can work well, but the agent can also end up going down rabbit holes, generating problematic code and spending a large number of tokens in the process.  Throughout the chapter I will discuss strategies for dealing with these issues, so that you can maximize the benefits of agentic coding while minimizing the risks.
+
+
+## AI interaction patterns for coding
+
+There are several common patterns of interaction with AI tools for coding. In order to maximize the impact of AI coding tools, it's important to be aware of each of these patterns and the use cases in which they can be helpful.
+
+
+- **Single-turn generation**:  Prompting of an LLM chatbot to generate code in a single shot.  This is often the first mode of interaction for novice users of AI coding.
+- **Context-aware code completion**: The integration of coding assistants into IDEs allows them to perform autocompletion in a way that takes into account the context in the code. For example, one can prompt the generation of an entire function simply by typing a comment that outlines the desired function.
+- **Programmatic access**: One can write code that calls the APIs of coding models to generate code in a programmatic way.
+- **Autonomous execution**: Using coding agents, a complicated plan can be executed by the model using tools to perform actions.
+
+## Principles for working with AI coding tools
+
+### Verification
+
+Any code generated by an AI coding tool must be verified to ensure that the computations are correct. As an example, I prompted ChatGPT (using GPT-4o) with the following prompt: "generate a python function to compute a multiple linear regression solution using linear algebra.", resulting in this code:
+
+```
+def multiple_linear_regression(X, y):
+    """
+    Solves a multiple linear regression problem using the normal equation.
+    
+    Parameters:
+    X (numpy array): A 2D numpy array where each row is a sample 
+      and each column is a feature.
+    y (numpy array): A 1D numpy array representing the target variable 
+      for each sample.
+    
+    Returns:
+    w (numpy array): The coefficients of the linear regression model.
+    """
+    # Add a column of ones to X for the intercept term
+    X_b = np.c_[np.ones((X.shape[0], 1)), X]
+    
+    # Compute the coefficients using the normal equation
+    w = np.linalg.inv(X_b.T.dot(X_b)).dot(X_b.T).dot(y)
+    
+    return w
+```
+
+I then started another new chat window and issued exactly the same prompt again, with the following result:
+
+```
+def multiple_linear_regression(X, y):
+    """
+    Computes the coefficients for a multiple linear regression 
+    using the normal equation.
+    
+    Parameters:
+    X : numpy.ndarray
+        The input feature matrix (each row is a data point, and 
+        each column is a feature).
+    y : numpy.ndarray
+        The target output vector.
+
+    Returns:
+    theta : numpy.ndarray
+        The computed coefficients (including the intercept if 
+        X includes a column of ones).
+    """
+    # Compute the normal equation: theta = (X^T X)^(-1) X^T y
+    X_transpose = np.transpose(X)
+    theta = np.linalg.inv(X_transpose @ X) @ X_transpose @ y
+    
+    return theta
+```
+
+This is very similar to the previous code, but you can see slight differences in the implementation of the function.
+This highlights the fact that there is a degree of randomness in the outputs of an LLM, as I discussed in the earlier introduction to LLMs.
+There are two issues with the code that was generated here.
+First, both functions use the normal equation ($(X'X)^{-1}X'y$) to invert the design matrix; this is a suboptimal solution to this problem, both because it will fail if the design matrix `X` is singular, and because it can be numerically unstable. A preferred solution would be a method that uses singular value decomposition (SVD), such as `np.linalg.lstsq()`.
+
+There is also one functionally important difference between the two functions: The second function does not add an intercept whereas the first one did.  
+We can see that each of these is problematic if we write some tests for the functions.  
+We need four tests in all: two tests for function 1 (with and without an intercept) and two tests for function 2 (with and without an intercept).  
+When we do this we see that two of the tests fail:
+
+```python
+======================================= short test summary info ========================================
+FAILED test_linreg.py::test_simple_linear_regression_function1 - numpy.linalg.LinAlgError: Singular matrix
+FAILED test_linreg.py::test_simple_linear_regression_function2_noint - assert 1 == 2
+===================================== 2 failed, 2 passed in 0.76s ======================================
+```
+
+The first failure reflects a linear algebra error caused by adding an intercept to the `X` matrix that already has one.  The second failure reflects an incorrect result due to omission of the intercept from the model.
+
+Tests are the primary means to ensure that LLM code is valid, and LLMs are quite good at generating test code.
+I initially used Claude Sonnet 4.5 to generate tests for the two functions above, but was surprised to see that all of the tests passed. 
+It turned out that that the LLM realized that the two functions differed in their assumptions about the presence of an intercept, and modified the inputs within the tests to make sure that they both passed; that is, it identified and accomodated the bugs rather than exposing them.
+As I will discuss in more detail in Chapter 8, LLM-generated tests often take the "happy path", doing everything they can to ensure that all tests pass at all costs.
+Thus, it is essential that LLM-generated tests are examined closely to ensure that they will actually catch problems when they exist, or to use test-driven development where the tests define the functional requirements prior to any implementation.
+
+
+### Context management
+
+Early in the development of language models, the term "prompt engineering" came to refer to the art of crafting prompts that can effectively drive an LLM to solve a particular problem.
+Over time, this has evolved into the idea of "context engineering", highlighting the fact that context will generally include more than just the prompt at hand, especially when agents start to wield tools.
+With agentic coding tools, it's common to provide one or more files that specify all of the relevant information for the task, which can be loaded by the model into its context every time it is run within the project.
+I will refer to the set of practices that one follows and resources that one uses to guide the development process as the *agentic coding workflow*.
+
+An essential tool for success with agentic coding workflows is the idea of *context management*.
+Even when using models with very large context windows, it generally makes sense to keep one's context footprint as small as possible, given that important information can easily get lost when the context window fills up.
+It's thus important to practice good *context management* when working with language models in general: at any point in time, the context window should contain all of the information that is relevant to the current task at hand, and as little as possible irrelevant information.
+In addition, context management is essential to deal with the cases when the model goes off in a bad direction or gets stuck, which happens regularly even with the best models.
+
+Context management includes two important components. First, we need to prepare the context so that the model has the relevant information to start developing, which we do using persistent *context files*.  Second, we need to manage the context during the process of development, which we do using the agent's context management tools.
+
+### Using persistent context files
+
+An essential aspect of context management is having important information contained in a set of files that can be read in by the agent to place important project information in the current context.  There are two types of files to consider here, which play different roles and have different lifespans: *constitution files*, and *memory files*.  Most coding agents combine these into a single *instructions file* (such as `AGENTS.md` or `CLAUDE.md`), but it's useful to distinguish them.  
+
+#### Constitution files
+
+Constitution files define the general coding and development practices that you want the agent to follow.  Here are the contents of a constitution file that I used in an agentic coding project:
+
+```
+**Code style (NON-NEGOTIABLE)**:
+- Write code that is clean and modular
+- Prefer shorter functions/methods over longer ones
+
+**Package management (NON-NEGOTIABLE)**:
+- use uv for package management
+- use `uv run` for all local commands
+
+**Development processes (NON-NEGOTIABLE)**:
+- FORBIDDEN: including any code or imports within init.py files.
+
+**Testing (NON-NEGOTIABLE)**:
+- Use pytest with a test-driven development approach
+- Prefer functions over classes for testing
+- Use pytest fixtures for persistent objects
+- Enforce RED-GREEN-Refactor cycle, with tests written first
+- Commit tests before implementation
+- FORBIDDEN: Implementation before test, skipping RED phase
+- FORBIDDEN: Changing the tests simply in order to pass.  All changes to tests should reflect either a change in requirements or an error identified in the test.
+- FORBIDDEN: Simplifying the problem to pass the test.  The test should fail for anything less than a solution of the full problem defined in the specification.
+```
+
+Most coding agents have a hierarchical configuration system, in which there is a user-level instructions file (e.g.` ~/.claude/CLAUDE.md`) along with a project-level instructions file within the project directory.  The user-level instructions file is a good place to define your general coding practices that will be consistent across all projects. 
+
+The user-level constitution file is very useful as a running document of one's development preferences and policies. Any time a coding agent behaves in a way that you wish to avoid in the future, it's useful to add a relevant directive to the user-level file.
+
+#### Memory files
+
+Whereas constitution files specify a global definition for your coding practices and preferences, memory files specify details that are specific to the particular project.  These are often contained in a single instructions file (AGENTS.md or CLAUDE.md) at the project level.  For simple projects it's usually fine to just work with that single instructions file, but for more complex projects I often prefer to break them into several different files that define different aspects of the project; in this case, I would include a directive at the top of the main instructions file (which is automatically read by the agent) to also read those other files:
+
+```
+Please read PLANNING.md, TASKS.md, and SCRATCHPAD.md to understand the project.
+```
+
+For coding agents that allow definition of custom commands, it can also be useful to define a command with this prompt, which can be easily run whenever the context is cleared; I used this prompt to create a custom command called `/freshstart` within Claude Code.
+
+There are several important kinds of information that should be defined in memory files. Note that while I present this as a sequential process, it often involves iteration, when shortcomings of later files reveal gaps in the earlier files.
+Also note that memory files can get bloated over time as the coding agent makes additions to them to reflect its ongoing work.  For large projects it's thus a good idea to regularly review and clean up these files.
+
+**Project requirements/specifications**
+
+The Project Requirements Document (PRD) specifies the overall goals and requirements for the project. Goals refers to the overall problems that the software aims to solve (e.g., "Searchable interface: Enable complex queries across sessions, subjects, stimuli, and processing status").  Given that coding agents often tend to engage in "gold plating" (i.e. solving problems that aren't on the critical path), it's also often useful to specify *non-goals*, that is, problems that the software doesn't need to solve (e.g. "Direct analysis capabilities (this is a tracking/management system, not an analysis platform)"). Requirements can include architectural features (e.g. defining the different components or layers of the system), functional requirements (e.g., "API shall validate incoming data against expected schema for the specified task") or non-functional requirements related to performance, reliability, security, or maintainability (e.g. "API response time < 500ms for single-document queries"). 
+
+I generally start a project by iterating on the PRD with an LLM chatbot.  I start by describing the overall problem that I want to solve, and then prompt the model to first ask me any questions that it has before generating a PRD.  Here is an example from a [project](https://github.com/BetterCodeBetterScience/example-parcelextract) that I developed in the course of writing this book:
+
+> "Help me create a Project Requirement Document (PRD) for a Python module called parcelextract that will take in a 4-dimensional Nifti brain image and extract signal from clusters defined by a specified brain parcellation, saving it to a text file accompanied by a json sidecar file containing relevant metadata.
+The tool should leverage existing packages such as nibabel, nilearn, and templateflow, and should follow the BIDS standard for file naming as closely as possible.
+The code should be written in a clean and modular way, using a test-driven development framework."
+
+I then manually edit the PRD to make sure that it aligns with my goals, or in some cases start over with a new chat session if the generated PRD is too far from my expectations. 
+
+**Planning document**
+
+Once I have a PRD, I would then ask an LLM to generate a *planning document* that contains information related to the planning and execution of the project, such as:
+
+- System architecture and components
+- Technology stack, language, and dependencies
+- Development tools to be used
+- Development workflow
+
+Here is the planning prompt from the `parcelextract` example above:
+
+> Based on the attached CLAUDE.md and PRD.md files, create a PLANNING.md file that includes architecture, technology stack, development processes/workflow, and required tools list for this app." 
+
+**Tasks document**
+
+Given the planning document, we then need a file that contains a detailed list of the tasks to be accomplished in the project, which can also be used as a running tally of where the development process stands.
+We can generate this within same chat session that we used to generate the planning file:
+
+> Based on the attached CLAUDE.md, PRD.md, and PLANNING.md files, create a TASKS.md file with bullet points for tasks divided into milestones for building this app.
+
+This will be the file that the agent then uses to organize its work. The tasks file will often be broken into sections, and when the agent is given the tasks file it will generally work one section at a time.
+
+**Scratchpad/TODO files**
+
+Once development starts, one will often run into problems that need to be addressed by the model, such as fixing errors or adding additional features.  While one could put these commands into the agent's command line, for more complex problems it can be useful to specify them in a separate scratchpad file.  This provides a place for the model to keep notes on its ongoing work and also ensures that the information will survive if the context is cleared.  I generally create a scratchpad file in my repository that contains the following header:
+
+```
+# Development scratchpad
+
+- Use this file to keep notes on ongoing development work.
+- Open problems marked with [ ]
+- Fixed problems marked with [x]
+
+## NOTES
+```
+
+Once a problem is solved to one's satisfaction it is useful to remove it from the scratchpad, in order to keep the context as clean as possible; to keep a running log of solved problems one can commit the file to version control each time before removing the solved problems.
+
+
+### Managing context during agentic coding
+
+During coding it is important to keep the context as clean as possible, meaning that it should only contain the information that is relevant to solving the problem at hand. 
+This is important even for models with very large context windows.
+LLM researchers have identified a phenomenon that has come to be called *context rot*, in which performance of the model is degraded as the amount of information in context grows. [Analyses of performance as a function of context](https://research.trychroma.com/context-rot) have shown that model performance can begin to degrade on some benchmarks when the context extends beyond 1000 tokens and can sometimes degrade very badly as the context goes beyond 100,000 tokens. 
+It is thus important to keep track of the context during an agentic coding session, and use the tools provided by the agent to manage the context.
+
+Using Claude Code as an example, the current state of the context can be viewed by using the `/context` command:
+
+![Claude Code context output](images/claude_context.png)
+
+Claude Code will automatically *compact* the context (meaning that it replaces the current context with an automatically generated summary) when the context window is close to being full, but by this point performance may have started to suffer, so it's often best to manually compact (`/compact`) or clear (`/clear`) the context when one reaches a natural breakpoint in the development process.
+I find that compacting is useful in the middle of a problem, but if I am at a breakpoint between problems I will often clear the context completely. 
+It's then essential to reload the memory files, which is why I created a custom command to make this easy.
+In addition, it will often be more effective to guide the summary to focus on the important aspects for the current workflow, rather than letting the LLM choose what to summarize.
+
+It's also important to [gain an understanding](https://claudelog.com/mechanics/context-window-depletion/) of which tasks are more sensitive to the contents within the context window and which are less sensitive (and thus can allow more frequent clearing of the context).
+Tasks that require integration across a large codebase or understanding of large-scale architecture will require more information in the context window, while tasks focused on a specific element of the code (such as a single line or function) can be accomplished with relatively little information in the context window.
+
+
+### Prompting and steering
+
+
+### Knowing the model
+
+
+### Effective workflows
+
+
+### Code quality
+
+
+### Maintaining human oversight
+
+
+
+
+### OLDER
+
 ## Using AI coding assistants
 
 The advent of AI coding assistants based on large language models (LLMs) has fundamentally changed the landscape of computer programming.
@@ -143,38 +467,7 @@ In this case the LLM simply misunderstood the problem that was being solved, hig
 This misunderstanding may have occurred if the model had earlier generated a simple example in response to the type hints prompt, and then failed to update to the regression prompt.
 This kind of perseverative error is not uncommon.
 
-## Cautions regarding large language models
 
-LLMs remain controversial for several reasons.
-First, they are known to perpetuate the biases that exist in human language.
-A large body of research has shown that these models tend to demonstrate bias towards gender and racial minorities, and in general to perpetuate stereotypes that are present in human language.
-The models have in some cases been fine-tuned to avoid this, but the biases nonetheless still persist.
-Second, there are ongoing arguments regarding whether some models have misused copyrighted materials, or violated the license terms of open-source software.
-
-Most importantly, there are continuing concerns regarding the tendency of LLMs to generate inaccurate material, which has come to be known as "hallucination".
-One of us (RP) has been continually amused at the inability of ChatGPT to distinguish between himself and his father, Wayne Poldrack, a retired accountant and not a neuroscientist.
-Given the prompt "Who is Wayne Poldrack", GPT-4o responds:
-
->Wayne Poldrack is a prominent neuroscientist and psychologist known for his work in cognitive neuroscience, neuroinformatics, and open science.
-He has made significant contributions to understanding brain function, particularly in areas like decision-making, learning, and memory, using neuroimaging techniques such as functional MRI (fMRI).
-Poldrack is also an advocate for open science and reproducibility in research, promoting the sharing of data and methods to improve scientific transparency.
-
-> One of his most influential contributions is the development of the OpenNeuro platform, which provides free and open access to brain imaging data, allowing researchers worldwide to share, analyze, and collaborate on neuroimaging studies.
-Poldrack has also been involved in efforts to improve data-sharing standards in the field and has published extensively on topics related to brain function and the methodology of neuroscience research.
-
-> As of recent years, he has been a professor at Stanford University, where he continues to lead research initiatives in cognitive neuroscience, and neuroimaging, and the use of data science techniques in understanding brain processes.
-
-
-When further prompted "Who is Russell Poldrack?", it continues:
-
-> It seems there might be some confusion here, as Wayne Poldrack is the well-known neuroscientist, and there is no widely recognized individual named “Russell Poldrack” in the fields of neuroscience, psychology, or related disciplines.
-If you’re referring to someone connected to Wayne Poldrack or seeking more specific information, feel free to clarify, and I can look into it further.
-
-On other occasions, ChatGPT has instead stated that Russell Poldrack and Wayne Poldrack are the same person, and even the latest Google Gemini 2.5 Pro provides a detailed description of a Wayne Poldrack who does not seem to exist.
-To restate the conclusion from the GPT-4 Technical Report stated in the Introduction: "Care should be taken when using the outputs of GPT-4, particularly in contexts where reliability is important."
-
-Fortunately, coding seems to be a best case scenario for the use of LLMs, since we can relatively easily write tests that can verify that the solutions generated by the system are correct.
-This is the reason for our heavy focus on testing and test-driven development in this book, as you saw earlier in the book.
 
 ## AI coding approaches
 
@@ -1019,28 +1312,7 @@ In summary, this example provided an overview of the power of agentic coding too
 
 ## Workflows for agentic coding
 
-Early in the development of language models, the term "prompt engineering" came to refer to the art of crafting prompts that can effectively drive an LLM to solve a particular problem.
-Over time, this has evolved into the idea of "context engineering", highlighting the fact that context will generally include more than just the prompt at hand, especially when agents start to wield tools.
-With agents like Claude Code, it's common to provide one or more files that specify all of the relevant information for the task, which can be loaded by the model into its context every time it is run within the project.
-By *workflow* I mean a set of practices that one follows and resources that one uses to guide the development process.
 
-### Context management
-
-Essential to agentic coding workflows is the idea of *context management*.
-Even when using models with very large context windows, it generally makes sense to keep one's context footprint as small as possible, given that important information can easily get lost when the context window fills up.
-It's thus important to practice good *context management* when working with language models in general: at any point in time, the context window should contain all of the information that is relevant to the current task at hand, and as little as possible irrelevant information.
-In addition, context management is essential to deal with the cases when the model goes off in a bad direction or gets stuck, which happens regularly even with the best models.
-
-The current state of the context can be viewed within Claude Code by using the `/context` command:
-
-![Claude Code context output](images/claude_context.png)
-
-Claude Code will automatically *compact* the context (meaning that it replaces the current context with an automatically generated summary) when the context window is close to being full, but by this point performance may have started to suffer, so it's often best to manually compact (`\compact`) or clear (`\clear`) the context when one reaches a natural breakpoint in the development process.
-In addition, it will often be more effective to guide the summary to focus on the important aspects for you, rather than letting the LLM choose what to summarize.
-Below we will show an example of a custom Claude command to perform this in the context of the workflow that we will discuss.
-
-It's also important to [gain an understanding](https://claudelog.com/mechanics/context-window-depletion/) of which tasks are more sensitive to the contents within the context window and which are less sensitive (and thus can allow more frequent clearing of the context).
-Tasks that require integration across a large codebase or understanding of large-scale architecture will require more information in the context window, while tasks focused on a specific element of the code (such as a single line or function) can be accomplished with relatively little information in the context window.
 
 ### A general agentic coding workflow
 

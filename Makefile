@@ -1,6 +1,9 @@
 clean:
 	- rm -rf book/_build
 
+spellcheck:
+	uv run codespell */*.md
+
 build-html: clean
 	myst build --html
 	npx serve _build/html

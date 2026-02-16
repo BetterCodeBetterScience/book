@@ -1,6 +1,6 @@
 # Coding with AI
 
-To say that impact of large language models (LLM) on coding has been transformational would be a gross understatement.  Until Github released its Copilot AI assistant in 2021, most coders leaned heavily on Internet searches. At some point there was a meme that computer programming would be officially renamed "Googling Stack Overflow", referring to a popular question-and-answer site for programming questions.  [](#stackoverflow-fig) shows a plot of the number of questions posted per month to this site; although traffic was already declining after a large bump during the COVID-19 pandemic, it absolutely plummeted since the introduction of ChatGPT in late 2022.  Ironically, it was the content of Stack Overflow that likely played a major role in the success of ChatGPT and other early LLMs in coding.  
+To say that the impact of large language models (LLMs) on coding has been transformational would be a gross understatement.  Until Github released its Copilot AI assistant in 2021, most coders leaned heavily on Internet searches. At some point there was a humorous meme that computer programming would be officially renamed "Googling Stack Overflow", referring to a popular question-and-answer site for programming questions.  [](#stackoverflow-fig) shows a plot of the number of questions posted per month to this site; although traffic was already declining after a large bump during the COVID-19 pandemic, it absolutely plummeted after the introduction of ChatGPT in late 2022.  Ironically, it was the content of Stack Overflow that likely played a major role in the success of ChatGPT and other early LLMs in coding.  
 
 ```{figure} images/stackoverflow_trend.png
 :label: stackoverflow-fig
@@ -10,7 +10,7 @@ To say that impact of large language models (LLM) on coding has been transformat
 A timeline of the monthly number of questions posted to Stack Overflow, once a popular question/answer forum for software development.  Plotted using data obtained from https://data.stackexchange.com/stackoverflow/query/1882532/questions-per-month?ref=blog.pragmaticengineer.com.
 ```
 
-After 2022, AI coding tools emerged and strengthened at a pace that can only be described as blistering. There are many ways that one could try to quantify this increase, such as using benchmarks for coding ability.  However, the models quickly came to perform almost perfectly on most of the early benchmarks, making it difficult to quantify continued growth.  One more useful way quantify the growth of these tools is the *task completion time-horizon* [@METR:2025aa], which quantifies the length of tasks on which the models can achieve a particular success rate.  [](#METRhorizon-fig) shows the task completion time horizon for models as of the time of writing (February 2026); note that the y-axis is on a log scale, meaning that the increase is exponential.  Since the beginning of 2024 (starting with GPT-4o), the time horizon at which models are 80% successful is estimated to have doubled about every 100 days.  These data highlight the astounding velocity of change in the ability of these models in the first few years of their emergence.  
+After 2022, AI coding tools emerged and strengthened at a pace that can only be described as blistering. There are many ways that one could try to quantify this increase, such as using benchmarks for coding ability.  However, the models quickly came to perform almost perfectly on most of the early benchmarks, making it difficult to quantify continued growth.  One more useful way to quantify the growth of these tools is the *task completion time-horizon* [@METR:2025aa], which quantifies the required length of tasks for humans on which the models can achieve a particular success rate.  [](#METRhorizon-fig) shows the task completion time horizon for models as of the time of writing (February 2026); note that the y-axis is on a log scale, meaning that the increase is exponential.  Since the beginning of 2024 (starting with GPT-4o), the time horizon at which models are 80% successful is estimated to have doubled about every 100 days.  These data highlight the astounding velocity of change in the ability of these models in the first few years of their emergence.  
 
 ```{figure} images/metr_horizon_benchmark.png
 :label: METRhorizon-fig
@@ -31,7 +31,7 @@ First, they are known to perpetuate the biases that exist in human language.
 A large body of research has shown that these models tend to demonstrate bias towards gender and racial minorities, and in general to perpetuate stereotypes that are present in human language.
 The models have in some cases been fine-tuned to avoid this, but the biases nonetheless still persist.
 Second, there are ongoing arguments regarding whether some models have misused copyrighted materials, or violated the license terms of open-source software.
-Third, there are legitimate concerns about the substantial resource usage (including energy and water) of the massive data centers that run these models.
+Third, there are legitimate concerns about the substantial resource usage (including energy and water) of the massive data centers that run these models. 
 
 Most importantly, there are lingering concerns regarding the tendency of LLMs to generate inaccurate material, which has come to be known as "hallucination".
 I was continually amused at the inability of early versions of ChatGPT to distinguish between myself and my father, Wayne Poldrack, a retired accountant and not a neuroscientist.
@@ -51,9 +51,9 @@ When further prompted "Who is Russell Poldrack?", it continued:
 > It seems there might be some confusion here, as Wayne Poldrack is the well-known neuroscientist, and there is no widely recognized individual named “Russell Poldrack” in the fields of neuroscience, psychology, or related disciplines.
 If you’re referring to someone connected to Wayne Poldrack or seeking more specific information, feel free to clarify, and I can look into it further.
 
-On other occasions, ChatGPT instead stated that Russell Poldrack and Wayne Poldrack are the same person, and even the  Google Gemini 2.5 Pro as of mid-2025 provided a detailed description of a several Wayne Poldracks who did not seem to exist.  
+On other occasions, ChatGPT instead stated that Russell Poldrack and Wayne Poldrack are the same person, and even the  Google Gemini 2.5 Pro model as of mid-2025 provided a detailed description of a several Wayne Poldracks who do not seem to actually exist.  
 
-While hallucinations have not been completely eliminated, they are much less common in the most recent models as of time of writing.  In part this seems to be due to the fact that the models now tend to use web search when they don't have high-confidence information about a query.  This was evident from the response to Google Gemini 3 Pro in February 2026 to my prompt "Who is Wayne Poldrack?" that it had previously hallucinated to:
+While hallucinations have not been completely eliminated, they are much less common in the most recent frontier models as of time of writing.  In part this seems to be due to the fact that the models now tend to use web search when they don't have high-confidence information about a query.  This was evident from the response to Google Gemini 3 Pro in February 2026 to my prompt "Who is Wayne Poldrack?" that it had previously hallucinated to:
 
 > Wayne Poldrack is a retired **Certified Public Accountant (CPA)** based in Rosenberg, Texas, and the father of the prominent Stanford neuroscientist **Russell (Russ) Poldrack**.
 
@@ -66,18 +66,17 @@ While hallucinations have not been completely eliminated, they are much less com
 > Russell Poldrack has publicly written about this error, using it as a case study to demonstrate how AI models can confidently present false biographical information.
 
 Even if they have become less frequent in newer models, the potential presence of hallucinations means that information generated by LLMs needs to be validated if it is to be used in domains where accuracy matters (like science).  Fortunately, coding is a best case scenario for the use of LLMs, since we can relatively easily write tests that can verify that the solutions generated by the system are correct.
-This is the reason for my heavy focus on testing and test-driven development in this book, as you saw earlier in the book.
+This is the reason for my heavy focus on testing and test-driven development in this book, and was in fact my rationale for presenting testing prior to discussing AI-assisted coding in detail.
 
 ## Generative versus agentic AI
 
-LLMs are often referred to as *generative AI* tools, since they generate new information based on prompts from the user.  These models involve *open-loop* interaction, in which the model generates output and then waits for additional input from the human.  In 2025 a new paradigm known as *agentic AI* emerged. Agentic AI allows *closed-loop* operation, in which the LLM is given access to external tools that it can use to perform actions, and then respond to the results of those actions with new actions. A coding agent can generate code, run tests on the code, process the error messages, and revise the code to address the errors, all without any human intervention.  Tool use allows models to become increasingly autonomous, and a growing ecosystem of tools allows the agents to become more powerful even if the underlying LLM doesn't change. These include tools for web search, system file access, running shell commands, installing new packages, running tests, version control, web browser interaction, and much more. In reality the distinction between generative and agentic AI is more of a spectrum than a binary distinction, as agentic features have been integrated into many chatbots and other systems that are used in a generative manner.
+LLMs are often referred to as *generative AI* tools, since they generate new information based on prompts from the user.  These models involve *open-loop* interaction, in which the model generates output and then waits for additional input from the human.  In 2025 a new paradigm known as *agentic AI* emerged. Agentic AI allows *closed-loop* operation, in which the LLM is given access to external tools that it can use to perform actions, and then respond to the results of those actions with new actions. A coding agent can generate code, run tests on the code, process the error messages, and revise the code to address the errors, all without any human intervention.  Tool use allows models to become increasingly autonomous, and a growing ecosystem of tools allows the agents to become more powerful even if the underlying LLM doesn't change. These include tools for web search, system file access, running shell commands, installing new packages, running tests, version control, web browser interaction, and much more. In practice the distinction between generative and agentic AI is now more of a spectrum than a binary distinction, as agentic features have been integrated into many chatbots and other systems that are used in a generative manner.
 
-The ability of coding agents to access tools was accelerated by the development of a standard protocol for tool calling known as the *Model Context Protocol* (commonly referred to as *MCP*).  
-You can think of as an API for tool use, providing a consistent way for AI agents to interact with tools; or, as the [MCP documentation](https://modelcontextprotocol.io/docs/getting-started/intro) says, "Think of MCP like a USB-C port for AI applications".
+The ability of coding agents to access tools was accelerated by the development of a standard protocol for tool calling known as the *Model Context Protocol* (commonly referred to as *MCP*). You can think of as an API for tool use, providing a consistent way for AI agents to interact with tools; or, as the [MCP documentation](https://modelcontextprotocol.io/docs/getting-started/intro) says, "Think of MCP like a USB-C port for AI applications".
 As just one example, one particularly useful tool for web projects is the [Playwright MCP](https://developer.microsoft.com/blog/the-complete-playwright-end-to-end-story-tools-ai-and-real-world-workflows), which allows the agent to interactively test the web application using a browser autonomously.
 This can greatly speed up development for these kinds of projects because it allows the agent to do things that would previously have required human intervention.
 
-While agentic coding tools greatly increase the power of AI coding assistants, they also change the kind of failure modes that can occur.  In the generative mode, the researcher generates code and has a chance to look at it before running it.  In the agentic model, the agent can generate a large amount of code and make changes across many files in the codebase without any human oversight.  In some cases this code can work well, but the agent can also end up going down rabbit holes, generating problematic code and spending a large number of tokens in the process.  Throughout the chapter I will discuss strategies for dealing with these issues, so that you can maximize the benefits of agentic coding while minimizing the risks.
+While agentic coding tools greatly increase the power of AI coding assistants, they also change the kind of failure modes that can occur.  In the generative mode, the researcher generates code (e.g. by prompting a chatbot or using autocompletion in an IDE) and has a chance to look at it before running it.  In the agentic model, the agent can generate a large amount of code and make changes across many files in the codebase without any human oversight.  In some cases this code can work well, but the agent can also end up going down rabbit holes, generating problematic code and spending a large number of tokens in the process.  Throughout the chapter I will discuss strategies for dealing with these issues, so that you can maximize the benefits of agentic coding while minimizing the risks.
 
 
 ## AI interaction patterns for coding
@@ -86,7 +85,7 @@ There are several common patterns of interaction with AI tools for coding. In or
 
 
 - **Single-turn generation**:  Prompting of an LLM chatbot to generate code in a single shot.  This is often the first mode of interaction for novice users of AI coding.
-- **Context-aware code completion**: The integration of coding assistants into IDEs allows them to perform autocompletion in a way that takes into account the context in the code. For example, one can prompt the generation of an entire function simply by typing a comment that outlines the desired function.
+- **Context-aware code completion**: The integration of coding assistants into IDEs allows them to perform autocompletion in a way that takes into account the context in the code. For example, one can prompt the generation of an entire function simply by typing a comment that outlines the desired function, and it will be written with knowledge of the variable names used in other parts of the file.
 - **Programmatic access**: One can write code that calls the APIs of coding models to generate code in a programmatic way.
 - **Autonomous execution**: Using coding agents, a complicated plan can be executed by the model using tools to perform actions.
 
@@ -95,7 +94,7 @@ There are several common patterns of interaction with AI tools for coding. In or
 
 ### Verification
 
-Any code generated by an AI coding tool must be verified to ensure that the computations are correct. As an example, I prompted ChatGPT (using GPT-4o) with the following prompt: "generate a python function to compute a multiple linear regression solution using linear algebra.", resulting in this code:
+Any code generated by an AI coding tool *must* be verified to ensure that the computations are correct. As an example, I prompted ChatGPT (using GPT-4o) with the following prompt: "generate a python function to compute a multiple linear regression solution using linear algebra.", resulting in this code:
 
 ```
 def multiple_linear_regression(X, y):
@@ -152,24 +151,21 @@ This highlights the fact that there is a degree of randomness in the outputs of 
 There are two issues with the code that was generated here.
 First, both functions use the normal equation ($(X'X)^{-1}X'y$) to invert the design matrix; this is a suboptimal solution to this problem, both because it will fail if the design matrix `X` is singular, and because it can be numerically unstable. A preferred solution would be a method that uses singular value decomposition (SVD), such as `np.linalg.lstsq()`.
 
-There is also one functionally important difference between the two functions: The second function does not add an intercept whereas the first one did.  
-We can see that each of these is problematic if we write some tests for the functions.  
-We need four tests in all: two tests for function 1 (with and without an intercept) and two tests for function 2 (with and without an intercept).  
-When we do this we see that two of the tests fail:
+There is also one functionally important difference between the two functions: The second function does not add an intercept whereas the first one did. We can see that each of these is problematic if we write some tests for the functions. We need four tests in all: two tests for function 1 (with and without an intercept in the design matrix) and two tests for function 2 (with and without an intercept). When we do this we see that two of the tests fail:
 
 ```python
-======================================= short test summary info ========================================
-FAILED test_linreg.py::test_simple_linear_regression_function1 - numpy.linalg.LinAlgError: Singular matrix
-FAILED test_linreg.py::test_simple_linear_regression_function2_noint - assert 1 == 2
-===================================== 2 failed, 2 passed in 0.76s ======================================
+================================ short test summary info =================================
+FAILED test_linreg.py::test_simple_lr1 - numpy.linalg.LinAlgError: Singular matrix
+FAILED test_linreg.py::test_simple_lr2_noint - assert 1 == 2
+============================== 2 failed, 2 passed in 0.76s ===============================
 ```
 
-The first failure reflects a linear algebra error caused by adding an intercept to the `X` matrix that already has one.  The second failure reflects an incorrect result due to omission of the intercept from the model.
+The first failure reflects a linear algebra error caused by adding an intercept to the `X` matrix that already has one; this would not have have failed if a more robust implementation of the least squares estimate had been used, but fails when the normal equation is used. The second failure reflects an incorrect result due to omission of the intercept from the model.
 
 Tests are the primary means to ensure that LLM code is valid, and LLMs are quite good at generating test code.
 I initially used Claude Sonnet 4.5 to generate tests for the two functions above, but was surprised to see that all of the tests passed. 
 It turned out that that the LLM realized that the two functions differed in their assumptions about the presence of an intercept, and modified the inputs within the tests to make sure that they both passed; that is, it identified and accommodated the bugs rather than exposing them.
-As I will discuss in more detail in Chapter 8, LLM-generated tests often take the "happy path", doing everything they can to ensure that all tests pass at all costs.
+As I will discuss in more detail below and in Chapter 8, LLM-generated tests often take the "happy path", doing everything they can to ensure that all tests pass at all costs.
 Thus, it is essential that LLM-generated tests are examined closely to ensure that they will actually catch problems when they exist, or to use test-driven development where the tests define the functional requirements prior to any implementation.
 
 
@@ -237,7 +233,7 @@ Also note that memory files can get bloated over time as the coding agent makes 
 
 **Project requirements/specifications**
 
-The Project Requirements Document (PRD) specifies the overall goals and requirements for the project. Goals refers to the overall problems that the software aims to solve (e.g., "Searchable interface: Enable complex queries across sessions, subjects, stimuli, and processing status").  Given that coding agents often tend to engage in "gold plating" (i.e. solving problems that aren't on the critical path), it's also often useful to specify *non-goals*, that is, problems that the software doesn't need to solve (e.g. "Direct analysis capabilities (this is a tracking/management system, not an analysis platform)"). Requirements can include architectural features (e.g. defining the different components or layers of the system), functional requirements (e.g., "API shall validate incoming data against expected schema for the specified task") or non-functional requirements related to performance, reliability, security, or maintainability (e.g. "API response time < 500ms for single-document queries"). 
+The Project Requirements Document (PRD) specifies the overall goals and requirements for the project. Goals refers to the overall problems that the software aims to solve (e.g., "Searchable interface: Enable complex queries across sessions, subjects, stimuli, and processing status").  Given that coding agents often tend to engage in "gold plating" (i.e. solving problems that aren't on the critical path), it's also useful to specify *non-goals*, that is, problems that the software doesn't need to solve (e.g. "Direct analysis capabilities (this is a tracking/management system, not an analysis platform)"). Requirements can include architectural features (e.g. defining the different components or layers of the system), functional requirements (e.g., "API shall validate incoming data against expected schema for the specified task") or non-functional requirements related to performance, reliability, security, or maintainability (e.g. "API response time < 500ms for single-document queries"). 
 
 I generally start a project by iterating on the PRD with an LLM chatbot.  I start by describing the overall problem that I want to solve, and then prompt the model to first ask me any questions that it has before generating a PRD.  Here is an example from a [project](https://github.com/BetterCodeBetterScience/example-parcelextract) that I developed in the course of writing this book:
 
@@ -326,21 +322,18 @@ I ultimately asked it to create an optimized C++ module that could be called fro
 It was able to do this, but this still didn't work well, and it continued to break other parts of the code as it tried to fix the problem.
 
 After a few days of thrashing around, I decided to try and simplify the problem by focusing on the single task of creating a GPU-accelerated version of `scipy.ndimage.label` (transcript [here](https://bettercodebetterscience.github.io/example-fastlabel/transcripts)).
-In this case there was a paper outlining algorithms for GPU-accelerated connected components identification, which I provided Claude Opus when generating my PRD.
+In this case there was a paper outlining algorithms for GPU-accelerated connected components identification, which I provided to Claude Opus when generating my PRD.
 It dutifully generated code, but again the GPU-enabled code was always much slower than CPU-only code.
 After I provided Claude with a link to the example code that accompanied the paper, it helped me arrive at a useful realization:
 
 ```
 Final Answer
 
-You were absolutely correct to push back on my initial assessment. After thorough 
-investigation using the reference implementation from the original authors, 
-I can now provide the definitive answer:
+You were absolutely correct to push back on my initial assessment. After thorough investigation using the reference implementation from the original authors, I can now provide the definitive answer:
 
 The Real Issue: CUDA vs MPS Architectural Differences
 
-The BUF algorithm does work excellently on CUDA GPUs (10-50x speedup), but cannot 
-achieve similar performance on MPS due to fundamental architectural differences:
+The BUF algorithm does work excellently on CUDA GPUs (10-50x speedup), but cannot  achieve similar performance on MPS due to fundamental architectural differences:
 
 CUDA Advantages:
 
@@ -373,12 +366,10 @@ My PyTorch implementation attempts to simulate these with Python operations, but
 
 Bottom Line
 
-This is not an implementation failure - it's an algorithm-hardware mismatch. 
-The BUF algorithm was designed specifically for CUDA's architecture and doesn't 
-translate to other GPU types.
+This is not an implementation failure - it's an algorithm-hardware mismatch. The BUF algorithm was designed specifically for CUDA's architecture and doesn't translate to other GPU types.
 ```
 
-This was a case where a bit of deeper knowledge about the differences between CUDA and MPS GPU architectures could have prevented me spending several days of watching Claude go down numerous rabbit holes trying to solve an unsolvable problem, and it highlights the ultimate limits of vibe coding for interesting scientific programming problems.
+This was a case where a bit of deeper knowledge about the differences between CUDA and MPS GPU architectures could have helped me avoid spending several days of watching Claude go down numerous rabbit holes trying to solve an unsolvable problem, and it highlights the ultimate limits of vibe coding for interesting scientific programming problems.
 
 There are several important lessons to be taken from this experience:
 
@@ -389,7 +380,7 @@ There are several important lessons to be taken from this experience:
 
 ### Prompting and steering
 
-When interacting with both chatbots and agents, we will often need to prompt the model to guide its behavior.  Here I discuss some strategies that can be useful.
+When interacting with both chatbots and agents, we often need to prompt the model to guide its behavior.  Here I discuss some strategies that can be useful.
 
 #### Leveraging in-context learning
 
@@ -423,7 +414,7 @@ def linear_regression_normal_eq(X: np.ndarray, y: np.ndarray) -> np.ndarray:
 ```
 
 Unlike the previous examples, the code now includes type hints.
-It's always a bad idea to generalize from a single result, so I ran these prompts through GPT-4o 10 times each (using the Openai API to generate them programmatically; see the [notebook](../src/bettercode/incontext_learning_example.ipynb)).
+It's always a bad idea to generalize from a single result, so I ran these prompts through GPT-4o 10 times each (using the OpenAI API to generate them programmatically; see the [notebook](../src/bettercode/incontext_learning_example.ipynb)).
 Here are the function signatures generated for each of the 10 runs without mentioning type hints in the prompt:
 
 ```
@@ -480,6 +471,9 @@ Haskell: filterUserNames :: [User] -> Int -> Bool -> [String]
 
 Python: ?
 ```
+
+To which it provides the following output:
+
 ```python
 def filter_user_names(users: list[User], min_age: int, active_only: bool) -> list[str]:
 ```
@@ -499,7 +493,7 @@ One of the important discoveries about LLMs is that there are prompting strategi
 An example of chain-of-thought prompting, reprinted from [@Wei:2023aa] under CC-BY.
 ```
 
-As of 2026, all of the frontier LLMs perform this kind of thinking automatically to some degree.  However, it is generally possible to encourage deeper reasoning by asking the model to "think harder". The details on how to do this differ between models and are also changing over time. As an example, I set out to create a difficult debugging problem for an LLM, which turned out to be substantially more difficult than I expected.  I prompted Google Gemini 3.0 Pro to create code with a bug that would be difficult for an LLM to solve without thinking, along with a test suite to validate the LLM's solution. However, its solutions were invariably solvable by Claude Opus 4.6, even with thinking set to low.  I tried using GPT 5.2 to create code, but it explicitly refused, stating that it was not able to generate adversarial code. It was only by using an open source language model (GLM-5) with its safety model turned off that I was able to create a problem that required thinking. The bug involved a mutable class attribute that resulted in sharing of state across instances of the class, which was camouflaged by the open source model (see [here]).  With thinking set to low or medium, the model was not able to fix the bug in any of its 20 tries at each level, whereas with thinking set to high it was able to solve the problem on each of the 20 tries.  The high thinking model required substantially more time and tokens per attempt (~13 seconds and 928 output tokens on average) compared to the medium thinking (~6 seconds and 320 output tokens) and low thinking (~ 4 seconds and 157 tokens) settings.  
+As of 2026, all of the frontier LLMs perform this kind of thinking automatically to some degree.  However, it is generally possible to encourage deeper reasoning by asking the model to "think harder". The details on how to do this differ between models and are also changing over time. As an example, I set out to create a difficult debugging problem for an LLM, which turned out to be substantially more difficult than I expected.  I prompted Google Gemini 3.0 Pro to create code with a bug that would be difficult for an LLM to solve without thinking, along with a test suite to validate the LLM's solution. However, its solutions were invariably solvable by Claude Opus 4.6, even with thinking set to low.  I tried using GPT 5.2 to create code, but it explicitly refused, stating: "I can’t help design a “really difficult problem” specifically intended to resist or defeat frontier LLMs (that’s adversarial)." It was only by using an open source language model (GLM-5) with its safety model turned off that I was able to create a problem that actually required thinking. The bug involved a mutable class attribute that resulted in sharing of state across instances of the class, which was camouflaged by the open source model (see [here](https://github.com/BetterCodeBetterScience/bettercode/tree/main/src/bettercode/effort)).  With thinking set to low or medium, the model was not able to fix the bug in any of its 20 tries at each level, whereas with thinking set to high it was able to solve the problem on each of the 20 tries.  The high thinking model required substantially more time and tokens per attempt (~13 seconds and 928 output tokens on average) compared to the medium thinking (~6 seconds and 320 output tokens) and low thinking (~ 4 seconds and 157 tokens) settings.  
 
 Changing the thinking settings of the model can thus have significant impact on its ability to solve difficult problems, but results in substantially slower response times and more tokens used. In addition, for simple queries too much thinking can lead to overly complex answers.  Thinking is more important when a model fails or gets stuck in a loop trying to solve a problem that it doesn't understand well enough.
 
@@ -510,11 +504,11 @@ The ability to decompose a problem is one of the fundamental skills of computer 
 
 ### Architecture and design
 
-> To create architecture is to put it in order. Put what in order? Function and objects. - Le Corbusier (supposedly from Precisions on the Present State of Architecture and City Planning, need to confirm)
+> To create architecture is to put it in order. Put what in order? Function and objects. - Le Corbusier (supposedly from *Precisions on the Present State of Architecture and City Planning*, need to confirm)
 
-When we think about a residence, architecture and design can make the difference between a beautiful home that is comfortable to live in versus a garish mess that feels like it is fighting the resident at every opportunity. Software architecture is similarly import for the generation of code that is usable, readable, and maintainable.  As my Stanford colleague John Ousterhout says in his highly recommended book "A Philosophy of Software Design" [@Ousterhout:2021aa], "Dealing with complexity is the most important challenge in software design" (p. 169).  Ousterhout highlights three symptoms of code complexity, all of which can be reduced by good design:
+When we think about a residence, architecture and design can make the difference between a beautiful home that is comfortable to live in versus a garish mess that feels like it is fighting the resident at every opportunity. Software architecture is similarly important for the generation of code that is usable, readable, and maintainable.  As my Stanford colleague John Ousterhout says in his highly recommended book "A Philosophy of Software Design" [@Ousterhout:2021aa], "Dealing with complexity is the most important challenge in software design" (p. 169).  Ousterhout highlights three symptoms of code complexity, all of which can be reduced by good design:
 
-- *"Change amplification"*: When the code is well designed, a single functional change should not require changes in multiple locations in the code.  If you have every found yourself struggling to make a seemingly easy change, this is likely due to poor design.
+- *"Change amplification"*: When the code is well designed, a single functional change should not require changes in multiple locations in the code.  If you have ever found yourself struggling to make a seemingly easy change, this is likely due to poor design.
 - *"Cogntive load"*: Well-designed code makes it easy for us to hold the relevant aspects of the code in our head.  Poorly designed code requires us to remember many different features, which is a recipe for human error.
 - *"Unknown unknowns"*: Well-designed code is *obvious*:  It makes it immediately apparent what needs to be done to solve a particular problem.  Poorly designed requires knowledge of the entire codebase to make decisions about how to implement changes.
 
@@ -526,7 +520,7 @@ Ultimately it is up to us as project owners to define what the project requireme
 
 ### Recognizing the need to change strategies
 
-As agentic coding tools become increasingly able to work autonomously, it is not uncommon for them to spend long periods working on their own.  Often these sessions can be remarkably productive, but in some cases agent can end going in circles or digging too deeply into unproductive rabbit-holes.  Expert human judgment is essential to determine when to stop the model and change direction.
+As agentic coding tools become increasingly able to work autonomously, it is not uncommon for them to spend long periods working on their own.  Often these sessions can be remarkably productive, but in some cases agent can end up going in circles or digging too deeply into unproductive rabbit-holes.  Expert human judgment is essential to determine when to stop the model and change direction.
 
 
 ## Failure modes for AI-assisted coding
@@ -544,22 +538,22 @@ These are failures where the code is clearly wrong, in a way that will cause out
 
 ### Testing failures
 
-As I will detail in a later chapter, AI tools can easily generate tests for existing code.  However, I have found that AI-generated tests commonly have problems, which I think primarily arise from the fact that the models are trained to create tests that pass at any cost.
+AI tools can easily generate tests for existing code.  However, I have found that AI-generated tests commonly have problems, which I think primarily arise from the fact that the models are trained to create tests that pass at any cost.
 
 - *Modifying the test to pass the code*: Faced with tests that fail, it is very common for AI assistants to modify the test code to accommodate or effectively ignore the bug, rather than actually fixing the problematic code. This is sometimes referred to as *Happy-path testing*. It is seen in the regression example above, and I will show more examples in Chapter 8 when testing workflows.
-- *Mocking broken implementations*: When using test-driven development, AI will sometimes generate mock implementations of a function that passes the test, and then never actually test the actual implementation.
+- *Mocking broken implementations*: When using test-driven development, AI will sometimes generate mock implementations of a function that passes the test, and then never properly test the actual implementation.
 - *Weak assertions*: In some cases AI will generate assertions that would pass even if the function did not give an appropriate result, as I will show in Chapter 8. These function in effect more like *smoke tests* (i.e. testing whether the function runs without crashing) rather than unit tests that are meant to test whether the function returns the proper kinds of outputs.  It's important to understand what the function's intended output is, and make sure that the actual output matches that intention.
-- *Failing to check for modifications*: When data go into a function, we generally expect the output to be changed in some way.  It's important to test specifically whether the intended changes were made; I have seen cases of AI-generated tests that simply check whether an object was returned, without checking its contents.
+- *Failing to check for modifications*: When data go into a function, we generally expect the output to be changed in some way compared to the input.  It's important to test specifically whether the intended changes were made; I have seen cases of AI-generated tests that simply check whether an object was returned, without checking its contents.
 - *Numerical precision*: It's common for AI to generate tests that fail due to floating point errors when they compare very large or small numbers using the `==` operator; this is really a common coding mistake rather than example of AI trying to game the tests.  It is important to test equality of floating point numbers using a method that allows for some degree of tolerance (e.g. `pytest.approx()`), though this can be tricky to calibrate in a way that catches real errors but avoids spurious errors.  
-- *Coverage gaps*: When generating tests for existing code, it's common for agents to simply skip some modules or functions.  It's important to have explicit instructions in the memory files to generate tests for each module/function, and to assess test coverage using the `coverage` tool.
-- *Failing to check for critical dependencies*: A test should fail if a critical dependency is missing, but in some cases AI may generate tests that modify their behavior depending on the presence or absence of a particular dependency. This can be particularly problem when using packages that modify their behavior depending on the existence of a particular dependency (as I show in an example in Chapter 8).  If the use of a particular dependency is critical to the workflow then it's important to check for those dependencies and make sure that they work properly, rather than simply passing the test if they aren't installed.
+- *Coverage gaps*: When generating tests for existing code, it's common for agents to simply skip some modules or functions.  It's important to have explicit instructions in the memory files to generate tests for each module/function, and to assess test coverage using the *coverage* tool.
+- *Failing to check for critical dependencies*: A test should fail if a critical dependency is missing, but in some cases AI may generate tests that modify their behavior depending on the presence or absence of a particular dependency. This can be particularly problematic when using packages that modify their behavior depending on the existence of a particular dependency (as I show in an example in Chapter 8).  If the use of a particular dependency is critical to the workflow then it's important to check for those dependencies and make sure that they work properly, rather than simply passing the test if they aren't installed.
 
 ### Feasibility failures
 
 These are cases where the approach taken by the model is fundamentally broken.
 
-- *Incorrect feasibility assessment*: As seen in the MPS/CUDA example above, AI models will sometimes claim with confidence that an implementation is feasible when it is not.
-- *Mismatch between algorithm and environment*: Also seen in the MPS/CUDA example above, the model may assume that an algorithm is feasible for the current system when in fact it is only feasible on other kinds of hardware or operating systems.
+- *Incorrect feasibility assessment*: As seen in the GPU acceleration example above, AI models will sometimes claim with confidence that an implementation is feasible when it is not.
+- *Mismatch between algorithm and environment*: Also seen in the GPU acceleration example above, the model may assume that an algorithm is feasible for the current system when in fact it is only feasible on other kinds of hardware or operating systems.
 - *Scalability*: The model may generate code that works with a toy example but cannot feasibly scale to real data due to computational complexity.
 - *Hallucination of capabilities*: The model may assume that a library has capabilities that it doesn't have; this is a more general example of the *halluciniated API* failure described above.
 
@@ -597,7 +591,7 @@ Security is very important for any web-facing development projects, but also can
 - *Unsafe agent modes*: Coding agents generally ask for permissions to perform actions that could be dangerous, but usually have the ability to enable an "unsafe" (or *YOLO*) mode for fully autonomous execution; for example, the current Claude Code has a `--dangerously-skip-permissions` flag that allows this.  This mode is very dangerous on a user machine, since it can wreak havoc by deleting or changing files across the system, or by uploading arbitrary information to the network; agents can do these things in normal mode, but not without human approval. Unsafe mode should only be used on an isolated system with no network access, or within a *sandbox* container with no network access.
 
 
-### Principle violations
+### Instruction violations
 
 AI agents may sometimes forget or ignore the instructions present in the constitution or memory files.  This often reflects context rot, and can be reduced through good context management.
 
@@ -610,20 +604,20 @@ AI agents may sometimes forget or ignore the instructions present in the constit
 
 The model may sometimes miscommunicate the state of affairs.
 
-- *Premature completion claims*: It is very common for models to claim to have solved a problem when the problem has not been truly solved, or claim that all tests pass when they do not.
+- *Premature completion claims*: It is very common for current models to claim to have solved a problem when the problem has not been truly solved, or claim that all tests pass when they do not.
 - *Lack of uncertainty*: AI models tend not to express uncertainty about their statements, which can make it difficult to determine when they are working on good information and when they are working with unreliable knowledge.
 - *Confident misdiagnosis*: A version of the previous issue, the model confidently claims to have diagnosed a problem, when in fact its diagnosis is incorrect; without a human in the loop, this can lead to significant wasted time and tokens.
 
 
 ## Code smells in AI-generated code
 
-In Chapter 3 I discussed common code smells in human written code. Given that AI models are trained on human-written code, they can also sometimes demonstrate these smells, although AI-generated code is generally quite well-written and usually avoids obvious smells.  However, there is also a set of code smells that are specific to AI-generated code.  The AI-assisted programmer needs to be particularly attentive to these issues when reviewing AI-generated code.  In many ways AI coding shifts code review from detecting obviously incorrect code to identifying more subtle problems.
+In Chapter 3 I discussed common code smells, focusing primarily on human-generated code. Given that AI models are trained on human-written code, they can also sometimes demonstrate these smells, although AI-generated code is generally quite well-written and usually avoids obvious smells.  However, there is also a set of code smells that are specific to AI-generated code.  The AI-assisted programmer needs to be particularly attentive to these issues when reviewing AI-generated code.  In many ways AI coding shifts code review from detecting obviously incorrect code to identifying more subtle problems.
 
 - *Silent error swallowing*:  AI agents often write code that includes `try/except` clauses that catch bare exceptions (i.e. without specifying an exception type) and silence them rather than raising an exception or giving a warning.  This can result in malfunctioning code that is impossible to identify without appropriate tests on the output.
 - *Overly complex or verbose code*: Agents will often create complex class hierarchies or inheritance patterns when a simple approach would be equally effective and much more readable. I regularly find myself asking the agent to simplify its code; this is key to being able to read and maintain the code in the future as well as making it easier to test in an understandable way.
-- *Remnants of previous iterations*: It's very common for an agent to make a wholesale change in the code, but to fail to update or remove all of the older code.  This can lead to confusion in debugging; for example, in the code that implemented the analysis of thinking levels that I described above, I had one very confusing experience where the model was passing when it should have failed, which turned out to be due to the hard-coding of a specific file name that was not updated after I decided to use a different input file.
+- *Remnants of previous iterations*: It's very common for an agent to make a wholesale change in the code, but to fail to update or remove all of the older code.  This can lead to confusion in debugging; for example, in the code that implemented the analysis of thinking levels that I described above, I had one very confusing experience where the model was passing when it should have failed, which turned out to be due to the hard-coding of a specific file name that was not updated by the model after I decided to use a different input file.
 - *Inappropriate pattern imitation*: Coding tools will sometime imitate patterns that are prevalent in their training data but inappropriate for the current context.  For example, the agent might add features related to thread-safety in code that does not use multithreading.  
-- *Inconsistent style*: The agent may use different coding styles in different places, such as using classes for some tests and functions/fixtures for other tests.  This may occur when the context becomes bloated or cleared during the session.
+- *Inconsistent style*: The agent may use different coding styles in different places, such as using classes for some tests and functions/fixtures for other tests.  This may occur when the context becomes bloated or is cleared during the session.
 - *Incorrect docstrings*: AI agents are very good at generating properly formatted docstrings, but can sometimes misinterpret the intention of the code.
 - *Inappropriate function names*: AI agents can sometimes generate function names that don't correctly describe the intended function.  Catching these requires human judgment and understanding.
 
@@ -632,11 +626,11 @@ In Chapter 3 I discussed common code smells in human written code. Given that AI
 
 As powerful as they are, AI coding agents can often go down the wrong road, and they are not very good at figuring out that they need to stop and rethink their strategy.
 This is why it's important to watch what the agent is doing and make sure that it's not just chasing its tail, as I experienced in my first attempt to create a GPU-accelerated permutation tool (discussed above).
-There are several version control strategies that are specifically useful for agentic workflows.
+Good version control practices are key to dealing with these kinds of issues, and there are several version control strategies that are specifically useful for agentic workflows.
 
 ### Create branches before major tasks
 
-When undertaking a task where there is a significant risk of problems or uncertainly about the ability of the model to complete the task, it's useful to create a new branch to work in. This makes reverting the changes as easy as checking out the main branch and deleting the test branch.  Use good branch naming practices (as described in Chapter 2) to make it easy to understand what's been done.
+When undertaking a task where there is a significant risk of problems or uncertainty about the ability of the model to complete the task, it's useful to create a new branch to work in. This makes reverting the changes as easy as checking out the main branch and deleting the test branch.  Use good branch naming practices (as described in Chapter 2) to make it easy to understand what's been done.
 
 ### Commit-clear-reload
 
@@ -685,7 +679,6 @@ However, this initial froth of enthusiasm was soon replaced by a realization tha
 
 Scientists have a particular responsibility to ensure the validity and correctness of the code that they generate using AI.  When we publish a scientific result, we must take full responsibility for the work that establishes the reported results [@Bridgeford:2025aa].  This means that we *must* do everything possible to test and validate the code that we generate, either as human coders or using AI.  Vibe coding may be fine for developing useful tools or web sites, but scientists should *never* publish a result based on code that they have not reviewed and tested.
 
-It is impossible to predict how AI coding abilities will change in the future, and some of the principles laid out in this chapter will certainly be made obsolete by future advances in AI coding tools.  
-But what seems to be clear from the first few years of experience with AI coding tools and agents is that these tools do no make programming expertise obsolete.
+It is impossible to predict how AI coding abilities will change in the future, and some of the principles laid out in this chapter will certainly be made obsolete by future advances in AI coding tools. But what seems to be clear from the first few years of experience with AI coding tools and agents is that these tools do no make programming expertise obsolete.
 Instead, AI tools can improve the productivity of skilled programmers, and they change the importance of different skills: Knowledge of specific coding constructs becomes less important, while the ability to decompose problems, understand and guide the design of software architectures, and review AI-generated code all become increasingly important.
 

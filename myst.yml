@@ -1,0 +1,39 @@
+version: 1
+project:
+  title: Better Code, Better Science
+  authors:
+    - name: Russell Poldrack
+  github: BetterCodeBetterScience/book
+  bibliography:
+    - book/references.bib
+  exports:
+    - format: pdf
+      template: plain_latex_book
+      output: exports/book.pdf
+    - format: md
+    - format: docx
+      template: https://github.com/myst-templates/docx_default.git
+    - format: typst
+      template: plain_typst_book
+      output: exports/book_typst.pdf
+  toc:
+    - file: book/frontmatter.md
+    - file: book/introduction.md
+    - file: book/essential_tools_and_techniques.md
+    - file: book/software_engineering.md
+    - file: book/testing.md
+    - file: book/AI_coding_assistants.md
+    - file: book/project_organization.md
+    - file: book/data_management.md
+    - file: book/workflows.md
+    - file: book/validation.md
+    - file: book/performance.md
+    - file: book/HPC.md
+    - file: book/sharing.md
+
+site:
+  options:
+    logo: logo.png
+    hide_myst_branding: true
+#    folders: true
+  template: book-theme

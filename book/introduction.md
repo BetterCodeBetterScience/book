@@ -71,7 +71,7 @@ There are likely very few coders today who have not used these tools or at least
 The presence of these tools has led to some breathless hand-wringing about whether AI will eliminate the need for programmers, but nearly all voices on this topic agree that programming will change drastically with the introduction of AI assistance but that the ability to program will remain a foundational skill for years to come.
 
 In early 2023 the frenzy about AI reached the boiling point with the introduction of the GPT-4 language model by OpenAI.
-Analyses of early versions of this model [@Bubeck:2023aa] showed that its ability to solve computer programming problems was on pair with human coders, and much better than the previous GPT-3 model.
+Analyses of early versions of this model [@Bubeck:2023aa] showed that its ability to solve computer programming problems was on par with human coders, and much better than the previous GPT-3 model.
 Later that year GPT-4 became available as part of the GitHub CoPilot AI assistant, and those of us using Copilot saw some quite astonishing improvements in the performance of the model compared to the GPT-3 version.
 I had been developing a workshop on software engineering practices for scientists, and the advent of this new tool led to some deep soul-searching about whether such training would even be necessary given the power of AI coding assistants.
 My colleagues and I [@Poldrack:2023aa] subsequently performed a set of analyses that asked three questions about the ability of GPT-4 to perform scientific coding.
@@ -116,7 +116,7 @@ The idea of replication as a sine qua non of science goes back to the 17th Centu
 Throughout the development of modern science, the ability for researchers to replicate results by other scientists has been a foundational feature of science.
 
 An example serves to show how well science can work when the stakes are high.
-In 1989, the chemists Martin Fleischmann and Stanley Pons reported that they had achieved nuclear fusion at temperatures much higher than usually thought to be required.
+In 1989, the chemists Martin Fleischmann and Stanley Pons reported that they had achieved nuclear fusion at temperatures much lower than usually thought to be required.
 If true this would have been a revolutionary new source of energy for the world, so scientists quickly began to try to reproduce the result.
 Within just a few months, the idea of "cold fusion" was fully discredited; while the New York Times labeled the cold fusion work as an example of ["pathological science"](https://www.nytimes.com/1989/09/24/magazine/cold-fusion-confusion.html), the entire episode actually showed how well science can sometimes self-correct.
 
@@ -133,7 +133,7 @@ Below I will talk more about the reasons that we now think these kinds of irrepr
 
 There are many different senses of the term "reproducibility", which can cause confusion.
 A framework that I like for this concept comes from the [Turing Way](https://book.the-turing-way.org/), an outstanding guide for open and reproducible science practices.
-This framework, shown in Figure [](#TuringWayReproducibility-fig), distinguishes between whether the data and analysis are either same or different between two analyses.
+This framework, shown in [](#TuringWayReproducibility-fig), distinguishes between whether the data and analysis are either same or different between two analyses.
 
 ```{figure} images/reproducible-matrix.jpg
 :label: TuringWayReproducibility-fig
@@ -164,7 +164,7 @@ Many of the efforts to improve reproducibilty have focused on reducing the preva
 
 There is a well known quote from Jonathan Buckheit and David Donoho [@Buckheit:1995aa] that highlights the importance of openly available research objects in science:
 
-> An article about computational science in a scientic publication is not the scholarship itself, it is merely advertising of the scholarship.
+> An article about computational science in a scientific publication is not the scholarship itself, it is merely advertising of the scholarship.
 The actual scholarship is the complete software development environment and the complete set of instructions which generated the figures.
 
 There was surprisingly little focus on code during the reproducibility crisis, but it is clear that there are problems even with what would seem like the easiest quadrant of the Turing Way framework: namely, the ability to reproduce results give the same data and same analysis code.
@@ -202,7 +202,7 @@ These errors appeared to have significant impact on results, but interestingly t
 It seems highly likely that a bug that had substantially reduced performance would have been identified much earlier.
 
 Another example comes from our own field of neuroimaging.
-A typical neuroimaging study collects data from hundreds of thousands of three-dimensional volumetric pixels (know as *voxels*) within the brain, and then performs statistical tests at each of those locations.
+A typical neuroimaging study collects data from hundreds of thousands of three-dimensional volumetric pixels (known as *voxels*) within the brain, and then performs statistical tests at each of those locations.
 This requires a correction for multiple tests to prevent the statistical error rate from skyrocketing simply due to the large number of tests.
 There are a number of different methods that are implemented in different software packages, some of which rely upon mathematical theory and others of which rely upon resampling or simulation.
 One of the commonly used open source software packages, AFNI, provided a tool called *3DClustSim* that used simulation to estimate a statistical correction for multiple comparisons.
@@ -214,8 +214,8 @@ Had the bug led to much more conservative results compared to other standard met
 ### How not to fool ourselves
 
 In his [1974 commencement address at Caltech](https://calteches.library.caltech.edu/51/2/CargoCult.htm), the physicist Richard Feynman famously said "The first principle is that you must not fool yourself — and you are the easiest person to fool." One of the most powerful ways that scientists have developed to prevent us from fooling ourselves is *blinding* - that is, preventing us from seeing or otherwise knowing information that could lead us to be biased towards our own hypotheses.
-You may be familiar, for example, of the idea of a "double-blind" randomized controlled trial in medical research, in which participants are randomly assigned to a treatment of interest or a control condition (such as a placebo); the "double-blind" aspect of the trial refers to the fact that neither the patient nor the resarcher knows who has been assigned to the treatment versus control condition.
-Assuming that blinding actually works (which can fail, for example, if the treatment has strong side effects), this can give results that are at much lower risk of bias compared to a trial in which the physician or patient know what their condition is.
+You may be familiar, for example, of the idea of a "double-blind" randomized controlled trial in medical research, in which participants are randomly assigned to a treatment of interest or a control condition (such as a placebo); the "double-blind" aspect of the trial refers to the fact that neither the patient nor the researcher knows who has been assigned to the treatment versus control condition.
+Assuming that blinding actually works (which can fail, for example, if the treatment has strong side effects), this can give results that are at much lower risk of bias compared to a trial in which the physician or patient knows what their condition is.
 In physics, researchers will regularly relabel or otherwise modify the data to prevent the researcher from knowing whether they are working with the real data versus some other version.
 This kind of blinding helps researchers avoid fooling themselves.
 

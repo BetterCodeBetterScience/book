@@ -18,7 +18,7 @@ While much of SWEBOK focuses on topics that are primarily relevant to large comm
 
 I have spent the last decade giving talks regularly on scientific coding practices.
 I often start by asking how many researchers in the audience have received software engineering training.
-In most audiences the proportion of people raising their hands is well below 1/4; this is true both for the audiences of neuroscientists and psychologists that he usually speaks to, as well as researchers from other fields that he occasionally speaks to.
+In most audiences the proportion of people raising their hands is well below 1/4; this is true both for the audiences of neuroscientists and psychologists that I usually speak to, as well as researchers from other fields that I occasionally speak to.
 This impression is consistent with the results of a poll that I conducted on the social media platform X, which showed that the majority of scientists responded that they had received no training in software engineering (see [](#XPoll-fig)).
 
 ```{figure} images/x_poll.png
@@ -52,7 +52,7 @@ Other common types of errors included numerical errors, logical errors, and memo
 
 If professional coders make errors at a rate of 1-2 errors per hundred lines, it seems very likely that the error rates of amateur coders writing software for their research would be substantially higher.
 While not all coding errors will make a difference in the final calculation, it's likely that many will [@Soergel:2014aa].
-My group has in fact experienced this within our own work (As described in [this blog post](https://reproducibility.stanford.edu/coding-error-postmortem/)).
+My group has in fact experienced this within our own work (as described in [this blog post](https://reproducibility.stanford.edu/coding-error-postmortem/)).
 In 2020 we posted a preprint that criticized the design of a particular aspect of a large NIH-funded study, the Adolescent Brain Cognitive Development (ABCD) study.
 This dataset is shared with researchers, and we also made the code openly available via GitHub.
 The ABCD team eagerly reviewed our code, and discovered an error due to an overly complex index scheme with double negatives that led to incorrect indexing of a data frame and thus changed the results.
@@ -133,7 +133,7 @@ Below I will talk more about the reasons that we now think these kinds of irrepr
 
 There are many different senses of the term "reproducibility", which can cause confusion.
 A framework that I like for this concept comes from the [Turing Way](https://book.the-turing-way.org/), an outstanding guide for open and reproducible science practices.
-This framework, shown in Figure [](#TuringWayReproducibility-fig), distinguishes between whether the data and analysis are either same or different between two analyses.
+This framework, shown in [](#TuringWayReproducibility-fig), distinguishes between whether the data and analysis are either same or different between two analyses.
 
 ```{figure} images/reproducible-matrix.jpg
 :label: TuringWayReproducibility-fig

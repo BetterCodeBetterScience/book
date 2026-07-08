@@ -46,6 +46,8 @@ In the earlier chapter on Data Management I discussed the FAIR (Findable, Access
 
 There are certainly some contexts where a more formal structure adhering in detail to the FAIR Workflows standard may be required, as in large collaborative projects with specific compliance objectives, but these rough guidelines should get a researcher most of the way there.
 
+Many of these practices also correspond directly to STAMPED principles [@Macdonald:2026aa] (see the [data management chapter](data_management.md)): version control and requirements files support **Tracking** and **Portability**, standard organization and file formats support **Modularity** and **Actionability**, and a public repository with clear metadata supports **Distributability**.
+
 
 ## Piping and chaining
 

@@ -574,3 +574,20 @@ Serial: Too slow for 10^ 6 iterations.
 Vectorized: Might run out of memory.
 Parallel: The "Goldilocks" solution where you send chunks of iterations to different cores.
 This provides a narrative arc: You start with the math, realize the serial version is too slow, try vectorizing but hit a memory limit, and finally arrive at parallelization as the engineering solution.
+
+
+## STAMPED principles ↔ book chapters mapping
+
+For readers who want to use the STAMPED framework [@Macdonald:2026aa] to self-assess their own projects, the table below indicates where each of the seven principles is put into practice in this book, together with representative items from the [interactive checklist](https://checklist.stamped-principles.org/).  Checklist item IDs (`must/NNN`, `should/NNN`, `may/NNN`) come from `stamped-checklist` v0.1.0.
+
+| Principle | Where in this book | Representative checklist items |
+|---|---|---|
+| **S**elf-containment | Project structure chapter (§ "Should code and data live alongside one another?"); Data management chapter (§ *DataLad*) | `must/001`–`must/003` (all files under a common root; datasets and external software reachable from that root) |
+| **T**racking | Data management chapter (§ *DataLad* for version control on larger datasets); Software engineering chapter (Git workflow) | `must/004`, `must/005` (Git for code and text; `git-annex` / *DataLad* / Git-LFS for large data); `must/006` (env specs in provenance records); `should/001` (one VCS across components) |
+| **A**ctionability | Workflow chapter (§ Using a workflow engine); Sharing chapter (§ Software metadata — `CITATION.cff`, `codemeta.json`) | `must/007`, `must/008` (`README.md` or `Makefile` with usage; a clear starting point); `should/002` (workflow tested regularly) |
+| **M**odularity | Project structure chapter (§ project structure, BIDS folder-naming); data-vs-code separation in the data management and sharing chapters | `should/003` (raw data / processed data / code / env separated into distinct modules); `may/001`–`may/005` (submodules, modular boundaries, composition mechanisms) |
+| **P**ortability | Project structure chapter (§ "It needs to be portable", § Containers); HPC chapter (§ Modules, § Containers); Sharing chapter (env-sharing sections) | `must/009`–`must/011` (relative paths; deps in env spec; host assumptions documented); `must/012` (system requirements in `README`); `must/013`, `must/014` (env specs in VCS, updated as deps change) |
+| **E**phemerality | Workflow chapter (§ Reproducible environments with containers); HPC chapter (§ Containers, per-job scratch directories) | `should/004`, `should/005` (pipeline tested in a fresh container / disposable env per execution) |
+| **D**istributability | Sharing chapter (§ Persistent identifiers for code; § Choosing a data repository); Data management chapter (*DataLad* remotes and portals) | `must/015`–`must/017` (env specs persistent, shareable, documented); `should/006`–`should/008` (env artifacts regularly re-tested and archived) |
+
+Item numbers reflect the checklist at time of writing; verify current numbering at <https://checklist.stamped-principles.org/> or <https://github.com/stamped-principles/stamped-checklist-schema> before printing or citing.

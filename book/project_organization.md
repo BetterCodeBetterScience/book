@@ -26,7 +26,7 @@ As I discussed in the section in Chapter 3 on clean coding, one of the most impo
 
 ### It needs to be portable
 
-It's rare for one to perform analyses that are only meant to run on one specific computer system.  Coding portably (as discussed in Chapter 3) makes it easy to run the code on other machines.  This can be useful, for example, when one replaces one's laptop, or when one needs to scale their code to run on a high-performance computing system.  It also helps ensure that the code can be tested using automated testing tools, like those discussed in Chapter 4.  
+It's rare for one to perform analyses that are only meant to run on one specific computer system.  Coding portably (as discussed in Chapter 3) makes it easy to run the code on other machines.  This can be useful, for example, when one replaces one's laptop, or when one needs to scale their code to run on a high-performance computing system.  It also helps ensure that the code can be tested using automated testing tools, like those discussed in Chapter 4.  Portability, expressed as explicitly specifying environments and avoiding hidden dependencies on the host, is what the STAMPED framework [@Macdonald:2026aa] calls the **P**ortability principle; the container-based approach discussed later in this chapter is one of the strongest ways to achieve it.
 
 
 ## Project structure
@@ -44,6 +44,8 @@ For my projects with datasets larger than a few gigabytes, I tend to keep data s
 - For projects that I run on my laptop, I keep my code folders inside my *Dropbox* folder, so that they are continually backed up.  I highly recommend this, as it allows one to go back in time and restore deleted files (assuming one's *Dropbox* account supports this feature), and also allows one to keep a hot spare system that has a current version of all of one's code (e.g., in case one spills a latte on their laptop and fries it).  For larger datasets I often don't want to put them into *Dropbox* due to the size that they take up.
 
 In general, for portability it's also nice to have the data location parameterized in the code (e.g., via a .env file or local config file) rather than hardcoded through the use of a local directory name.  Thus, even if you decide to put the data within the code directory, it's good to write the code in a way that can allow the data to live in an arbitrary location.
+
+Keeping code and data as separately versioned modules is an instance of STAMPED-**M**odularity: code often changes on a different schedule than the curated data it processes, so pinning them to independent identifiers pays off later.  At the same time, ensuring that everything needed to reproduce the project is reachable from a single top-level object — even when the data physically live elsewhere on the filesystem — is what STAMPED calls **S**elf-containment (the "don't look up" rule: no reliance on implicit external state).  Tools such as *DataLad* (discussed in the data management chapter) make it practical to hold code and large data together in one logical project while keeping their storage separate.
 
 ### Folder structure
 

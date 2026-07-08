@@ -176,6 +176,11 @@ It is increasingly common for researchers to share both code and data from their
 However, in our experience, it can be very difficult to actually run the shared code, due to various problems that limit the portability of the code.
 Throughout this book I will discuss the tools and techniques that can help improve the portability of shared code and thus increase the reproducibility of published results.
 
+Two frameworks give shape to this discussion.
+The FAIR principles (Findable, Accessible, Interoperable, Reusable) [@Wilkinson:2016aa] structure the discovery and governance layer of research-object sharing; we return to them in the data management chapter.
+STAMPED [@Macdonald:2026aa] is a recent operational companion: research objects should be **S**elf-contained, **T**racked, **A**ctionable, **M**odular, **P**ortable, **E**phemeral, and **D**istributable, with an [interactive checklist](https://checklist.stamped-principles.org/) for self-assessment.
+Much of what this book teaches — version control, containers, structured project layouts, and reproducible workflows — facilitate FAIR and STAMPED practices.
+
 ### Bug-hacking
 
 A particular concern is that not all software errors are created equal.

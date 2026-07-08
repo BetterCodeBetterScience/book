@@ -953,7 +953,7 @@ However,*git* does not work well for version control on larger datasets using bi
 
 ### Using *DataLad* for version control on larger datasets
 
-A solution to this problem is to use a version control tool that is specifically designed for large data.  There are several tools that address this problem; we will focus on [Dat*aLad](https://www.datalad.org/), which is a data management system that functions very similarly to git.  It is based on a tool called [*git-annex*](https://git-annex.branchable.com/), but provides much greater ease of use for researchers.  (Full disclosure: Our group collaborates with the *DataLad* group and our grants have supported some of their development work.)
+A solution to this problem is to use a version control tool that is specifically designed for large data.  There are several tools that address this problem; we will focus on [*DataLad*](https://www.datalad.org/) [@Halchenko:2021aa], which is a data management system that functions very similarly to git.  It is based on a tool called [*git-annex*](https://git-annex.branchable.com/), but provides much greater ease of use for researchers.  (Full disclosure: Our group collaborates with the *DataLad* group and our grants have supported some of their development work.)
 
 An important note: *DataLad* is quite powerful but has a significant learning curve, and takes a bit of time to get accustomed to.  In particular, its use of symbolic links can sometimes confuse new users. Having said that, let's look at some simple examples.
 

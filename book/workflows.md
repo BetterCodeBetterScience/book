@@ -263,6 +263,8 @@ The use of DAGs to represent workflows provides a number of important benefits:
 
 There are a couple of additional benefits to using a workflow engine, which I will discuss in more detail in the context of a more complex workflow. The first is that they generally deal automatically with the storage of intermediate results (known as *caching* or *checkpointing*), which can help speed up execution when nothing has changed and allow continued execution if the process is interrupted.  The second is that the workflow engine uses the execution graph to optimize the schedule of computations, only performing those operations that are actually needed.  This is similar in spirit to the concept of *lazy execution* used by packages like *Polars*, in which the system optimizes computational efficiency by first analyzing the full computational graph.
 
+Expressing an analysis as a workflow rather than a prose description is what the STAMPED framework calls the **A**ctionability principle: the workflow file is a machine-actionable specification that others (and future you) can execute, not just documentation of what was done.
+
 ### General-purpose versus domain-specific workflow engines
 
 With the growth of data science within industry and research, there has been an explosion of new workflow management systems that aim to solve particular problems; a list of these can be found at [awesome-workflow-engines](https://github.com/meirwah/awesome-workflow-engines). It's also worth noting that there are a number of domain-specific workflow engines that are specialized for particular kinds of data and workflows.  Examples include [*Galaxy*](https://galaxyproject.org/) which is specialized for bioinformatics and genomics, and [*Nipype*](https://nipype.readthedocs.io/en/latest/index.html) which is specialized for neuroimaging analysis workflows. If your research community uses one of these then it's worth exploring that engine as your first option, since it will probably be well supported within the community. However, a benefit of using a general-purpose engine is that they will often be better maintained and supported, and AI tools will likely have more examples to work from when generating new workflows.
@@ -621,7 +623,9 @@ Pulling singularity image docker://jupyter/scipy-notebook:x86_64-ubuntu-22.04.
 ...
 ```
 
-As with conda, it's worth noting that *Snakemake* will store the *Apptainer* image within the `.snakemake` directory, which can sometimes be quite large; for the *Jupyter* image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.  
+As with conda, it's worth noting that *Snakemake* will store the *Apptainer* image within the `.snakemake` directory, which can sometimes be quite large; for the *Jupyter* image linked above, it was about 1.2 GB, but I have seen containers up to 10 GB or more on occasion.
+
+Running a workflow inside a fresh container image, rather than in-place against whatever happens to be installed on the host, is a practical form of the STAMPED **E**phemerality principle: the environment is staged from an explicit specification, used, and can be discarded, so that a successful run confirms the specification was complete.  The same pattern applies when a continuous-integration system executes the workflow on a fresh worker for every commit, and on high-performance computing systems where each job runs in its own scratch directory.
 
 
 ### Best practices for *Snakemake* workflows

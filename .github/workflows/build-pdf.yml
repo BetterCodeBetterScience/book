@@ -1,0 +1,155 @@
+name: Build PDF and preview on PRs
+
+# Builds the book PDF on every pull request, builds the base-branch PDF
+# for comparison, and pushes both plus a page-by-page visual diff to a
+# per-PR preview branch so a reviewer can browse the rendered output
+# from the PR conversation.
+#
+# Modeled on the stamped-principles/stamped-paper build-pdf.yml pattern,
+# with two adaptations for this repo:
+#   1. Base PDF is built locally (checked-out `main`), rather than
+#      fetched from a Pages URL — this repo does not publish the PDF.
+#   2. mystmd's PDF export is pinned to plain_latex_book so we skip
+#      the current Typst export path (which trips on `**X**yz` bold
+#      markdown patterns in the sources).
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: build-pdf-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          path: pr
+
+      - name: Checkout base branch
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-base \
+            texlive-latex-recommended \
+            texlive-latex-extra \
+            texlive-fonts-recommended \
+            texlive-bibtex-extra \
+            latexmk
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install mystmd
+        run: npm install -g mystmd
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Build PR PDF
+        working-directory: pr
+        run: uv run myst build --pdf --template plain_latex_book
+
+      - name: Build base PDF
+        if: github.event_name == 'pull_request'
+        working-directory: base
+        run: uv run myst build --pdf --template plain_latex_book
+
+      - name: Stage PDFs
+        run: |
+          cp pr/exports/book.pdf pr-book.pdf
+          if [ -f base/exports/book.pdf ]; then
+            cp base/exports/book.pdf base-book.pdf
+          fi
+
+      - name: Generate PDF diff
+        if: github.event_name == 'pull_request'
+        id: diff
+        run: |
+          docker run --rm -v "$PWD:/work" -w /work \
+            ghcr.io/stamped-principles/diff-pdf:latest \
+            bash pr/.github/scripts/diff-book-pdf.sh \
+              pr-book.pdf \
+              base-book.pdf \
+              "gh-pages-pr-${{ github.event.pull_request.number }}" \
+              "${{ github.repository }}" \
+              "${{ github.server_url }}" \
+              "${{ github.event.pull_request.head.sha }}" \
+              "${{ github.base_ref }}"
+          {
+            echo 'body<<ENDOFCOMMENT'
+            cat pr-comment.md
+            echo 'ENDOFCOMMENT'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Push PDFs and diffs to preview branch
+        if: github.event_name == 'pull_request'
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        working-directory: pr
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          BRANCH="gh-pages-pr-${PR_NUMBER}"
+          git checkout --orphan "$BRANCH"
+          git rm -rf --cached .
+          cp ../pr-book.pdf book.pdf
+          git add -f book.pdf
+          [ -f ../diff.pdf ] && cp ../diff.pdf diff.pdf && git add -f diff.pdf
+          for f in ../diff-page-*.png; do
+            [ -f "$f" ] && cp "$f" . && git add -f "$(basename "$f")"
+          done
+          git commit -m "PDF preview for PR #${PR_NUMBER} (${HEAD_SHA:0:7})"
+          git push -f origin "$BRANCH"
+
+      - name: Upload PR PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: book-pdf
+          path: pr-book.pdf
+          retention-days: 14
+
+      - name: Upload diff artifacts
+        if: github.event_name == 'pull_request' && hashFiles('diff.pdf') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: book-pdf-diff
+          path: |
+            diff.pdf
+            diff-page-*.png
+          retention-days: 14
+
+      - name: Find existing PR comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/find-comment@v3
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: '<!-- pdf-preview -->'
+
+      - name: Post or update PR comment
+        if: github.event_name == 'pull_request'
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.diff.outputs.body }}
+          edit-mode: replace
